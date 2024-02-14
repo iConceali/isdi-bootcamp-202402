@@ -1,0 +1,39 @@
+@import car-util
+
+.car
+    @include position(relative, 100px, 0, 50px)
+
+.car__bodywork
+    @include bgcr
+    @include size(200px, 80px)
+    @include position(relative, 0, 0, 0)
+    border-radius: 10px
+    z-index: 1
+
+.car__ceiling
+    @include bgcr
+    @include size(146px, 40px)
+    @include position(absolute, -40px, 30px, 0)
+    clip-path: polygon(20% 0%, 80% 0, 100% 100%, 0% 100%)
+    border-top-left-radius: 30px
+
+.window
+    @include window
+
+.window--left
+    left: -10px
+    clip-path: polygon(50% 0%, 100% 0, 100% 100%, 0% 100%)
+
+.window--right
+    left: 76px
+    clip-path: polygon(0% 0%, 50% 0, 100% 100%, 0% 100%)
+
+.wheel
+    @include wheel
+    z-index: 2
+
+.wheel--left
+    left: 30px
+
+.wheel--right
+    left: 120px

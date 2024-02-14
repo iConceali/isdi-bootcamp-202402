@@ -1,0 +1,23 @@
+@mixin size($width, $height)
+    width: $width
+    height: $height
+
+@mixin position($position, $top, $left, $bottom)
+    position: $position
+    top: $top
+    bottom: $bottom
+    left: $left
+
+@mixin bgcr
+    background-color: red
+
+@mixin window
+    background-color: #ADD8E6
+    @include size(80px, 59px)
+    @include position(absolute, 6px, 0, 0)
+
+@mixin wheel
+    @include size(60px, 60px)
+    background-color: #000
+    border-radius: 50%
+    @include position(absolute, 47px, 0, 0)

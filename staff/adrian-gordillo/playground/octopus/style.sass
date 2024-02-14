@@ -1,0 +1,70 @@
+@import utils
+
+body
+    background-color: #FFBDBD
+
+.octopus
+    @include size(31.25em, 31.25em)
+    position: absolute
+    transform: (-50%, -50%)
+    left: 30%
+    right: 50%
+
+    &__head
+        position: absolute
+        @include size(18.75em, 18.75em)
+        background: linear-gradient((#f01c8a, #f53e2f))
+        border-radius: 50%
+        z-index: 1
+
+    &__shine
+        border: 0.62em solid #ffffff
+        @include position(absolute, 2.5em, 2.5em)
+        @include size(6.25em, 3.75em)
+        border-radius: 50%
+        border-color: transparent
+        border-top-color: #ffffff
+        transform: rotate(-35deg)
+
+    &__mouth
+        @include position(absolute, 10.2em, 6.8em)
+        @include size(4.25em, 3.75em)
+        border: 0.62em solid #000000
+        border-radius: 50%
+        border-color: transparent
+        border-top-color: #000000
+        transform: rotate(-180deg)
+        z-index: 2
+
+    &__eyes
+        position: relative
+
+    &__eye
+        &-left
+            @include eye
+            @include position(absolute, 120px, 70px)
+
+        &-right
+            @include eye
+            @include position(absolute, 120px, 160px)
+
+    &__pupil-left
+        @include pupil
+
+    &__pupil-right
+        @include pupil
+
+    .leg
+        @include size(3.75em, 7.5em)
+        @include leg
+
+        &.leg-1
+            z-index: -1
+
+        &.leg-2
+            transform: rotate(-30deg)
+            left: 10.85em
+
+        &.leg-3
+            transform: rotate(30deg)
+            left: 4.12em

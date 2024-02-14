@@ -1,0 +1,104 @@
+@import util
+
+.pig__head
+  @include size(150px, 150px)
+  @include position(relative, 0, 0)
+  background: pink
+  margin: 50px
+  border-radius: 50%
+  border: 2px solid black
+  z-index: 1
+
+.eye
+  @include size(30px, 30px)
+  @include position(absolute, 0, 0)
+  background-color: white
+  border-radius: 50%
+  border: 2px solid black
+
+.eye--L
+  top: 40px
+  left: 20px
+
+.eye--R
+  top: 40px
+  left: 100px
+
+.pupil
+  @include size(10px, 10px)
+  @include position(absolute, 10px, 10px)
+  background-color: black
+  border-radius: 50%
+  animation-name: animation
+  animation-duration: 3s
+  animation-iteration-count: infinite
+
+.hide_layout
+  @include size(265px, 100px)
+  @include position(absolute, 150px, 0)
+  background-color: white
+  z-index: 2
+  color: black
+  display: flex
+  justify-content: center
+
+.nose
+  @include size(80px, 40px)
+  @include position(absolute, 50%, 33px)
+  background-color: pink
+  border-radius: 50%
+  border: 2px solid black
+
+.nose__hole
+  @include size(15px, 15px)
+  @include position(relative, 0, 0)
+  background-color: pink
+  border: 2px solid black
+  border-radius: 50%
+
+.nose__hole-L
+  @include position(relative, 10px, 10px)
+
+.nose__hole-R
+  @include position(absolute, 10px, 50px)
+
+.ear
+  border: 1px solid black
+  background: pink
+  -webkit-transform: rotate(45deg) skew(20deg, 30deg)
+  -moz-transform: rotate(45deg) skew(20deg, 30deg)
+  -ms-transform: rotate(45deg) skew(20deg, 30deg)
+  -o-transform: rotate(45deg) skew(20deg, 30deg)
+  transform: rotate(45deg) skew(20deg, 30deg)
+
+.hand
+  @include size(20px, 20px)
+  border: 1px solid black
+  background: pink
+  -webkit-transform: rotate(45deg) skew(15deg, 15deg)
+  -moz-transform: rotate(45deg) skew(15deg, 15deg)
+  -ms-transform: rotate(45deg) skew(15deg, 15deg)
+  -o-transform: rotate(45deg) skew(15deg, 15deg)
+  transform: rotate(45deg) skew(15deg, 15deg)
+
+.ear-R
+  @include size(40px, 50px)
+  @include position(absolute, 55px, 150px)
+  z-index: 0
+
+.ear-L
+  @include size(50px, 50px)
+  @include position(absolute, 60px, 70px)
+  z-index: 0
+
+.hand-L1
+  @include position(absolute, 140px, 10px)
+
+.hand-L2
+  @include position(absolute, 140px, 30px)
+
+.hand-R1
+  @include position(absolute, 140px, 220px)
+
+.hand-R2
+  @include position(absolute, 140px, 240px)

@@ -1,0 +1,72 @@
+@mixin size($height, $width)
+    height: $height
+    width: $width
+
+.container
+    display: flex
+    flex-direction: column
+    align-items: center
+    margin-top: 51px
+
+    &__box
+        display: flex
+        @include size(150px, 150px)
+        margin-bottom: 5px
+        background-color: #E5E5E5
+        box-shadow: 0px 5px 5px -5px rgba(0, 0, 0, 0.75)
+        border-radius: 2px
+        padding: 10px
+
+        &--yellow
+            background-color: yellow
+            @include size(90px, 40px)
+            border: 4px solid black
+
+        &--white1
+            background-color: #E8E8E8
+            @include size(50px, 40px)
+            border: 4px solid black
+            border-top: none
+
+        &--blue
+            background-color: #08388A
+            @include size(30px, 40px)
+            border: 4px solid black
+            border-top: none
+
+        &--red
+            display: flex
+            background-color: #E10D1E
+            @include size(115px, 98px)
+            border: 4px solid black
+            border-left: none
+
+        &--white2
+            background-color: #E8E8E8
+            @include size(23px, 75px)
+            border: 4px solid black
+            border-top: none
+            border-left: none
+
+        &--white3
+            background-color: #E8E8E8
+            @include size(23px, 19px)
+            border: 4px solid black
+            border-top: none
+            border-left: none
+
+    &__mini-box:nth-child(1)
+        display: flex
+        flex-direction: column
+
+    &__mini-box:nth-child(2)
+        display: flex
+        flex-direction: column
+
+    &__mini-boxo
+        display: flex
+        flex-direction: row
+
+    &__mini-boxi
+        display: flex
+        flex-direction: column

@@ -1,0 +1,72 @@
+.car {
+  position: relative;
+  top: 100px;
+  bottom: 50px;
+  left: 0;
+}
+
+.car__bodywork {
+  background-color: red;
+  width: 200px;
+  height: 80px;
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 10px;
+  z-index: 1;
+}
+
+.car__ceiling {
+  background-color: red;
+  width: 146px;
+  height: 40px;
+  position: absolute;
+  top: -40px;
+  bottom: 0;
+  left: 30px;
+  clip-path: polygon(20% 0%, 80% 0, 100% 100%, 0% 100%);
+  border-top-left-radius: 30px;
+}
+
+.window {
+  background-color: #ADD8E6;
+  width: 80px;
+  height: 59px;
+  position: absolute;
+  top: 6px;
+  bottom: 0;
+  left: 0;
+}
+
+.window--left {
+  left: -10px;
+  clip-path: polygon(50% 0%, 100% 0, 100% 100%, 0% 100%);
+}
+
+.window--right {
+  left: 76px;
+  clip-path: polygon(0% 0%, 50% 0, 100% 100%, 0% 100%);
+}
+
+.wheel {
+  width: 60px;
+  height: 60px;
+  background-color: #000;
+  border-radius: 50%;
+  position: absolute;
+  top: 47px;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.wheel--left {
+  left: 30px;
+}
+
+.wheel--right {
+  left: 120px;
+}
+
+/*# sourceMappingURL=car-style.css.map */

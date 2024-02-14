@@ -1,0 +1,122 @@
+body {
+  position: relative;
+  margin: 50px;
+}
+
+.main-head {
+  position: relative;
+  top: 0;
+  left: 100px;
+  z-index: 5;
+}
+
+.head {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  background-color: #cb8252;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.mouth {
+  position: absolute;
+  top: 43px;
+  left: 32px;
+  width: 100px;
+  height: 56px;
+  background-color: #cb8252;
+  border-radius: 20px;
+  transform: rotate(67deg);
+}
+
+.nose {
+  position: absolute;
+  top: 43px;
+  left: 32px;
+  width: 100px;
+  height: 56px;
+  background-color: #cf976a;
+  border-radius: 20px;
+  transform: rotate(67deg);
+  clip-path: polygon(60% 0%, 100% 0, 100% 100%, 81% 100%);
+}
+
+.nose-hole {
+  position: absolute;
+  top: 12px;
+  left: 79px;
+  width: 6px;
+  height: 6px;
+  background-color: #805333;
+  border-radius: 50%;
+}
+
+.eye {
+  position: absolute;
+  top: 33px;
+  left: 60px;
+  width: 17px;
+  height: 17px;
+  background-color: #2c2f38;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.eye-pupil {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 7px;
+  height: 7px;
+  background-color: white;
+  border-radius: 50%;
+  z-index: 3;
+}
+
+.body-horse {
+  position: absolute;
+  top: 13px;
+  left: 55px;
+  width: 85px;
+  height: 123px;
+  background-color: #a56a43;
+  border-radius: 90% 0%/65% 37%;
+}
+
+.body-horse3 {
+  position: absolute;
+  top: 38px;
+  left: 34px;
+  width: 115px;
+  height: 117px;
+  background-color: #a56a43;
+  clip-path: polygon(25% 16%, 82% 0, 100% 100%, 0% 100%);
+  border-radius: 10px;
+}
+
+.body-horse2 {
+  position: absolute;
+  top: 68px;
+  left: 57px;
+  width: 82px;
+  height: 68px;
+  background-color: #a56a43;
+  border-radius: 4% 0%/40% 0%;
+}
+
+.ear {
+  position: absolute;
+  top: -10px;
+  left: 106px;
+  width: 45px;
+  height: 35px;
+  background-color: #cb8252;
+  border-radius: 0% 100%/20% 50%;
+  transform: rotate(45deg);
+  z-index: 1;
+}
+
+/* PELO CABALLO*/
+
+/*# sourceMappingURL=style.css.map */
