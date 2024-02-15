@@ -14,14 +14,14 @@ function generateEnemy(enemy, numEnemy1, numEnemy2) {
 }
 
 let enemyContainer = document.getElementById("enemy-container");
-//let enemy = document.querySelectorAll(".enemy");
 
 generateEnemy(enemyContainer, 6, 6);
 
 let enemies = document.querySelectorAll(".enemy");
 let ship = document.getElementById("ship");
-
 let score = 0;
+let username = prompt("What's your name?");
+//let userScore = [];
 
 let x = 50 - 6.72;
 let y = 40;
@@ -47,6 +47,7 @@ function moveEnemyContainer() {
 setInterval(function () {
   moveEnemyContainer();
   checkCollision();
+  actualizarScore();
 }, 100);
 
 //setInterval(moveEnemyContainer, 300);
@@ -56,34 +57,36 @@ function checkCollision() {
 
   // Recorrer todos los enemigos
   enemies.forEach((enemy) => {
-    let enemyRect = enemy.getBoundingClientRect();
+    if (enemy.style.visibility !== "hidden") {
+      let enemyRect = enemy.getBoundingClientRect();
 
-    if (
-      shipRect.x + shipRect.width > enemyRect.x &&
-      shipRect.x < enemyRect.x + enemyRect.width &&
-      shipRect.y + shipRect.height > enemyRect.y &&
-      shipRect.y < enemyRect.y + enemyRect.height
-    ) {
-      let audio = new Audio("./sound/explosionSound.wav");
-      audio.volume = 0.5;
-      setTimeout(function () {
-        audio.play();
-      }, 50);
-      ship.src = "./image/boom.gif";
-      enemy.src = "./image/boom.gif";
+      if (
+        shipRect.x + shipRect.width > enemyRect.x &&
+        shipRect.x < enemyRect.x + enemyRect.width &&
+        shipRect.y + shipRect.height > enemyRect.y &&
+        shipRect.y < enemyRect.y + enemyRect.height
+      ) {
+        let audio = new Audio("./sound/explosionSound.wav");
+        audio.volume = 0.5;
+        setTimeout(function () {
+          audio.play();
+        }, 50);
+        ship.src = "./image/boom.gif";
+        enemy.src = "./image/boom.gif";
 
-      setTimeout(function () {
-        x = 50 - 6.72;
-        y = 40;
-        ship.style.left = x + "vw";
-        ship.style.top = y + "vw";
+        setTimeout(function () {
+          x = 50 - 6.72;
+          y = 40;
+          ship.style.left = x + "vw";
+          ship.style.top = y + "vw";
 
-        ship.style.display = "block";
-        ship.src = "./image/sp1.png";
+          ship.style.display = "block";
+          ship.src = "./image/sp1.png";
 
-        //enemy.style.display = "none";
-        enemy.style.visibility = "hidden";
-      }, 300);
+          //enemy.style.display = "none";
+          enemy.style.visibility = "hidden";
+        }, 300);
+      }
     }
   });
 }
@@ -157,6 +160,8 @@ function moveBullets() {
           bulletCount = false;
           enemy.src = "./image/boom.gif";
 
+          score += 100;
+
           setTimeout(function () {
             //enemy.style.display = "none";
             enemy.style.visibility = "hidden";
@@ -174,8 +179,9 @@ function moveBullets() {
 
 function actualizarScore() {
   document.querySelector(
-    ".spanScore"
-  ).innerHTML = `<strong>Score: ${score}</strong>`;
+    ".spanUser"
+  ).innerHTML = `<strong>${username}'s</strong>`;
+  document.querySelector(".spanScore").innerHTML = `Score: ${score}</strong>`;
 }
 
 setInterval(moveBullets, 10);

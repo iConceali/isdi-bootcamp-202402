@@ -66,12 +66,28 @@ body {
   box-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 15px #0f0;
 }
 
+.divScore {
+  height: 100px;
+  width: 100px;
+  position: fixed;
+  top: 85vh;
+  left: 10px;
+  z-index: 1;
+}
+
 .spanScore {
   color: gold;
-  font-size: 30px;
+  font-size: 50px;
   margin-right: 180px;
-  position: fixed;
-  left: 49.6%;
+  position: absolute;
+  top: 50px;
+}
+
+.spanUser {
+  color: gold;
+  font-size: 50px;
+  margin-right: 180px;
+  position: absolute;
 }
 
 /*# sourceMappingURL=style.css.map */
