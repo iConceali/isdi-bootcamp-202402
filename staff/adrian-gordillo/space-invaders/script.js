@@ -85,6 +85,7 @@ function checkCollision() {
   });
 }
 let bullets = [];
+let bulletCount = false;
 
 document.onkeydown = function (event) {
   if (event.key === "ArrowLeft") x = x - 1;
@@ -104,24 +105,27 @@ document.onkeydown = function (event) {
   ship.style.left = x + "vw";
 
   if (event.key === " ") {
-    let bullet = document.createElement("div");
-    bullet.className = "bullet";
+    if (!bulletCount) {
+      let bullet = document.createElement("div");
+      bullet.className = "bullet";
 
-    let bulletX = x + 0.5 * (0.82 * 7);
-    let bulletY = y;
+      let bulletX = x + 0.5 * (0.82 * 7);
+      let bulletY = y;
 
-    bullet.style.left = bulletX + "vw";
-    bullet.style.top = bulletY + "vw";
+      bullet.style.left = bulletX + "vw";
+      bullet.style.top = bulletY + "vw";
 
-    document.getElementById("space").appendChild(bullet);
+      document.getElementById("space").appendChild(bullet);
 
-    bullets.push(bullet);
+      bullets.push(bullet);
 
-    let audio = new Audio("./sound/laserSound.mp3");
-    audio.volume = 0.5;
-    setTimeout(function () {
-      audio.play();
-    }, 50);
+      let audio = new Audio("./sound/laserSound.mp3");
+      audio.volume = 0.5;
+      setTimeout(function () {
+        audio.play();
+      }, 50);
+      bulletCount = true;
+    }
   }
 };
 
@@ -146,6 +150,7 @@ function moveBullets() {
           audio.play();
         }, 50);
         bullet.remove();
+        bulletCount = false;
         enemy.src = "./image/boom.gif";
 
         setTimeout(function () {
@@ -156,6 +161,7 @@ function moveBullets() {
 
     if (bulletRect.top < 0) {
       bullet.remove();
+      bulletCount = false;
     }
   });
 }
