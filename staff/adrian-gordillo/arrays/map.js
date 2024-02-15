@@ -3,10 +3,11 @@ delete Array.prototype.map;
 function map(arr, mapForm) {
   var newArr = [];
   if (mapForm === undefined) {
-    for (var i = 0; i < arr.length; i++) {
+    /* for (var i = 0; i < arr.length; i++) {
       newArr[i] = arr[i];
     }
-    return newArr;
+    return newArr;*/
+    throw error;
   } else {
     for (var i = 0; i < arr.length; i++) {
       newArr[i] = mapForm(arr[i]);
@@ -75,3 +76,9 @@ const names = ["Alice", "Bob", "Charlie"];
 const greetingMessages = map(names, (name) => `Hello, ${name}!`);
 console.log(greetingMessages);
 // Expected output: ['Hello, Alice!', 'Hello, Bob!', 'Hello, Charlie!']
+
+//CASE 7
+/*
+console.log("CASE 7");
+
+const undefinedTest = map(names);*/
