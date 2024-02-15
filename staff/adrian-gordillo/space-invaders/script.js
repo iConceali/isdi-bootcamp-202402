@@ -21,6 +21,8 @@ generateEnemy(enemyContainer, 6, 6);
 let enemies = document.querySelectorAll(".enemy");
 let ship = document.getElementById("ship");
 
+let score = 0;
+
 let x = 50 - 6.72;
 let y = 40;
 let enemyContainerLeft = 0;
@@ -79,7 +81,8 @@ function checkCollision() {
         ship.style.display = "block";
         ship.src = "./image/sp1.png";
 
-        enemy.style.display = "none";
+        //enemy.style.display = "none";
+        enemy.style.visibility = "hidden";
       }, 300);
     }
   });
@@ -136,26 +139,29 @@ function moveBullets() {
     bullet.style.top = bulletRect.y - 3 + "px";
 
     enemies.forEach((enemy) => {
-      let enemyRect = enemy.getBoundingClientRect();
+      if (enemy.style.visibility !== "hidden") {
+        let enemyRect = enemy.getBoundingClientRect();
 
-      if (
-        bulletRect.x + bulletRect.width > enemyRect.x &&
-        bulletRect.x < enemyRect.x + enemyRect.width &&
-        bulletRect.y + bulletRect.height > enemyRect.y &&
-        bulletRect.y < enemyRect.y + enemyRect.height
-      ) {
-        let audio = new Audio("./sound/explosionSound.wav");
-        audio.volume = 0.5;
-        setTimeout(function () {
-          audio.play();
-        }, 50);
-        bullet.remove();
-        bulletCount = false;
-        enemy.src = "./image/boom.gif";
+        if (
+          bulletRect.x + bulletRect.width > enemyRect.x &&
+          bulletRect.x < enemyRect.x + enemyRect.width &&
+          bulletRect.y + bulletRect.height > enemyRect.y &&
+          bulletRect.y < enemyRect.y + enemyRect.height
+        ) {
+          let audio = new Audio("./sound/explosionSound.wav");
+          audio.volume = 0.5;
+          setTimeout(function () {
+            audio.play();
+          }, 50);
+          bullet.remove();
+          bulletCount = false;
+          enemy.src = "./image/boom.gif";
 
-        setTimeout(function () {
-          enemy.style.display = "none";
-        }, 300);
+          setTimeout(function () {
+            //enemy.style.display = "none";
+            enemy.style.visibility = "hidden";
+          }, 300);
+        }
       }
     });
 
@@ -164,6 +170,12 @@ function moveBullets() {
       bulletCount = false;
     }
   });
+}
+
+function actualizarScore() {
+  document.querySelector(
+    ".spanScore"
+  ).innerHTML = `<strong>Score: ${score}</strong>`;
 }
 
 setInterval(moveBullets, 10);

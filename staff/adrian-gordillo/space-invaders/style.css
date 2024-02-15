@@ -66,4 +66,12 @@ body {
   box-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 0 15px #0f0;
 }
 
+.spanScore {
+  color: gold;
+  font-size: 30px;
+  margin-right: 180px;
+  position: fixed;
+  left: 49.6%;
+}
+
 /*# sourceMappingURL=style.css.map */
