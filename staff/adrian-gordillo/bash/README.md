@@ -88,3 +88,9 @@ kill -9 8763
 
 rm -rf workspace
 ```
+
+## rsync -va --del <from> <to> (synchronizes all files and folders from-to)
+
+```sh
+$ rsync va --del ./pepito /Users/my-user/pepito
+```
