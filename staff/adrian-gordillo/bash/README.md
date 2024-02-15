@@ -2,7 +2,7 @@
 
 Command-line intergace commands typical in BASH.
 
-## pwd (Ver carpeta actual)
+## pwd (See current folder)
 
 ```sh
 $ pwd
@@ -10,7 +10,7 @@ $ pwd
 /Users/adria
 ```
 
-## ls (listar contenido directorio)
+## ls (list directory content)
 
 ```sh
 
@@ -21,7 +21,7 @@ Downloads
 workspace
 ```
 
-## ls -l (info ampliada del conteido del directorio)
+## ls -l (extended information on directory content)
 
 ```sh
 
@@ -32,7 +32,7 @@ drwxr-xr-x 1 adria 197609       0 Feb  5 17:02  Documents/
 drwxr-xr-x 1 adria 197609       0 Feb  5 20:26  Downloads/
 ```
 
-## ls -a (mostrar archivos ocultos)
+## ls -a (show hidden files)
 
 ```sh
 
@@ -44,14 +44,14 @@ $ ls -a
  .wallaby/
 ```
 
-## touch "xxxx" (crear archivo vacío)
+## touch "xxxx" (create empty file)
 
 ```sh
 
 touch ahello.world
 ```
 
-## .nombreArchivo (el . significa oculto)
+## .nombreArchivo (the . means hidden)
 
 ```sh
 
@@ -61,28 +61,28 @@ touch ahello.world
  .wallaby/
 ```
 
-## mkdir (crear carpeta)
+## mkdir (create folder)
 
 ```sh
 
 mkdir workspace
 ```
 
-## mv "xxx" (mover carpeta y se puede renombrar)
+## mv "xxx" (move folder and can be renamed)
 
 ```sh
 
 mv hello.world hola.mundo
 ```
 
-## kill -9 <PID> (cerrar task)
+## kill -9 <PID> (close task)
 
 ```sh
 
 kill -9 8763
 ```
 
-## rm -rf <nombre_archivo> (eliminar carpeta y todo su contenido)
+## rm -rf <file_name> (delete folder and all its contents)
 
 ```sh
 
