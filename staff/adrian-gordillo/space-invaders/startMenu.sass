@@ -1,13 +1,14 @@
 body
+    background-image: url('./image/startMenu.png')
+    background-size: 100% 100%
+    background-position: center
+    background-repeat: no-repeat
     background-color: black
+    margin: 0
+    height: 100vh
     overflow: hidden
 
 #container
-    background-image: url('./image/startMenu.png')
-    background-position: center
-    background-size: cover
-    background-repeat: no-repeat
-    background-color: black
     margin: 0
     height: 100vh
     width: 100vw
@@ -18,7 +19,7 @@ body
 .container__menu
     border: none
     position: absolute
-    top: 62%
+    top: 70%
     left: 53%
     transform: translate(-50%, -50%)
     width: 594px
@@ -27,23 +28,44 @@ body
     flex-direction: column
 
 .btn_menu
-    width: 414px
-    height: 149px
+    width: 100%
+    height: 100%
     cursor: pointer
     position: relative
     margin: 10px
-    top: 19%
+    top: 18%
     left: 49%
     transform: translate(-50%, -50%)
+    animation-name: menuAnimation
+    animation-duration: 8s
+    animation-iteration-count: infinite
+
+.btn_start
+    background-image: url("./image/btn_start.png")
+    background-repeat: no-repeat
+    background-size: 100% 100%
 
 .btn_start:hover
     background-image: url("./image/btn_start_hover.png")
+    background-repeat: no-repeat
+
+.btn_about
+    background-image: url("./image/btn_about.png")
+    background-repeat: no-repeat
+    background-size: 100% 100%
 
 .btn_about:hover
     background-image: url("./image/btn_about_hover.png")
+    background-repeat: no-repeat
+
+.btn_exit
+    background-image: url("./image/btn_exit.png")
+    background-repeat: no-repeat
+    background-size: 100% 100%
 
 .btn_exit:hover
     background-image: url("./image/btn_exit_hover.png")
+    background-repeat: no-repeat
 
 .astronautGif
     background-image: url("./image/astronaut.gif")
@@ -87,3 +109,16 @@ body
     100%
         top: 61vh
         left: 20vw
+
+@keyframes menuAnimation
+    0%
+        top: 18%
+        left: 49%
+
+    50%
+        top: 10%
+        left: 49%
+
+    100%
+        top: 18%
+        left: 49%
