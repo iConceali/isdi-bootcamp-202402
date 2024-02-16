@@ -1,8 +1,11 @@
 delete Array.prototype.forEach;
 
 function forEach(arr, mapForm) {
+  var mapFormType = typeof mapForm;
+  if (mapFormType !== "function")
+    throw new TypeError(mapFormType + " is not a function");
   for (var i = 0; i < arr.length; i++) {
-    mapForm(arr[i]);
+    mapForm(arr[i], i, arr);
   }
 }
 
