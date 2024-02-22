@@ -1,39 +1,28 @@
-/**
- * Inserts an element in iterable object at specfified index.
- *
- * @param object - The iterable object to mutate.
- * @param index - The index from which to insert the given values.
- * @param value - The value to insert.
- *
- * @throws {TypeError} When object is not an object, or when index is not a number.
- */
 function insertMany(object, index, ...values) {
   var extracted = {};
 
-  if (!(object instanceof Object)) {
+  if (!(object instanceof Object))
     throw new TypeError(object + " is not an Object");
-  } else if (typeof index !== "number") {
+
+  if (typeof index !== "number")
     throw new TypeError(index + " is not an Number");
-  } else {
-    for (var i = 0; i < index; i++) {
-      extracted[Object.keys(extracted).length] = object[i];
-    }
-    for (var value of values) {
-      extracted[Object.keys(extracted).length] = value;
-    }
-    for (var i = index + 1; i < Object.keys(object).length; i++) {
-      extracted[Object.keys(extracted).length] = object[i];
-    }
-    for (var i = 0; i < Object.keys(extracted).length; i++) {
-      object[i] = extracted[i];
-    }
 
-    //for (var key in extracted) {
-    //  object = extracted[key];
-    // }
+  for (var i = 0; i < index; i++)
+    extracted[Object.keys(extracted).length] = object[i];
 
-    object.length += values.length;
-  }
+  for (var value of values) extracted[Object.keys(extracted).length] = value;
+
+  for (var i = index; i < object.length; i++)
+    extracted[Object.keys(extracted).length] = object[i];
+
+  for (var i = 0; i < Object.keys(extracted).length; i++)
+    object[i] = extracted[i];
+
+  //for (var key in extracted) {
+  //  object = extracted[key];
+  // }
+  object.length += values.length;
+
   return object.length;
 }
 

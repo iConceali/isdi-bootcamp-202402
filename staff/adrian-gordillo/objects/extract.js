@@ -7,16 +7,30 @@
  * @throws {TypeError} When object is not an object, or when index is not a number.
  */
 function extract(object, callback) {
-  for (var key in object) {
-    if (callback(object[key])) {
-      var extracted = object[key];
+  var extracted = {};
 
-      delete object[key];
+  if (!(object instanceof Object))
+    throw new TypeError(object + " is not an Object");
+
+  if (!(callback instanceof Function))
+    throw new TypeError(callback + " is not an Function");
+
+  for (var i = 0; i < object.length; i++) {
+    if (callback(object[i])) {
+      extracted = object[i];
+
+      for (var j = i; j < object.length - 1; j++) {
+        object[j] = object[j + 1];
+      }
+
+      delete object[object.length - 1];
       object.length--;
 
-      return extracted;
+      break;
     }
   }
+
+  return extracted;
 }
 
 console.log("CASO 1: Extraer usuario 'Pepito' de 'users'");
@@ -39,11 +53,19 @@ console.log(user);
 
 console.log(users);
 /*
-        {
-            0: { name: 'Wendy', age: 19 },
-            1: { name: 'Peter', age: 20 },
-            2: { name: 'Campa', age: 30 },
-            3: { name: 'James', age: 40 },
-            length: 4
-        }
-    */
+          {
+              0: { name: 'Wendy', age: 19 },
+              1: { name: 'Peter', age: 20 },
+              2: { name: 'Campa', age: 30 },
+              3: { name: 'James', age: 40 },
+              length: 4
+          }
+      */
+console.log("CASO 2: callback is not a Function");
+
+try {
+  extract(users, 123);
+} catch (error) {
+  console.log(error);
+  // TypeError: undefined is not an Object
+}

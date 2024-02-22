@@ -1,109 +1,72 @@
 /**
- * Removes an element in iterable object at specfified index.
+ * Extracts elements that match the condition from an iterable object.
  *
  * @param object - The iterable object to mutate.
- * @param index - The index from which to remove a value.
+ * @param callback - The condition function to apply for extraction.
  *
- * @throws {TypeError} When object is not an object, or when index is not a number.
+ * @throws {TypeError} When object is not an object.
  */
-function remove(object, index) {
+function extractMany(object, callback) {
   if (!(object instanceof Object)) {
     throw new TypeError(object + " is not an Object");
-  } else if (typeof index !== "number") {
-    throw new TypeError(index + " is not an Number");
-  } else {
-    var removed = object[index];
-    delete object[index];
-
-    // Ajustar las claves del objeto después de la eliminación
-    var keys = Object.keys(object);
-    for (var i = index; i < keys.length - 1; i++) {
-      object[i] = object[i + 1];
-    }
-
-    // Eliminar la última propiedad duplicada
-    delete object[keys.length - 1];
-    object.length -= 1;
   }
-  return removed;
+
+  if (!(callback instanceof Function)) {
+    throw new TypeError(callback + " is not a Function");
+  }
+
+  var extracted = { length: 0 };
+  var index = 0;
+
+  for (var i = 0; i < object.length; i++) {
+    if (callback(object[i])) {
+      extracted[index++] = object[i];
+      extracted.length++;
+      object.length--;
+
+      for (var j = i; j < object.length; j++) {
+        object[j] = object[j + 1];
+      }
+
+      delete object[object.length];
+
+      i--;
+    }
+  }
+
+  return extracted;
 }
 
-console.log("CASE 1: remove blue from index 1");
+console.log("CASE 1: Extracts many users from users");
 
-var colors = {
-  0: "red",
-  1: "blue",
-  2: "green",
-  length: 3,
+var users = {
+  0: { name: "Wendy", age: 19 },
+  1: { name: "Peter", age: 20 },
+  2: { name: "Pepito", age: 50 },
+  3: { name: "Campa", age: 30 },
+  4: { name: "James", age: 40 },
+  length: 5,
 };
 
-var removed = remove(colors, 1);
+var extracted = extractMany(users, function (user) {
+  return user.age > 35;
+});
 
-console.log(removed);
-// 'blue'
-
-console.log(colors);
+console.log(extracted);
 /*
-{
-    0: 'red',
-    1: 'green',
-    length: 2
-}
-*/
+   {
+      0: { name: 'Pepito', age: 50 },
+      1: { name: 'Campa', age: 30 },
+      2: { name: 'James', age: 40 },
+      length: 3
+  }
+  */
 
-console.log("CASE 2: remove red from index 0");
-
-var colors = {
-  0: "red",
-  1: "blue",
-  2: "green",
-  length: 3,
-};
-
-var length = remove(colors, 0);
-
-console.log(length);
-// 'red'
-
-console.log(colors);
+console.log(users);
 /*
-{
-    0: 'blue',
-    1: 'green',
-    length: 2
-}
-*/
-
-console.log("CASE 3: fails on undefind object parameter");
-
-try {
-  remove();
-} catch (error) {
-  console.log(error);
-  // TypeError: undefined is not an Object
-}
-
-console.log("CASE 4: fails on 1 as an object parameter");
-
-try {
-  remove(1);
-} catch (error) {
-  console.log(error);
-  // TypeError: 1 is not an Object
-}
-
-console.log("CASE 5: fails on undefined as index parameter");
-
-var colors = {
-  0: "red",
-  1: "blue",
-  2: "green",
-  length: 3,
-};
-
-try {
-  remove(colors);
-} catch (error) {
-  console.log(error);
-  // TypeError: undefined is not a Number
-}
+    {
+        0: { name: 'Wendy', age: 19 },
+        1: { name: 'Peter', age: 20 },
+        length: 2
+    }
+  */
