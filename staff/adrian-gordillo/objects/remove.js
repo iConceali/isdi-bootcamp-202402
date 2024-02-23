@@ -7,24 +7,23 @@
  * @throws {TypeError} When object is not an object, or when index is not a number.
  */
 function remove(object, index) {
-  if (!(object instanceof Object)) {
+  if (!(object instanceof Object))
     throw new TypeError(object + " is not an Object");
-  } else if (typeof index !== "number") {
+
+  if (typeof index !== "number")
     throw new TypeError(index + " is not an Number");
-  } else {
-    var removed = object[index];
-    delete object[index];
 
-    // Ajustar las claves del objeto después de la eliminación
-    var keys = Object.keys(object);
-    for (var i = index; i < keys.length - 1; i++) {
-      object[i] = object[i + 1];
-    }
+  var removed = object[index];
+  delete object[index];
 
-    // Eliminar la última propiedad duplicada
-    delete object[keys.length - 1];
-    object.length -= 1;
-  }
+  // Ajustar las claves del objeto después de la eliminación
+  var keys = Object.keys(object);
+  for (var i = index; i < keys.length - 1; i++) object[i] = object[i + 1];
+
+  // Eliminar la última propiedad duplicada
+  delete object[keys.length - 1];
+  object.length -= 1;
+
   return removed;
 }
 
