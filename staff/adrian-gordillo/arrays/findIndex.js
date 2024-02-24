@@ -7,11 +7,40 @@ function findIndex(array, callback) {
   return undefined;
 }
 
-console.log("CASE 1");
+function copyArray(array) {
+  var arrCopy = [];
 
-const array1 = [5, 12, 8, 130, 44];
+  for (var i = 0; i < array.length; i++) {
+    arrCopy[arrCopy.length] = array[i];
+  }
+  return arrCopy;
+}
 
-const isLargeNumber = (element) => element > 13;
+function conAssert(arrOriginal, arrCopy, result, expectedValue) {
+  //comprobamos si el array original no ha sido modificado
+  for (var i = 0; i < arrOriginal.length; i++) {
+    console.assert(arrOriginal[i] === arrCopy[i], arrCopy[i]);
+  }
 
-console.log(findIndex(array1, isLargeNumber));
-// Expected output: 3
+  // Comprobamos que la función principal devuelve el resultado que esperamos
+  if (expectedValue !== undefined) {
+    console.assert(
+      expectedValue.toString() === result.toString(),
+      "El resultado del callback no es el esperado"
+    );
+  }
+}
+
+console.log(
+  "CASE 1: filterIndex() devuelve el indice del valor que da como resultado el callback"
+);
+
+var numbers = [5, 12, 8, 130, 44];
+var numbersCopy = copyArray(numbers);
+
+var isLargeNumber = (element) => element > 13;
+
+var result = findIndex(numbers, isLargeNumber);
+var expectedValue = 3;
+
+conAssert(numbers, numbersCopy, result, expectedValue);

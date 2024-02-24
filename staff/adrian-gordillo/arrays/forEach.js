@@ -17,38 +17,69 @@ function forEach(arr, callback) {
   }
 }
 
-console.log("CASE 1");
+function copyArray(array) {
+  var arrCopy = [];
 
-var nums = [10, 20, 30, 40, 50];
+  for (var i = 0; i < array.length; i++) {
+    arrCopy[arrCopy.length] = array[i];
+  }
+  return arrCopy;
+}
 
-forEach(nums, function (num) {
-  console.log(num);
+function conAssert(arrOriginal, arrCopy, result, expectedValue) {
+  //comprobamos si el array original no ha sido modificado
+  for (var i = 0; i < arrOriginal.length; i++) {
+    console.assert(arrOriginal[i] === arrCopy[i], arrCopy[i]);
+  }
+
+  // Comprobamos que la función principal devuelve el resultado que esperamos
+  if (expectedValue !== undefined) {
+    console.assert(
+      expectedValue === result,
+      "El resultado del callback no es el esperado"
+    );
+  }
+}
+
+console.log(
+  "CASE 1: forEach itera por todos los elementos del array y ejecuta un console.log por cada valor"
+);
+
+var numbers = [10, 20, 30, 40, 50];
+var numbersCopy = copyArray(numbers);
+
+var result = forEach(numbers, function (num) {
+  //console.log(num);
 });
-// 10
-// 20
-// 30
-// 40
-// 50
+conAssert(numbers, numbersCopy);
 
-console.log("CASE 2");
+console.log(
+  "CASE 2: forEach itera por todos los elementos y devuelve la suma de todos los elementos"
+);
 
-var nums = [10, 20, 30, 40, 50];
+var numbers = [10, 20, 30, 40, 50];
 var sum = 0;
+var numbersCopy = copyArray(numbers);
 
-forEach(nums, function (num) {
+forEach(numbers, function (num) {
   sum += num;
 });
 
-console.log(sum);
-// 150
+var result = sum;
+var expectedValue = 150;
 
-console.log("CASE 3");
+conAssert(numbers, numbersCopy, result, expectedValue);
 
-var nums = [10, 20, 30, 40, 50];
+console.log(
+  "CASE 3: forEach itera por todos los elementos y devuelve la suma de todos los elementos con sus respectivos indices"
+);
+var numbers = [10, 20, 30, 40, 50];
+var numbersCopy = copyArray(numbers);
 
-forEach(nums, function (num, index) {
+forEach(numbers, function (num, index) {
   console.log(num + index);
 });
+
 // 10
 // 21
 // 32
@@ -67,7 +98,7 @@ forEach(nums, function (num, index, array) {
 // 37
 // 48
 // 59
-
+/*
 console.log("CASE 5");
 
 var nums = [10, 20, 30, 40, 50];
@@ -123,18 +154,4 @@ try {
   // TypeError: boolean false is not a function
 }
 
-/*//CASE 1
-console.log("CASE 1");
-
-const array1 = [1, 4, 9, 16];
-
-// Pass a function to map
-const map1 = array1.map();
-
-console.log(map1);
-
-const arrayTest = [];
-const map2 = forEach(array1, (x) => console.log(x * 2));
-
-// Expected output: Array [2, 8, 18, 32]
 */

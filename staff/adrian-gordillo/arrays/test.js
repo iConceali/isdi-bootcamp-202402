@@ -1,71 +1,92 @@
-delete Array.prototype.join;
+delete Array.from;
 
-function join(arr, separator) {
-  var result = "";
+const functions = require("./functions");
 
-  if (separator === "") {
+function from(arr, mapForm) {
+  var newArr = [];
+  if (mapForm === undefined) {
     for (var i = 0; i < arr.length; i++) {
-      if (Array.isArray(arr[i])) {
-        result += join(arr[i], separator);
-      } else {
-        result += arr[i];
-      }
-
-      if (i < arr.length - 1) {
-        result += separator;
-      }
+      newArr[i] = arr[i];
     }
-  } else if (separator === undefined) {
-    separator = ",";
-    for (var i = 0; i < arr.length - 1; i++) {
-      result += join(arr[i], separator) + separator;
-    }
-    result += join(arr[arr.length - 1], separator);
+    return newArr;
   } else {
-    for (var i = 0; i < arr.length - 1; i++) {
-      if (Array.isArray(arr[i])) {
-        result += join(arr[i], separator) + separator;
-      } else {
-        result += arr[i] + separator;
+    for (var i = 0; i < arr.length; i++) {
+      if (mapForm(arr[i]) !== undefined) {
+        newArr[newArr.length] = mapForm(arr[i]);
       }
     }
-    result += Array.isArray(arr[arr.length - 1])
-      ? join(arr[arr.length - 1], separator)
-      : arr[arr.length - 1];
   }
-
-  return result;
+  return newArr;
 }
 
-// Resto del código sigue igual
+console.log(
+  "CASE 1: from() devuelve un nuevo array a partir de un string el cual separa por letras"
+);
 
-// CASE 1
-console.log("CASE 1");
+var arr = "papaya";
+var arrCopy = functions.copyArray(arr);
 
-const elements = ["Fire", "Air", "Water"];
-console.log(join(elements));
-// Expected output: "Fire,Air,Water"
+var result = from(arr);
+var expectedValue = ["p", "a", "p", "a", "y", "a"];
 
-// CASE 2
-console.log("CASE 2");
+functions.conAssert(arr, arrCopy, result, expectedValue);
 
-console.log(join(elements, ""));
-// Expected output: "FireAirWater"
+console.log(
+  "CASE 2: from() devuelve un nuevo array con los elementos sumados por si mismos"
+);
 
-// CASE 3
-console.log("CASE 3");
+var arr = [1, 2, 3];
+var arrCopy = functions.copyArray(arr);
 
-console.log(join(elements, "-"));
-// Expected output: "Fire-Air-Water"
+var result = from(arr, (x) => x + x);
+var expectedValue = [2, 4, 6];
 
-// CASE 4
-console.log("CASE 4");
+functions.conAssert(arr, arrCopy, result, expectedValue);
 
-const matrix = [
-  [1, 2, 3],
-  [4, 5, 6],
-  [7, 8, 9],
-];
+console.log(
+  "CASE 3: from() devuelve un nuevo array con los elementos del string indicado por duplicados"
+);
 
-console.log(join(matrix)); // 1,2,3,4,5,6,7,8,9
-console.log(join(matrix, ";")); // 1,2,3;4,5,6;7,8,9
+var arr = "hello";
+var arrCopy = functions.copyArray(arr);
+
+var result = from(arr, (char) => char + char);
+var expectedValue = ["hh", "ee", "ll", "ll", "oo"];
+
+functions.conAssert(arr, arrCopy, result, expectedValue);
+
+console.log(
+  "CASE 4: from() devuelve un nuevo array con los valores multiplicados por si mismos"
+);
+
+var numbers = [1, 2, 3, 4];
+var numbersCopy = functions.copyArray(numbers);
+
+var result = from(numbers, (num) => num * num);
+var expectedValue = [1, 4, 9, 16];
+
+functions.conAssert(numbers, numbersCopy, result, expectedValue);
+
+console.log(
+  "CASE 5: from() devuelve un nuevo array con los elementos del array original en mayusculas"
+);
+
+var words = ["apple", "banana", "orange"];
+var wordsCopy = functions.copyArray(words);
+
+var result = from(words, (word) => word.toUpperCase());
+var expectedValue = ["APPLE", "BANANA", "ORANGE"];
+
+functions.conAssert(words, wordsCopy, result, expectedValue);
+
+console.log(
+  "CASE 6: from() devuelve un nuevo array con los valores que sean superior a (5)"
+);
+
+var numbers = [2, 7, 1, 9, 3, 6];
+var numbersCopy = functions.copyArray(numbers);
+
+var expectedValue = [7, 9, 6];
+var result = from(numbers, (num) => (num > 5 ? num : undefined));
+
+functions.conAssert(numbers, numbersCopy, result, expectedValue);

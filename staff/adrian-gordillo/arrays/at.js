@@ -1,7 +1,8 @@
 delete Array.prototype.at;
+const functions = require("./functions.js");
 
 function at(arr, index) {
-  let result = "";
+  var result = "";
 
   if (index >= 0) {
     result = arr[index];
@@ -10,39 +11,75 @@ function at(arr, index) {
   }
   return result;
 }
+/*
+function copyArray(array) {
+  var arrCopy = [];
+
+  for (var i = 0; i < array.length; i++) {
+    arrCopy[arrCopy.length] = array[i];
+  }
+  return arrCopy;
+}
+
+function conAssert(arr1, arr2, expectedValue) {
+  var valueFound = false;
+
+  for (var i = 0; i < arr1.length; i++) {
+    console.assert(arr1[i] === arr2[i], arr2[i]);
+
+    if (expectedValue !== undefined && expectedValue === arr1[i]) {
+      valueFound = true;
+    }
+  }
+
+  console.assert(!expectedValue || valueFound, expectedValue);
+}
+*/
 
 // CASE 1
-
+console.log(
+  "CASE 1: Devuelve el valor que encuentra en el indice indicado (400)"
+);
 var nums = [100, 200, 300, 400, 500];
 
-var num = at(nums, 3);
+var numsCopy = functions.copyArray(nums);
 
-console.log(num);
-// 400
+var result = at(nums, 3);
+var expectedValue = 400;
+
+functions.conAssert(nums, numsCopy, result, expectedValue);
 
 // CASE 2
-
+console.log(
+  'CASE 2: Devuelve el valor que encuentra en el indice indicado (" ")'
+);
 var chars = ["h", "o", "l", "a", " ", "m", "u", "n", "d", "o"];
+var charsCopy = functions.copyArray(chars);
 
-var char = at(chars, 4);
+var result = at(chars, 4);
+var expectedValue = " ";
 
-console.log(char);
-// ' '
+functions.conAssert(chars, charsCopy, result, expectedValue);
 
 // CASE 3
-
+console.log(
+  'CASE 3: Devuelve el valor que encuentra en el indice indicado ("n")'
+);
 var chars = ["h", "o", "l", "a", " ", "m", "u", "n", "d", "o"];
+var charCopy = functions.copyArray(chars);
 
-var char = at(chars, -3);
+var result = at(chars, -3);
+var expectedValue = "n";
 
-console.log(char);
-// 'n'
+functions.conAssert(chars, charsCopy, result, expectedValue);
 
 // CASE 4
+console.log('CASE 4: Devuelve "undefined" al no encontrar ningún resultado');
 
 var chars = ["h", "o", "l", "a", " ", "m", "u", "n", "d", "o"];
+var charsCopy = functions.copyArray(chars);
 
-var char = at(chars, -30);
+var expectedValue = undefined;
+var result = at(chars, -30);
 
-console.log(char);
-// undefined
+functions.conAssert(chars, charsCopy, result, expectedValue);

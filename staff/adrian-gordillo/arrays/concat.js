@@ -1,44 +1,96 @@
 delete Array.prototype.concat;
 
-function concat(arr1, arr2) {
+function concat(arr, ...arrays) {
   var result = [];
 
-  if (arr1.length === 0 || arr2.length === 0) {
+  if (arr instanceof Array === false)
+    throw new TypeError(arr + " is not an Array");
+
+  /*
+  if (arr.length === 0 || arrays.length === 0) {
     return result;
   }
-
-  for (var i = 0; i < arr1.length; i++) {
-    result[result.length] = arr1[i];
+*/
+  for (var i = 0; i < arr.length; i++) {
+    result[i] = arr[i];
   }
 
-  for (var j = 0; j < arr2.length; j++) {
-    result[result.length] = arr2[j];
+  for (var i = 0; i < arrays.length; i++) {
+    if (arrays[i] instanceof Array) {
+      for (var j = 0; j < arrays[i].length; j++) {
+        result[result.length] = arrays[i][j];
+      }
+    } else {
+      result[result.length] = arrays[i];
+    }
   }
 
   return result;
 }
 
+function copyArray(array) {
+  var arrCopy = [];
+
+  for (var i = 0; i < array.length; i++) {
+    arrCopy[arrCopy.length] = array[i];
+  }
+  return arrCopy;
+}
+
+function conAssert(result, ...arrays) {
+  var currentIndex = 0;
+
+  for (var i = 0; i < arrays.length; i++) {
+    if (arrays[i] instanceof Array) {
+      for (var j = 0; j < arrays[i].length; j++) {
+        console.assert(
+          result[j + currentIndex] === arrays[i][j],
+          result[j + currentIndex]
+        );
+      }
+      currentIndex += arrays[i].length;
+    } else {
+      console.assert(result[currentIndex] === arrays[i], arrays[i]);
+      currentIndex++;
+    }
+  }
+}
+
 // CASE 1
-var a = ["a", "b", "c"];
-var b = ["d", "e", "f"];
-console.log(concat(a, b));
+console.log("CASE 1: concatena todas las arrays asignadas");
+var arr1 = ["a", "b", "c"];
+var arr2 = ["d", "e", "f"];
 
-// CASE 2
-var c = [1, 2, 3];
-var d = [4, 5, 6];
-console.log(concat(c, d));
+var aCopy = copyArray(arr1);
+var bCopy = copyArray(arr2);
 
-// CASE 3
-var e = ["apple", "orange"];
-var f = ["banana", "grape"];
-console.log(concat(e, f));
+var result = concat(arr1, arr2);
+//arr1[0] = "r";
+//conAssert(result, arr1, arr2);
 
-// CASE 4
-var g = [true, false];
-var h = [1, 0];
-console.log(concat(g, h));
+//console.log(aCopy);
+//console.assert(a[2] === aCopy[2], "c");
+//console.log(result);
 
-// CASE 5
-var l;
-var m = ["pasto", 500];
-console.log(concat(0, m));
+//CASE 2
+console.log("CASE 2: concatena todas las arrays asignadas");
+
+var arr3 = ["make", "it", "stop"];
+var result = concat(arr1, arr2, arr3);
+conAssert(result, arr1, arr2, arr3);
+//console.log(result)
+//CASE 3
+console.log("CASE 3: concatena todas las arrays asignadas");
+
+var str = "please";
+var result = concat(arr1, arr2, arr3, str);
+conAssert(result, arr1, arr2, arr3, str);
+//console.log(result)
+//CASE 4
+console.log("CASE 4: concatena todas las arrays asignadas");
+
+var obj = { name: "Pepito" };
+var result = concat(arr1, obj);
+
+conAssert(result, arr1, obj);
+console.log(result);
