@@ -1,4 +1,5 @@
-delete Array.prototype.includes;
+//delete Array.prototype.includes;
+var functions = require("./functions.js");
 
 function includes(arr, valor, index) {
   if (index >= arr.length) {
@@ -25,13 +26,65 @@ function includes(arr, valor, index) {
   return false;
 }
 
-const array1 = [1, 2, 3];
-const array2 = [1, 2, NaN];
-const array3 = ["1", "2", "3"];
+console.log(
+  "CASE 1: includes() busca el valor (2) dentro del array tiene que devolver (true)"
+);
 
-console.log(includes(array1, 2)); // true
-console.log(includes(array1, 4)); // false
-console.log(includes(array1, 3, 3)); // false
-console.log(includes(array1, 3, -1)); // true
-console.log(includes(array2, NaN)); // true
-console.log(includes(array3, 3)); // false
+var array = [1, 2, 3];
+var arrayCopy = functions.copyArray(array);
+
+var result = includes(array, 2); // true
+var expectedValue = true;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+console.log(
+  "CASE 2: includes() busca el valor (4) dentro del array tiene que devolver (false)"
+);
+
+var result = includes(array, 4); // false
+var expectedValue = false;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+console.log(
+  "CASE 3: includes() busca el valor (3) dentro del array a partir del indice (3) tiene que devolver (false)"
+);
+
+var result = includes(array, 3, 3); // false
+var expectedValue = false;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+console.log(
+  "CASE 4: includes() busca el valor (3) dentro del array a partir del indice (-1) tiene que devolver (true)"
+);
+
+var result = includes(array, 3, -1); // true
+var expectedValue = true;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+console.log(
+  "CASE 5: includes() busca el valor (NaN) dentro del array tiene que devolver (true)"
+);
+
+var array = [1, 2, NaN];
+var arrayCopy = functions.copyArray(array);
+
+var result = includes(array, NaN); // true
+var expectedValue = true;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+console.log(
+  "CASE 6: includes() busca el valor númerico (3) dentro del array tiene que devolver (false)"
+);
+
+var array = ["1", "2", "3"];
+var arrayCopy = functions.copyArray(array);
+
+var result = includes(array, 3); // false
+var expectedValue = false;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);

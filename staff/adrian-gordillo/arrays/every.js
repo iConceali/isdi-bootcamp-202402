@@ -1,4 +1,5 @@
 delete Array.prototype.every;
+var functions = require("./functions");
 
 function every(array, callback) {
   var result;
@@ -8,6 +9,7 @@ function every(array, callback) {
   return true;
 }
 
+/*
 function copyArray(array) {
   var arrCopy = [];
 
@@ -32,7 +34,7 @@ function conAssert(arrOriginal, arrCopy, result, expectedValue) {
   }
   //console.assert(!expectedValue || valueFound, expectedValue);
 }
-
+*/
 //CASE 1
 console.log(
   "CASE 1: Devuelve true si collback cumple en todos los elementos del array 'true'"
@@ -41,13 +43,13 @@ var isBelowThreshold = (currentValue) => currentValue < 40;
 
 var array1 = [1, 30, 39, 29, 10, 13];
 
-var array1Copy = copyArray(array1);
+var array1Copy = functions.copyArray(array1);
 
 //console.log(array1Copy);
 var result = every(array1, isBelowThreshold);
 
-conAssert(array1, array1Copy, result, true);
-//console.assert(result === true, "true");
+functions.conAssert(array1, array1Copy, result, true);
+
 //console.log(result);
 // Expected output: true
 /*
@@ -66,7 +68,7 @@ console.log(
 
 var result1 = every(array1, (x) => x < 4);
 
-conAssert(array1, array1Copy, result1, false);
+functions.conAssert(array1, array1Copy, result1, false);
 //console.assert(result1 === false, "false");
 //console.log(result1)
 // Expected output: false
@@ -85,7 +87,7 @@ console.log(
 );
 var result2 = every(array1, (x) => x > 2);
 
-conAssert(array1, array1Copy, result2, false);
+functions.conAssert(array1, array1Copy, result2, false);
 //console.assert(result2 === true, "true");
 //console.log(result2);
 // Expected output: true

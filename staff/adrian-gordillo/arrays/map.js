@@ -1,4 +1,5 @@
 delete Array.prototype.map;
+var functions = require("./functions.js");
 
 function map(arr, mapForm) {
   var newArr = [];
@@ -18,129 +19,165 @@ function map(arr, mapForm) {
 }
 
 //CASE 1
-console.log("CASE 1");
+console.log(
+  "CASE 1: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array ([2, 8, 18, 32])"
+);
 
-const array1 = [1, 4, 9, 16];
+var array = [1, 4, 9, 16];
+var arrayCopy = functions.copyArray(array);
 
-// Pass a function to map
-const map1 = map(array1, (x) => x * 2);
+var result = map(array, (x) => x * 2);
+var expectedValue = [2, 8, 18, 32];
 
-console.log(map1);
-// Expected output: Array [2, 8, 18, 32]
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 //CASE 2
-console.log("CASE 2");
+console.log(
+  "CASE 2: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array ([1, 2, 3])"
+);
 
-const numbers = [1, 4, 9];
-const roots = map(numbers, (num) => Math.sqrt(num));
+var array = [1, 4, 9];
+var arrayCopy = functions.copyArray(array);
 
-console.log(roots);
-// Expected output: Array [1, 2, 3]
+var result = map(array, (num) => Math.sqrt(num));
+var expectedValue = [1, 2, 3];
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 //CASE 3
-console.log("CASE 3");
+console.log(
+  "CASE 3: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array ([{ 1: 10 }, { 2: 20 }, { 3: 30 }])"
+);
 
-const kvArray = [
+var array = [
   { key: 1, value: 10 },
   { key: 2, value: 20 },
   { key: 3, value: 30 },
 ];
+var arrayCopy = functions.copyArray(array);
 
-const reformattedArray = map(kvArray, ({ key, value }) => ({ [key]: value }));
+var result = map(array, ({ key, value }) => ({ [key]: value }));
+var expectedValue = [{ 1: 10 }, { 2: 20 }, { 3: 30 }];
 
-console.log(reformattedArray);
-//// Expected output:  [{ 1: 10 }, { 2: 20 }, { 3: 30 }]
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 // CASE 4
-console.log("CASE 4");
+console.log(
+  "CASE 4: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array (['HELLO', 'WORLD', 'JAVASCRIPT'])"
+);
 
-const words = ["hello", "world", "javascript"];
-const uppercasedWords = map(words, (word) => word.toUpperCase());
-console.log(uppercasedWords);
-// Expected output: ['HELLO', 'WORLD', 'JAVASCRIPT']
+var array = ["hello", "world", "javascript"];
+var arrayCopy = functions.copyArray(array);
+
+var result = map(array, (word) => word.toUpperCase());
+var expectedValue = ["HELLO", "WORLD", "JAVASCRIPT"];
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 // CASE 5
-console.log("CASE 5");
-
-const temperaturesInCelsius = [0, 25, 100];
-const temperaturesInFahrenheit = map(
-  temperaturesInCelsius,
-  (celsius) => (celsius * 9) / 5 + 32
+console.log(
+  "CASE 5: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array ([32, 77, 212])"
 );
-console.log(temperaturesInFahrenheit);
-// Expected output: [32, 77, 212]
+
+var array = [0, 25, 100];
+var arrayCopy = functions.copyArray(array);
+
+var result = map(array, (celsius) => (celsius * 9) / 5 + 32);
+var expectedValue = [32, 77, 212];
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 // CASE 6
-console.log("CASE 6");
+console.log(
+  "CASE 6: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array (['Hello, Alice!', 'Hello, Bob!', 'Hello, Charlie!'])"
+);
 
-const names = ["Alice", "Bob", "Charlie"];
-const greetingMessages = map(names, (name) => `Hello, ${name}!`);
-console.log(greetingMessages);
-// Expected output: ['Hello, Alice!', 'Hello, Bob!', 'Hello, Charlie!']
+var array = ["Alice", "Bob", "Charlie"];
+var arrayCopy = functions.copyArray(array);
+
+var result = map(array, (name) => `Hello, ${name}!`);
+var expectedValue = ["Hello, Alice!", "Hello, Bob!", "Hello, Charlie!"];
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 //-------------------------------------
-console.log("CASE 7");
+// CASE 7
+console.log(
+  "CASE 7: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array ([2, 8, 18, 32])"
+);
 
-var nums = [1, 4, 9, 16];
+var array = [1, 4, 9, 16];
+var arrayCopy = functions.copyArray(array);
 
-var numsX2 = map(nums, function (x) {
+var result = map(array, function (x) {
   return x * 2;
 });
+var expectedValue = [2, 8, 18, 32];
 
-console.log(numsX2);
-// [2, 8, 18, 32]
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
-console.log(nums);
-// [1, 4, 9, 18]
+// CASE 8
+console.log(
+  "CASE 8: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array ([1000, 2000, 3000, 4000, 5000])"
+);
 
-console.log("CASE 8");
+var array = [10, 20, 30, 40, 50];
+var arrayCopy = functions.copyArray(array);
 
-var nums = [10, 20, 30, 40, 50];
-
-var numsX100 = map(nums, function (num) {
+var result = map(array, function (num) {
   return num * 100;
 });
+var expectedValue = [1000, 2000, 3000, 4000, 5000];
 
-console.log(numsX100);
-// [1000, 2000, 3000, 4000, 5000]
-console.log(nums);
-// [10, 20, 30, 40, 50]
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
-console.log("CASE 9");
+// CASE 9
+console.log(
+  "CASE 9: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array (['A', 'B', 'C'])"
+);
 
-var chars = ["a", "b", "c"];
+var array = ["a", "b", "c"];
+var arrayCopy = functions.copyArray(array);
 
-var charsInUpper = map(chars, function (char) {
+var result = map(array, function (char) {
   return char.toUpperCase();
 });
+var expectedValue = ["A", "B", "C"];
 
-console.log(charsInUpper);
-// ['A', 'B', 'C']
-console.log(chars);
-// ['a', 'b', 'c']
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
-console.log("CASE 10");
+// CASE 10
+console.log(
+  "CASE 10: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array (['10, 0, [10,20,30]', '20, 1, [10,20,30]', '30, 2, [10,20,30]'])"
+);
 
-var nums = [10, 20, 30];
+var array = [10, 20, 30];
+var arrayCopy = functions.copyArray(array);
 
-var result = map(nums, function (element, index, array) {
+var result = map(array, function (element, index, array) {
   return element + ", " + index + ", [" + array + "]";
 });
+var expectedValue = [
+  "10, 0, [10,20,30]",
+  "20, 1, [10,20,30]",
+  "30, 2, [10,20,30]",
+];
 
-console.log(result);
-//['10, 0, [10,20,30]', '20, 1, [10,20,30]', '30, 2, [10,20,30]']
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
-console.log(nums);
-// [10, 20, 30]
+// CASE 11
+console.log(
+  "CASE 11: map() aplica cada valor de un array a la función que le indiquemos y devuelve el resultado en un nuevo array ([{ name: 'Peter', piece: 28.48 },{ name: 'Wendy', piece: 30.38 },{ name: 'Pepito', piece: 18.99 },{ name: 'Campa', piece: 22.15 }])"
+);
 
-console.log("CASE 11");
-
-var data = [
+var array = [
   { name: "Peter", mark: 9 },
   { name: "Wendy", mark: 9.6 },
   { name: "Pepito", mark: 6 },
   { name: "Campa", mark: 7 },
 ];
-
+var arrayCopy = functions.copyArray(array);
+console.log(array === arrayCopy);
+//array[0].name = "Fred";
 function calculateCake(element, index, array) {
   // ex: (7/31.6 * 100).toFixed(2)
 
@@ -157,24 +194,12 @@ function calculateCake(element, index, array) {
   return { name: element.name, piece: piece };
 }
 
-var cake = map(data, calculateCake);
+var result = map(array, calculateCake);
+var expectedValue = [
+  { name: "Peter", piece: 28.48 },
+  { name: "Wendy", piece: 30.38 },
+  { name: "Pepito", piece: 18.99 },
+  { name: "Campa", piece: 22.15 },
+];
 
-console.log(cake);
-/*
-[
-    { name: 'Peter', piece:  },
-    { name: 'Wendy', piece:  },
-    { name: 'Pepito', piece:  },
-    { name: 'Campa', piece:  }
-]
-*/
-
-console.log(data);
-/*
-[
-    { name: 'Peter', mark: 9 },
-    { name: 'Wendy', mark: 9.6 },
-    { name: 'Pepito', mark: 6 },
-    { name: 'Campa', mark: 7 }
-]
-*/
+functions.conAssert(array, arrayCopy, result, expectedValue);

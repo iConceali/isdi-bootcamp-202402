@@ -1,5 +1,7 @@
 delete Array.prototype.join;
-//--No he podido sacarlo po rmi cuenta el caso 5
+var functions = require("./functions.js");
+
+//--No he podido sacarlo por mi cuenta el caso 5 y 6
 function joinArray(array, separator) {
   let string = "";
   if (separator === undefined) separator = ",";
@@ -15,42 +17,87 @@ function joinArray(array, separator) {
 }
 
 //CASE 1
+console.log(
+  'CASE 1: join() junta todos los valores/elementos de un array con un separador (" ") debería devolver ("hola caracola venite")'
+);
 
-var arr = ["hola", "caracola", "venite"];
-var result = joinArray(arr, " ");
-console.log(result);
+var array = ["hola", "caracola", "venite"];
+var arrayCopy = functions.copyArray(array);
+
+var result = joinArray(array, " ");
+var expectedValue = "hola caracola venite";
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 //'hola caracola venite'
 
 //CASE 2
-var arr1 = [1, 2, 3];
-result = joinArray(arr1, "-");
-console.log(result);
+console.log(
+  'CASE 2: join() junta todos los valores/elementos de un array con un separador ("-") debería devolver ("1-2-3")'
+);
+
+var array1 = [1, 2, 3];
+var arrayCopy1 = functions.copyArray(array1);
+
+result = joinArray(array1, "-");
+var expectedValue = "1-2-3";
+
+functions.conAssert(array1, arrayCopy1, result, expectedValue);
 //'1-2-3'
 
 //CASE 3
-result = joinArray(arr);
-console.log(result);
+console.log(
+  'CASE 3: join() junta todos los valores/elementos de un array como no se le indica separador por defecto (,) debería devolver ("hola,caracola,venite")'
+);
+
+result = joinArray(array);
+var expectedValue = "hola,caracola,venite";
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 //hola,caracola,venite
 
 //CASE 4
-result = joinArray(arr1, "");
-console.log(result);
+console.log(
+  'CASE 4: join() junta todos los valores/elementos de un array con un separador ("") debería devolver ("123")'
+);
+
+result = joinArray(array1, "");
+var expectedValue = "123";
+
+functions.conAssert(array1, arrayCopy1, result, expectedValue);
 //'123'
 
 //CASE 5
-var matrix = [
+console.log(
+  'CASE 5: join() junta todos los valores/elementos de un array con un separador (";") debería devolver ("1,2,3;4,5,6;7,8,9")'
+);
+
+var array = [
   [1, 2, 3],
   [4, 5, 6],
   [7, 8, 9],
 ];
-result = joinArray(matrix, ";");
-console.log(result);
+var arrayCopy = functions.copyArray(array);
+
+result = joinArray(array, ";");
+var expectedValue = "1,2,3;4,5,6;7,8,9";
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 //'1,2,3;4,5,6;7,8,9'
 
 //CASE 6
-let arr2 = [];
-let arr3 = [1, [3, arr2, 4], 2];
-result = joinArray(arr3, ";");
+console.log(
+  'CASE 6: join() junta todos los valores/elementos de un array con un separador (";") debería devolver ("1;3,,4;2")'
+);
+
+var array = [];
+var array1 = [1, [3, array, 4], 2];
+var arrayCopy = functions.copyArray(array);
+var arrayCopy1 = functions.copyArray(array1);
+
+result = joinArray(array1, ";");
+var expectedValue = "1;3,,4;2";
+
+functions.conAssert(array1, arrayCopy1, result, expectedValue);
 //'1;3,,4;2'
 
 //----mi codogio

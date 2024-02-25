@@ -1,4 +1,5 @@
 delete Array.prototype.lastIndexOf;
+var functions = require("./functions.js");
 
 function lastIndexOf(arr, valor, index) {
   if (index >= arr.length) {
@@ -29,31 +30,110 @@ function lastIndexOf(arr, valor, index) {
 }
 
 // CASE 1
-console.log("CASE 1");
+console.log(
+  "CASE 1: lastIndexOf() busca el último elemento (Dodo) en un array y devuelve su indice (3)"
+);
 
-const animals = ["Dodo", "Tiger", "Penguin", "Dodo"];
+var array = ["Dodo", "Tiger", "Penguin", "Dodo"];
+var arrayCopy = functions.copyArray(array);
 
-console.log(lastIndexOf(animals, "Dodo"));
-// Expected output: 3
-
-console.log(lastIndexOf(animals, "Tiger"));
-// Expected output: 1
+var result = lastIndexOf(array, "Dodo");
+var expectedValue = 3;
 
 // CASE 2
-console.log("CASE 2");
+console.log(
+  "CASE 2: lastIndexOf() busca el último elemento (Tiger) en un array y devuelve su indice (1)"
+);
 
-const numbers = [2, 5, 9, 2];
-console.log(lastIndexOf(numbers, 2)); // 3
-console.log(lastIndexOf(numbers, 7)); // -1
-console.log(lastIndexOf(numbers, 2, 3)); // 3
-console.log(lastIndexOf(numbers, 2, 2)); // 0
-console.log(lastIndexOf(numbers, 2, -2)); // 0
-console.log(lastIndexOf(numbers, 2, -1)); // 3
+var arrayCopy = functions.copyArray(array);
+
+var result = lastIndexOf(array, "Tiger");
+var expectedValue = 1;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 // CASE 3
-console.log("CASE 3");
+console.log(
+  "CASE 3: lastIndexOf() busca el último valor (2) en un array y devuelve su indice (3)"
+);
 
-const array = [NaN];
-lastIndexOf(array, NaN);
+var array = [2, 5, 9, 2];
+var arrayCopy = functions.copyArray(array);
 
-console.log(lastIndexOf(array, NaN));
+var result = lastIndexOf(array, 2);
+var expectedValue = 3;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+// CASE 4
+console.log(
+  "CASE 4: lastIndexOf() busca el último valor (7) en un array si no lo encuentra devuelve -1 (-1)"
+);
+
+var arrayCopy = functions.copyArray(array);
+
+var result = lastIndexOf(array, 7);
+var expectedValue = -1;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+// CASE 5
+console.log(
+  "CASE 5: lastIndexOf() busca el último valor (2) a partir de un indice (3) en un array y devuelve su indice (3)"
+);
+
+var arrayCopy = functions.copyArray(array);
+
+var result = lastIndexOf(array, 2, 3);
+var expectedValue = 3;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+// CASE 6
+console.log(
+  "CASE 6: lastIndexOf() busca el último valor (2) a partir de un indice (2) en un array y devuelve su indice (0)"
+);
+
+var arrayCopy = functions.copyArray(array);
+
+var result = lastIndexOf(array, 2, 2);
+var expectedValue = 0;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+// CASE 7
+console.log(
+  "CASE 7: lastIndexOf() busca el último valor (2) a partir de un indice (-2) en un array y devuelve su indice (0)"
+);
+
+var arrayCopy = functions.copyArray(array);
+
+var result = lastIndexOf(array, 2, -2);
+var expectedValue = 0;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+// CASE 8
+console.log(
+  "CASE 8: lastIndexOf() busca el último valor (2) a partir de un indice (-2) en un array y devuelve su indice (3)"
+);
+
+var arrayCopy = functions.copyArray(array);
+
+var result = lastIndexOf(array, 2, -1);
+var expectedValue = 3;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
+
+// CASE 9
+console.log(
+  "CASE 9: lastIndexOf() si busca un valor (NaN) en un array, siempre deolvera -1 (-1)"
+);
+
+var array = [NaN];
+var arrayCopy = functions.copyArray(array);
+
+var result = lastIndexOf(array, NaN);
+var expectedValue = -1;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);

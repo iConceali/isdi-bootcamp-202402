@@ -1,4 +1,5 @@
 delete Array.prototype.indexOf;
+var functions = require("./functions.js");
 
 function indexOf(arr, valor, index) {
   if (index >= arr.length) {
@@ -30,33 +31,78 @@ console.log(
 );
 
 // CASE 1
-var s1 = ["ant", "bison", "camel", "duck", "bison"];
-var index1 = indexOf(s1, "bison");
-console.log(index1); // Debería imprimir: 1
+console.log(
+  "CASE 1: indexOf() busca un valor/elemento (bison) dentro de un array. Si lo encuentra devuelve el indice en el que lo encontró (1)"
+);
+
+var array = ["ant", "bison", "camel", "duck", "bison"];
+var arrayCopy = functions.copyArray(array);
+
+var result = indexOf(array, "bison");
+var expectedValue = 1;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 // CASE 2
-var s2 = ["apple", "banana", "orange", "kiwi"];
-var index2 = indexOf(s2, "orange");
-console.log(index2); // Debería imprimir: 2
+console.log(
+  "CASE 2: indexOf() busca un valor/elemento (orange) dentro de un array. Si lo encuentra devuelve el indice en el que lo encontró (2)"
+);
+
+var array = ["apple", "banana", "orange", "kiwi"];
+var arrayCopy = functions.copyArray(array);
+
+var result = indexOf(array, "orange");
+var expectedValue = 2;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 // CASE 3
-var s3 = ["cat", "dog", "fish", "cat", "bird"];
-var index3 = indexOf(s3, "cat");
-console.log(index3); // Debería imprimir: 0
+console.log(
+  "CASE 3: indexOf() busca un valor/elemento (cat) dentro de un array. Si lo encuentra devuelve el indice en el que lo encontró (0)"
+);
+
+var array = ["cat", "dog", "fish", "cat", "bird"];
+var arrayCopy = functions.copyArray(array);
+
+var result = indexOf(array, "cat");
+var expectedValue = 0;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 // CASE 4
-var s4 = ["apple", "banana", "orange", "kiwi"];
-var index4 = indexOf(s4, "grape");
-console.log(index4); // Debería imprimir: -1 (ya que "grape" no está en el array)
+console.log(
+  "CASE 4: indexOf() busca un valor/elemento (grape) dentro de un array. Si no lo encuentra devuelve el valor -1 (-1)"
+);
+
+var array = ["apple", "banana", "orange", "kiwi"];
+var arrayCopy = functions.copyArray(array);
+
+var result = indexOf(array, "grape");
+var expectedValue = -1;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 // CASE 5
-var s5 = ["apple", "banana", "orange", "kiwi"];
-var index5 = indexOf(s5, "orange", 2);
-console.log(index5); // Debería imprimir: 2
-//(ya que la búsqueda comienza desde el índice 2 y "orange" está en el índice 2)
+console.log(
+  "CASE 5: indexOf() busca un valor/elemento (orange) a partir del indice (2) dentro de un array. Si lo encuentra devuelve el indice en el que lo encontró (2)"
+);
+
+var array = ["apple", "banana", "orange", "kiwi"];
+var arrayCopy = functions.copyArray(array);
+
+var result = indexOf(array, "orange", 2);
+var expectedValue = 2;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
 
 // CASE 6
-var s6 = ["apple", "banana", "orange", "kiwi"];
-var index6 = indexOf(s6, "banana", 1);
-console.log(index6); // Debería imprimir: 1
-//(ya que la búsqueda comienza desde el índice 1 y "banana" está en el índice 1)
+console.log(
+  "CASE 6: indexOf() busca un valor/elemento (banana) a partir del indice (1) dentro de un array. Si lo encuentra devuelve el indice en el que lo encontró (1)"
+);
+var array = ["apple", "banana", "orange", "kiwi"];
+var arrayCopy = functions.copyArray(array);
+
+var result = indexOf(array, "banana", 1);
+var expectedValue = 1;
+
+functions.conAssert(array, arrayCopy, result, expectedValue);
