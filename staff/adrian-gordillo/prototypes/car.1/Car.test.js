@@ -1,4 +1,4 @@
-var Car = require("./Car");
+var Car = require("./car");
 
 console.log("TEST Car");
 
