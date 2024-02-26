@@ -41,7 +41,6 @@ console.log(
   "CASE 1: Devuelve el valor que encuentra en el indice indicado (400)"
 );
 var nums = [100, 200, 300, 400, 500];
-
 var numsCopy = functions.copyArray(nums);
 
 var result = at(nums, 3);
