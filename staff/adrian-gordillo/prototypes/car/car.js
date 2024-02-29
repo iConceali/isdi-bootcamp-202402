@@ -50,17 +50,17 @@ Car.prototype.speedUp = function (speed) {
 
 Car.prototype.changeSteering = function (steering) {
   this.steering = steering;
-  if (this.steering > 0 && this.gear > 0)
-    this.direction = "forward-right" && this.acceleration > 0;
+  if (this.steering > 0 && this.gear > 0 && this.acceleration > 0)
+    this.direction = "forward-right";
 
-  if (this.steering > 0 && this.gear === -1)
-    this.direction = "backward-right" && this.acceleration > 0;
+  if (this.steering > 0 && this.gear === -1 && this.acceleration > 0)
+    this.direction = "backward-right";
 
-  if (this.steering < 0 && this.gear > 0)
-    this.direction = "forward-left" && this.acceleration > 0;
+  if (this.steering < 0 && this.gear > 0 && this.acceleration > 0)
+    this.direction = "forward-left";
 
-  if (this.steering < 0 && this.gear === -1)
-    this.direction = "backward-left" && this.acceleration > 0;
+  if (this.steering < 0 && this.gear === -1 && this.acceleration > 0)
+    this.direction = "backward-left";
 };
 
 /*
