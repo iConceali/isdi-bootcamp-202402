@@ -1,4 +1,4 @@
-function Actor(width, heght) {
+function Actor(width, height) {
   this.x = 0;
   this.y = 0;
   this.z = 0;
@@ -6,7 +6,7 @@ function Actor(width, heght) {
   this.step = 1;
 
   this.width = width;
-  this.heght = heght;
+  this.height = height;
 }
 
 module.exports = Actor;
