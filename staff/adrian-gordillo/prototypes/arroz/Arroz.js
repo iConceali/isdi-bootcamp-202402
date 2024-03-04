@@ -121,6 +121,19 @@ Arroz.prototype.forEach = function (callback) {
   }
 };
 
+Arroz.from = function (arroz) {
+  var instance = new Arroz();
+
+  for (var i = 0; i < arroz.length; i++) {
+    var elem = arroz[i];
+
+    instance[instance.length++] = elem;
+  }
+
+  return instance;
+};
+
+/*
 Arroz.prototype.from = function (callback) {
   var returned = [];
 
@@ -140,7 +153,7 @@ Arroz.prototype.from = function (callback) {
   }
   return returned;
 };
-
+*/
 Arroz.prototype.includes = function (valor, index) {
   if (index >= this.length) {
     return false;
@@ -189,6 +202,156 @@ Arroz.prototype.indexOf = function (valor, index) {
     }
   }
   return -1;
+};
+
+Arroz.prototype.join = function (separator) {
+  let string = "";
+
+  if (separator === undefined) separator = ",";
+  for (var i = 0; i < this.length - 1; i++) {
+    if (this[i] instanceof Arroz === false) string += this[i] + separator;
+    else string += join(this[i]) + separator;
+  }
+  if (this[this.length - 1] instanceof Arroz === false)
+    if (this.length === 0) string += "";
+    else string += this[this.length - 1];
+  else string += join(this[i]);
+  return string;
+};
+
+Arroz.prototype.lastIndexOf = function (valor, index) {
+  if (index >= this.length) {
+    return -1;
+  } else if ((index < 0 && this.length + index < 0) || index === undefined) {
+    for (var i = this.length - 1; i >= 0; i--) {
+      if (valor === this[i]) {
+        return i;
+      }
+    }
+  } else if (index < 0 && this.length + index > 0) {
+    for (var i = this.length + index; i >= 0; i--) {
+      if (valor === this[i]) {
+        return i;
+      }
+    }
+  } else {
+    for (var i = index; i >= 0; i--) {
+      if (valor === this[i]) {
+        return i;
+      }
+    }
+    if (valor === this[i] || (isNaN(valor) && isNaN(this[i]))) {
+      return -1;
+    }
+  }
+  return -1;
+};
+
+Arroz.prototype.map = function (callback) {
+  var mapped = new Arroz();
+
+  for (var i = 0; i < this.length; i++) {
+    var elem = this[i];
+
+    var mappedElement = callback(elem, i, this);
+
+    mapped[mapped.length++] = mappedElement;
+  }
+
+  return mapped;
+};
+
+Arroz.prototype.reduce = function (callback, accum) {
+  var i = 0;
+
+  if (arguments.length === 1) {
+    accum = this[0];
+
+    i = 1;
+  }
+
+  for (; i < this.length; i++) {
+    var elem = this[i];
+
+    accum = callback(accum, elem);
+  }
+
+  return accum;
+};
+
+Arroz.prototype.shift = function () {
+  var first = this[0];
+
+  for (var i = 1; i < this.length; i++) {
+    this[i - 1] = this[i];
+  }
+
+  this.length--;
+
+  delete this[this.length];
+
+  return first;
+};
+
+Arroz.prototype.slice = function (indexStart, indexEnd) {
+  let result = [];
+
+  if (indexStart === undefined || indexStart >= this.length) {
+    indexStart = 0;
+  } else if (indexStart < 0) {
+    indexStart += this.length;
+  }
+
+  if (indexEnd === undefined || indexEnd >= this.length) {
+    indexEnd = this.length;
+  } else if (indexEnd < 0) {
+    indexEnd += this.length;
+  }
+
+  for (let i = indexStart; i < indexEnd && i < this.length; i++) {
+    result[result.length] = this[i];
+  }
+  return result;
+};
+
+Arroz.prototype.splice = function (start, deleteCount, item) {
+  if (deleteCount === 0) {
+    for (var i = this.length - 1; i > start - 1; i--) {
+      var elem = this[i];
+
+      this[i + 1] = elem;
+    }
+
+    this[start] = item;
+
+    return [];
+  } else if (deleteCount === 1) {
+    var removed = [];
+
+    removed[removed.length] = this[start];
+
+    this[start] = item;
+
+    this.length++;
+
+    return removed;
+  } else if (deleteCount >= 2) {
+    var removed = [];
+
+    for (var i = 0; i < deleteCount; i++)
+      removed[removed.length] = this[start + i];
+
+    for (var i = 0; i < this.length - (start + deleteCount - 1); i++) {
+      var elem = this[start + deleteCount + i];
+      this[start + 1 + i] = elem;
+    }
+
+    this.length -= deleteCount - 1;
+
+    this[start] = item;
+
+    return removed;
+  }
 };
 
 module.exports = Arroz;

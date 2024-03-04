@@ -322,14 +322,36 @@ matcha.describe("⭐⭐⭐ Arroz ⭐⭐⭐", function () {
   });
 
   matcha.describe("⭐⭐⭐ from ⭐⭐⭐", function () {
+    matcha.it("should create an instance of Arroz from numbers", function () {
+      var nums = new Arroz(10, 20, 30);
+      var nums2 = Arroz.from(nums);
+
+      matcha.expect(nums.length).toBe(3);
+
+      for (var i = 0; i < nums.length; i++) {
+        matcha.expect(nums[i]).toBe(10 * (i + 1));
+      }
+
+      matcha.expect(nums === nums2).toBe(false);
+      // N2H
+      //matcha.expect(nums).not.toBe(nums2)
+
+      matcha.expect(nums2.length).toBe(nums.length);
+
+      for (var i = 0; i < nums2.length; i++) {
+        matcha.expect(nums2[i]).toBe(10 * (i + 1));
+      }
+    });
+  });
+
+  /*
+  matcha.describe("⭐⭐⭐ from ⭐⭐⭐", function () {
     matcha.it(
       "should return the index of the value that results in the callback",
       function () {
         var a = new Arroz("papaya");
 
-        matcha.expect(!!a.from).toBe(true);
-
-        var result = a.from();
+        var result = Arroz.from(a);
 
         matcha.expect(a.length).toBe(1);
         matcha.expect(a[0]).toBe("papaya");
@@ -340,10 +362,11 @@ matcha.describe("⭐⭐⭐ Arroz ⭐⭐⭐", function () {
         matcha.expect(result[4]).toBe("y");
         matcha.expect(result[5]).toBe("a");
         matcha.expect(result.length).toBe(6);
+        console.log(result);
       }
     );
   });
-
+*/
   matcha.describe("⭐⭐⭐ includes ⭐⭐⭐", function () {
     matcha.it(
       "should return true if it finds the indicated value within the arroz",
@@ -415,6 +438,146 @@ matcha.describe("⭐⭐⭐ Arroz ⭐⭐⭐", function () {
         matcha.expect(a[2]).toBe("camel");
         matcha.expect(a[3]).toBe("duck");
         matcha.expect(result).toBe(2);
+      }
+    );
+  });
+
+  matcha.describe("⭐⭐⭐ join ⭐⭐⭐", function () {
+    matcha.it(
+      "should return all the values joined and separated by the separator",
+      function () {
+        var a = new Arroz("hola", "caracola", "venite");
+
+        var result = a.join(" ");
+
+        matcha.expect(a.length).toBe(3);
+        matcha.expect(a[0]).toBe("hola");
+        matcha.expect(a[1]).toBe("caracola");
+        matcha.expect(a[2]).toBe("venite");
+        matcha.expect(result).toBe("hola caracola venite");
+
+        matcha.expect(result.length).toBe(20);
+      }
+    );
+  });
+
+  matcha.describe("⭐⭐⭐ lastIndexOf ⭐⭐⭐", function () {
+    matcha.it(
+      "should return the index of the last element that matches",
+      function () {
+        var a = new Arroz(2, 5, 9, 2);
+
+        var result = a.lastIndexOf(2, 3);
+
+        matcha.expect(a.length).toBe(4);
+        matcha.expect(a[0]).toBe(2);
+        matcha.expect(a[1]).toBe(5);
+        matcha.expect(a[2]).toBe(9);
+        matcha.expect(a[3]).toBe(2);
+        matcha.expect(result).toBe(3);
+      }
+    );
+  });
+
+  matcha.describe("⭐⭐⭐ map ⭐⭐⭐", function () {
+    matcha.it("should map numbers to power of 2", function () {
+      var nums = new Arroz(10, 20, 30);
+
+      var i = 0;
+
+      var numsPow2 = nums.map(function (element, index, arroz) {
+        matcha.expect(index).toBe(i++);
+        matcha.expect(arroz).toBe(nums);
+        matcha.expect(element).toBe(10 * (index + 1));
+
+        return element ** 2;
+      });
+
+      matcha.expect(nums.length).toBe(3);
+
+      for (var i = 0; i < nums.length; i++) {
+        matcha.expect(nums[i]).toBe(10 * (i + 1));
+      }
+
+      matcha.expect(numsPow2.length).toBe(nums.length);
+
+      for (var i = 0; i < numsPow2.length; i++) {
+        matcha.expect(numsPow2[i]).toBe((10 * (i + 1)) ** 2);
+      }
+    });
+  });
+
+  matcha.describe("⭐⭐⭐ reduce ⭐⭐⭐", function () {
+    matcha.it(
+      "should return the index of the last element that matches",
+      function () {
+        var a = new Arroz(
+          { what: "socks", price: 14.95, qty: 2, brand: "adidas" },
+          { what: "t-shirt", price: 24.85, qty: 3, brand: "levis" },
+          { what: "shorts", price: 20.15, qty: 4, brand: "hilfigher" },
+          { what: "bag", price: 200.05, qty: 1, brand: "dolce gabbana" }
+        );
+
+        var result = a.reduce(function (amount, item) {
+          //return amount + item['price'] * item['qty']
+          return amount + item.price * item.qty;
+        }, 0);
+
+        matcha.expect(a.length).toBe(4);
+        matcha.expect(result).toBe(385.1);
+      }
+    );
+  });
+
+  matcha.describe("⭐⭐⭐ shift ⭐⭐⭐", function () {
+    matcha.it(
+      "should delete the first element of the arroz and return it. This method modifies the length of the arroz.",
+      function () {
+        var a = new Arroz(10, 20, 30);
+
+        matcha.expect(a.length).toBe(3);
+
+        var result = a.shift();
+
+        matcha.expect(a.length).toBe(2);
+        matcha.expect(a[0]).toBe(20);
+        matcha.expect(a[1]).toBe(30);
+        matcha.expect(result).toBe(10);
+      }
+    );
+  });
+
+  matcha.describe("⭐⭐⭐ slice ⭐⭐⭐", function () {
+    matcha.it(
+      "should return a copy of part of the array within a new array from indexStart to indexEnd. The original array will not be modified.",
+      function () {
+        var a = new Arroz("ant", "bison", "camel", "duck", "elephant");
+
+        matcha.expect(a.length).toBe(5);
+
+        var result = a.slice(2, 4);
+
+        matcha.expect(result.length).toBe(2);
+        matcha.expect(result[0]).toBe("camel");
+        matcha.expect(result[1]).toBe("duck");
+      }
+    );
+  });
+
+  matcha.describe("⭐⭐⭐ splice ⭐⭐⭐", function () {
+    matcha.it(
+      "should change the content of an array by removing existing elements and/or adding new elements.",
+      function () {
+        var a = new Arroz("Jan", "March", "April", "June");
+
+        matcha.expect(a.length).toBe(4);
+
+        var result = a.splice(1, 0, "Feb");
+
+        matcha.expect(a.length).toBe(5);
+        matcha.expect(result[0]).toBe("[]");
+        console.log(result);
+        console.log(a);
       }
     );
   });
