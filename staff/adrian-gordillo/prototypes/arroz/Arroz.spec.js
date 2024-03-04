@@ -243,11 +243,11 @@ matcha.describe("⭐⭐⭐ Arroz ⭐⭐⭐", function () {
     matcha.it(
       "should return the first value (returned by the callback function) found in the arroz",
       function () {
-        var a = new Arroz([
+        var a = new Arroz(
           { name: "apples", quantity: 2 },
           { name: "bananas", quantity: 0 },
-          { name: "cherries", quantity: 5 },
-        ]);
+          { name: "cherries", quantity: 5 }
+        );
 
         matcha.expect(!!a.find).toBe(true);
 
@@ -256,8 +256,14 @@ matcha.describe("⭐⭐⭐ Arroz ⭐⭐⭐", function () {
         });
 
         matcha.expect(a.length).toBe(3);
-        matcha.expect(a[0]).toBe({ name: "apples", quantity: 2 });
-        matcha.expect(value).toBe({ name: "cherries", quantity: 5 });
+        matcha.expect(a[0].name).toBe("apples");
+        matcha.expect(a[0].quantity).toBe(2);
+        matcha.expect(a[1].name).toBe("bananas");
+        matcha.expect(a[1].quantity).toBe(0);
+        matcha.expect(a[2].name).toBe("cherries");
+        matcha.expect(a[2].quantity).toBe(5);
+        matcha.expect(value.name).toBe("cherries");
+        matcha.expect(value.quantity).toBe("5");
         console.log(value);
       }
     );
@@ -300,6 +306,7 @@ matcha.describe("⭐⭐⭐ Arroz ⭐⭐⭐", function () {
         });
 
         matcha.expect(a.length).toBe(5);
+        matcha.expect(b.length).toBe(5);
         matcha.expect(a[0]).toBe(10);
         matcha.expect(a[1]).toBe(20);
         matcha.expect(a[2]).toBe(30);
