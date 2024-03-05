@@ -1,5 +1,10 @@
 body {
   background-color: #0f1224;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
 
 h1 {
@@ -10,7 +15,17 @@ h1 {
 }
 
 main {
-  margin: 0 20vw;
+  width: 80%; /* Puedes ajustar el ancho según tu preferencia */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-home {
+  width: 80%; /* Puedes ajustar el ancho según tu preferencia */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 form {
@@ -50,6 +65,21 @@ input:hover {
   background-color: #a2afec;
 }
 
+.btn-createPost {
+  margin: 10px 0;
+  width: 305px;
+  height: 60px;
+  border-radius: 20px;
+  background-color: #b66c30;
+  border: none;
+  font-weight: bold;
+  color: black;
+}
+
+.btn-createPost:hover {
+  background-color: #d4803a;
+}
+
 .div-logout {
   align-items: center;
   display: flex;
@@ -60,4 +90,14 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.imgPost {
+  width: 305px;
+  height: 250px;
+}
+
+.post p {
+  color: white;
+  margin: 0;
 }

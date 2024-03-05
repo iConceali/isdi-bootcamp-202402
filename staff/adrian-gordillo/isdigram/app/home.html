@@ -9,8 +9,20 @@
   </head>
 
   <body>
-    <main>
+    <main class="main-home">
       <h1>Hello, World!</h1>
+
+      <form>
+        <input type="text" placeholder="Image Link" id="image" />
+
+        <input type="text" placeholder="Text" id="text" />
+
+        <button class="btn-createPost" id="btn-createPost" type="submit">
+          Create Post
+        </button>
+        <button class="btn-createPost" id="btn-viewPost">View Post</button>
+      </form>
+
       <div class="div-logout">
         <button class="btn-logout btn-general" id="btn-logout">Logout</button>
       </div>
@@ -19,5 +31,6 @@
     <script src="data.js"></script>
     <script src="logic.js"></script>
     <script src="home.js"></script>
+    <script src="post.js"></script>
   </body>
 </html>

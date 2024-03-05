@@ -1,22 +1,20 @@
-var form = document.querySelector("form");
-var registerLink = document.querySelector("a");
+(function () {
+  var form = document.querySelector("form");
 
-form.addEventListener("submit", function (event) {
-  event.preventDefault();
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
 
-  var usernameInput = document.getElementById("username");
-  var username = usernameInput.value;
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
 
-  var passwordInput = document.getElementById("password");
-  var password = passwordInput.value;
+    try {
+      logic.loginUser(username, password);
 
-  try {
-    loginUser(username, password);
+      form.reset();
 
-    form.reset();
-
-    location.href = "./home.html";
-  } catch (error) {
-    alert(error.message);
-  }
-});
+      location.href = "./home.html";
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+})();

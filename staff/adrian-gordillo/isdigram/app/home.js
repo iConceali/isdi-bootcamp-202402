@@ -1,18 +1,18 @@
-var title = document.querySelector("h1");
-var logoutButton = document.getElementById("btn-logout");
+(function () {
+  var title = document.querySelector("h1");
+  var logoutButton = document.getElementById("btn-logout");
 
-try {
-  var user = retrieveUser(sessionStorage.username);
+  try {
+    var user = logic.retrieveUser();
 
-  title.innerText = "Hello, " + user.name + "!";
-} catch (error) {
-  alert(error.message);
-}
+    title.innerText = "Hello, " + user.name + "!";
+  } catch (error) {
+    alert(error.message);
+  }
 
-logoutButton.addEventListener("click", function () {
-  sessionStorage.clear();
+  logoutButton.addEventListener("click", function () {
+    logic.logoutUser();
 
-  var loginAdress = location.href.replace("home", "login");
-
-  location.href = loginAdress;
-});
+    location.href = "./home.html";
+  });
+})();
