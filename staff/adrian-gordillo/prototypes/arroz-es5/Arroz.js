@@ -321,7 +321,7 @@ Arroz.prototype.splice = function (start, deleteCount, item) {
 
       this[i + 1] = elem;
     }
-
+    this.length++;
     this[start] = item;
 
     return [];

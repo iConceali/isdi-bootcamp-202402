@@ -575,9 +575,9 @@ matcha.describe("⭐⭐⭐ Arroz ⭐⭐⭐", function () {
         var result = a.splice(1, 0, "Feb");
 
         matcha.expect(a.length).toBe(5);
-        matcha.expect(result[0]).toBe("[]");
-        console.log(result);
-        console.log(a);
+        matcha.expect(result[0]).toBe(undefined);
+        // console.log(result);
+        // console.log(a);
       }
     );
   });
