@@ -3,8 +3,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
+  /* height: 60vh; */
+  margin-top: 50px;
 }
 
 h1 {
@@ -21,8 +21,18 @@ main {
   align-items: center;
 }
 
+#div-buttons-create-post {
+  width: 290px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  margin: 5px;
+}
+
 .main-home {
-  width: 80%; /* Puedes ajustar el ancho según tu preferencia */
+  width: 85%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -50,7 +60,7 @@ input:hover {
   background-color: #2e3966;
 }
 
-.btn-general {
+.btn-logout {
   margin: 10px 0;
   width: 305px;
   height: 60px;
@@ -61,11 +71,7 @@ input:hover {
   color: black;
 }
 
-.btn-general:hover {
-  background-color: #a2afec;
-}
-
-.btn-createPost {
+.btn-general {
   margin: 10px 0;
   width: 305px;
   height: 60px;
@@ -76,14 +82,64 @@ input:hover {
   color: black;
 }
 
-.btn-createPost:hover {
+.btn-general:hover {
   background-color: #d4803a;
 }
 
-.div-logout {
-  align-items: center;
+.btn-general-post {
+  width: 306px;
+  height: 60px;
+  border-radius: 20px;
+  background-color: #b66c30;
+  border: none;
+  font-weight: bold;
+  color: black;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.btn-general-post:hover {
+  background-color: #d4803a;
+}
+
+.btn-floating-post {
+  margin: 10px 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  background-color: #b66c30;
+  border: none;
+  font-weight: bold;
+  color: black;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.post {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.info-post-content {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.btn-delete-post {
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+  background-image: url("./images/basura.png");
+  background-size: cover;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-delete-post:hover {
+  background-color: #e53935;
 }
 
 a {
@@ -93,11 +149,43 @@ a {
 }
 
 .imgPost {
-  width: 305px;
-  height: 250px;
+  max-width: 100%;
 }
 
 .post p {
   color: white;
   margin: 0;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#create-post-section {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(216, 209, 209, 0.521);
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1;
+  display: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.postList {
+  margin-top: 10px;
+  margin-bottom: 90px;
+}
+
+#p-date {
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.459);
 }

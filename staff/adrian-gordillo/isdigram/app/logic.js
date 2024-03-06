@@ -43,7 +43,7 @@ var logic = (function () {
 
   function createPost(image, text) {
     var post = {
-      username: sessionStorage.username,
+      author: sessionStorage.username,
       image: image,
       text: text,
       date: new Date().toLocaleDateString("en-CA"),

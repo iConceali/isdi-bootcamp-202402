@@ -11,26 +11,31 @@
   <body>
     <main class="main-home">
       <h1>Hello, World!</h1>
+      <button class="btn-logout" id="btn-logout">Logout</button>
 
-      <form>
-        <input type="text" placeholder="Image Link" id="image" />
+      <div class="postList"></div>
 
-        <input type="text" placeholder="Text" id="text" />
+      <section id="create-post-section">
+        <form>
+          <input type="text" placeholder="Image Link" id="image" />
 
-        <button class="btn-createPost" id="btn-createPost" type="submit">
-          Create Post
-        </button>
-        <button class="btn-createPost" id="btn-viewPost">View Post</button>
-      </form>
+          <input type="text" placeholder="Text" id="text" />
 
-      <div class="div-logout">
-        <button class="btn-logout btn-general" id="btn-logout">Logout</button>
-      </div>
+          <button class="btn-general-post" id="btn-createPost" type="submit">
+            Create Post
+          </button>
+        </form>
+
+        <button class="btn-general-post" id="btn-cancel-post">Cancel</button>
+      </section>
+
+      <!-- <button class="btn-createPost" id="btn-viewPost">+</button> -->
     </main>
-
+    <footer>
+      <button class="btn-floating-post" id="btn-floating-form-post">+</button>
+    </footer>
     <script src="data.js"></script>
     <script src="logic.js"></script>
     <script src="home.js"></script>
-    <script src="post.js"></script>
   </body>
 </html>
