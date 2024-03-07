@@ -3,8 +3,31 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* height: 60vh; */
   margin-top: 50px;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  /* background-color: #b66c30; */
+  width: 100%;
+}
+
+#btn-chat {
+  border: none;
+  background: none;
+  background-image: url("./images/chat.png");
+  background-size: cover;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  width: 30px;
+  height: 25px;
+  float: right;
+  margin-right: 15px;
+  margin-top: 5px;
 }
 
 h1 {
@@ -15,7 +38,7 @@ h1 {
 }
 
 main {
-  width: 80%; /* Puedes ajustar el ancho según tu preferencia */
+  width: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -133,7 +156,6 @@ input:hover {
   background-image: url("./images/basura.png");
   background-size: cover;
   border: none;
-  color: white;
   font-weight: bold;
   cursor: pointer;
 }
@@ -152,9 +174,15 @@ a {
   max-width: 100%;
 }
 
-.post p {
+h3 {
   color: white;
   margin: 0;
+}
+
+p {
+  color: white;
+  margin: 0;
+  max-width: 80vw;
 }
 
 footer {
@@ -180,12 +208,47 @@ footer {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-.postList {
+.post-list {
   margin-top: 10px;
   margin-bottom: 90px;
 }
 
-#p-date {
-  margin-bottom: 10px;
+.date {
+  margin: 0;
   color: rgba(255, 255, 255, 0.459);
+}
+
+.chat-form {
+  display: flex;
+  margin-top: 10px;
+}
+
+.chat-input {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.btn-send-chat {
+  border: none;
+  background-color: #445bdd;
+  border-radius: 20px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100px;
+  height: 30px;
+}
+
+.chat-box {
+  border: 1px solid white;
+  border-radius: 10px;
+  height: 62vh;
+  max-height: 62vh;
+  overflow-y: auto;
+}
+
+.chat-message {
+  margin: 10px;
+  color: white;
+  word-wrap: break-word;
 }

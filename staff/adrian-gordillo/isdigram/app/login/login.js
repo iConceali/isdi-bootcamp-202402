@@ -1,23 +1,30 @@
 (function () {
+  if (logic.isUserLoggedIn()) {
+    location.href = "../home";
+
+    return;
+  }
+
   var form = document.querySelector("form");
-  var loginLink = document.querySelector("a");
+  var a = document.querySelector("a");
+
+  a.href = "../register";
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    var name = document.getElementById("name").value;
-    var birthdate = document.getElementById("birthdate").value;
-    var email = document.getElementById("email").value;
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
 
     try {
-      logic.registerUser(name, birthdate, email, username, password);
+      logic.loginUser(username, password);
 
       form.reset();
 
-      loginLink.click();
+      location.href = "../home";
     } catch (error) {
+      console.log(error);
+
       alert(error.message);
     }
   });

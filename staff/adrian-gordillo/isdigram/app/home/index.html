@@ -5,15 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
 
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../style.css" />
   </head>
 
   <body>
+    <header>
+      <button class="" id="btn-chat"></button>
+    </header>
     <main class="main-home">
       <h1>Hello, World!</h1>
       <button class="btn-logout" id="btn-logout">Logout</button>
 
-      <div class="postList"></div>
+      <section class="post-list">
+        <div class="chat-box"></div>
+      </section>
 
       <section id="create-post-section">
         <form>
@@ -34,8 +39,8 @@
     <footer>
       <button class="btn-floating-post" id="btn-floating-form-post">+</button>
     </footer>
-    <script src="data.js"></script>
-    <script src="logic.js"></script>
+    <script src="../data.js"></script>
+    <script src="../logic.js"></script>
     <script src="home.js"></script>
   </body>
 </html>
