@@ -3,6 +3,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0;
   margin-top: 50px;
 }
 
@@ -11,23 +12,7 @@ header {
   top: 0;
   right: 0;
   padding: 10px;
-  /* background-color: #b66c30; */
   width: 100%;
-}
-
-#btn-chat {
-  border: none;
-  background: none;
-  background-image: url("./images/chat.png");
-  background-size: cover;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  width: 30px;
-  height: 25px;
-  float: right;
-  margin-right: 15px;
-  margin-top: 5px;
 }
 
 h1 {
@@ -42,6 +27,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 30px;
 }
 
 #div-buttons-create-post {
@@ -81,17 +67,6 @@ input {
 
 input:hover {
   background-color: #2e3966;
-}
-
-.btn-logout {
-  margin: 10px 0;
-  width: 305px;
-  height: 60px;
-  border-radius: 20px;
-  background-color: #8f99cc;
-  border: none;
-  font-weight: bold;
-  color: black;
 }
 
 .btn-general {
@@ -242,13 +217,84 @@ footer {
 .chat-box {
   border: 1px solid white;
   border-radius: 10px;
-  height: 62vh;
-  max-height: 62vh;
+  height: 65vh;
+  max-height: 65vh;
   overflow-y: auto;
+  padding-bottom: 10px;
 }
 
 .chat-message {
   margin: 10px;
   color: white;
   word-wrap: break-word;
+  max-width: 75vw;
+}
+
+.user-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.user-list__item--online img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid lime;
+  cursor: pointer;
+  float: left;
+  margin-left: 25px;
+  margin-top: 5px;
+}
+
+.user-list__item--offline img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid red;
+  cursor: pointer;
+  float: left;
+  margin-left: 25px;
+  margin-top: 5px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  float: left;
+  margin-left: 25px;
+  margin-top: 5px;
+}
+
+.btn-logout {
+  border: none;
+  background: none;
+  background-image: url("./images/icon-exit.png");
+  background-size: cover;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  float: right;
+  margin-right: 15px;
+  margin-top: 5px;
+}
+
+#btn-chat {
+  border: none;
+  background: none;
+  background-image: url("./images/icon-send.png");
+  background-size: cover;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  float: right;
+  margin-right: 15px;
+  margin-top: 5px;
 }
