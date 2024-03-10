@@ -178,8 +178,28 @@ var logic = (function () {
     return posts.reverse();
   }
 
+  function changePost(postId, newText) {
+    validateText(postId, "postId", true);
+
+    try {
+      var post = data.findPost(function (post) {
+        return post.id === postId;
+      });
+
+      if (!post) throw new Error("post not found");
+
+      if (post.author !== getLoggedInUserId())
+        throw new Error("post does not belong to user");
+
+      data.editPost(postId, newText);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  }
+
   function removePost(postId) {
-    // TODO input validation
+    // TODO input validation---------------------------
 
     validateText(postId, "postId", true);
 
@@ -197,6 +217,72 @@ var logic = (function () {
     });
   }
 
+  //TODO chat logic-------------------------------------
+  function sendChatMessage(message, receiverId) {
+    var senderId = getLoggedInUserId();
+    var sender = retrieveUser();
+
+    var receiver = data.findUser(function (user) {
+      return user.id === receiverId;
+    });
+
+    if (!receiver) throw new Error("Receiver user not found");
+
+    var chatMessage = {
+      sender: sender.username,
+      receiver: receiver.username,
+      text: message,
+      date: new Date().toLocaleDateString("en-CA"),
+    };
+
+    var chatData = JSON.parse(localStorage.getItem("chat")) || {};
+
+    var chatKey1 = `${senderId}_${receiverId}`;
+    var chatKey2 = `${receiverId}_${senderId}`;
+
+    // Crear un objeto para la conversación si no existe
+    chatData[chatKey1] = chatData[chatKey1] || [];
+    chatData[chatKey2] = chatData[chatKey2] || [];
+
+    // Añadir el mensaje a ambas direcciones
+    chatData[chatKey1].push(chatMessage);
+    chatData[chatKey2].push(chatMessage);
+
+    // Guardar el objeto actualizado en localStorage
+    localStorage.setItem("chat", JSON.stringify(chatData));
+
+    displayChatMessage(chatMessage.sender, chatMessage.text);
+  }
+
+  function retrieveChatMessages(receiverId) {
+    var senderId = getLoggedInUserId();
+    var chatData = JSON.parse(localStorage.getItem("chat")) || {};
+    var chatKey = `${senderId}_${receiverId}`;
+
+    // Obtener mensajes de la conversación actual
+    var messages = chatData[chatKey] || [];
+
+    return messages;
+  }
+
+  function displayChatMessage(sender, text) {
+    var chatBox = document.querySelector(".chat-box");
+
+    var messageDiv = document.createElement("div");
+    messageDiv.className = "chat-message";
+
+    var senderSpan = document.createElement("span");
+    senderSpan.innerText = sender + ": ";
+
+    var textSpan = document.createElement("span");
+    textSpan.innerText = text;
+
+    messageDiv.append(senderSpan, textSpan);
+    chatBox.insertBefore(messageDiv, chatBox.firstChild);
+  }
+
+  //todo ----------------------------------------------
+
   return {
     registerUser: registerUser,
     loginUser: loginUser,
@@ -208,5 +294,9 @@ var logic = (function () {
     createPost: createPost,
     retrievePosts: retrievePosts,
     removePost: removePost,
+    changePost: changePost,
+    sendChatMessage: sendChatMessage,
+    retrieveChatMessages: retrieveChatMessages,
+    displayChatMessage: displayChatMessage,
   };
 })();

@@ -7,24 +7,34 @@
   }
 
   var body = document.querySelector("body");
+  var main = document.querySelector(".main-home");
   var title = document.querySelector("h1");
   var logoutButton = document.querySelector("#btn-logout");
   var createPostSection = document.querySelector("#create-post-section");
   var createPostForm = createPostSection.querySelector("form");
   var createPostCancelButton = document.querySelector("#btn-cancel-post");
-  var createPostButton = document.querySelector("#btn-floating-form-post");
-  var listSection = document.querySelector(".post-list");
+  var btnHome = document.querySelector("#btn-home img");
+  btnHome.src = "../images/icon-home-on.png";
+  var btnSearch = document.querySelector("#btn-search img");
+  btnSearch.src = "../images/icon-search-off.png";
+  var btnPost = document.querySelector("#btn-post img");
+  btnPost.src = "../images/icon-post-off.png";
+  var btnReels = document.querySelector("#btn-reels img");
+  btnReels.src = "../images/icon-reels-off.png";
+  var btnProfile = document.querySelector("#btn-profile img");
+  btnProfile.src = "../images/icon-profile-off.png";
+  var listSection = document.querySelector(".users-frame");
   var btnChat = document.querySelector("#btn-chat");
   var avatar = document.querySelector("#user-avatar");
 
-  var userList = document.createElement("ul");
+  var userList = document.createElement("div");
   userList.className = "user-list";
 
   var chatBox = document.createElement("div");
   chatBox.className = "chat-box";
 
-  //TODO INICIO CHAT ---------------------------------------
-  function openChat() {
+  //TODO START CHAT ---------------------------------------
+  function openChat(receiverId) {
     try {
       listSection.innerHTML = "";
 
@@ -68,7 +78,14 @@
           avatarImg.src = user.avatar || "../images/avatar-empty.webp";
           avatarImg.alt = user.username;
 
-          item.appendChild(avatarImg);
+          var avatarText = document.createElement("p");
+          avatarText.innerText = user.username;
+
+          item.addEventListener("click", function () {
+            openChat(user.id);
+          });
+
+          item.append(avatarImg, avatarText);
 
           userList.appendChild(item);
         });
@@ -84,12 +101,12 @@
         event.preventDefault();
         var message = chatInput.value;
 
-        sendChatMessage(message);
+        logic.sendChatMessage(message, receiverId);
 
         chatInput.value = "";
       };
 
-      renderChatMessages();
+      renderChatMessages(receiverId);
     } catch (error) {
       console.error(error);
 
@@ -97,37 +114,23 @@
     }
   }
 
-  function renderChatMessages() {
-    var messages = [
-      { sender: "User1", text: "Hello, how are you?" },
-      { sender: "User2", text: "Hi! I'm doing well, thanks!" },
-      { sender: "User1", text: "That's great to hear!" },
-    ];
+  function renderChatMessages(receiverId) {
+    var chatBox = document.querySelector(".chat-box");
+    chatBox.innerHTML = "";
 
-    messages.forEach(function (message) {
-      displayChatMessage(message.sender, message.text);
-    });
+    try {
+      var messages = logic.retrieveChatMessages(receiverId);
+
+      messages.forEach(function (message) {
+        logic.displayChatMessage(message.sender, message.text);
+      });
+    } catch (error) {
+      console.error(error);
+
+      alert(error.message);
+    }
   }
 
-  function sendChatMessage(message) {
-    var sender = "CurrentUser";
-
-    displayChatMessage(sender, message);
-  }
-
-  function displayChatMessage(sender, text) {
-    var messageDiv = document.createElement("div");
-    messageDiv.className = "chat-message";
-
-    var senderSpan = document.createElement("span");
-    senderSpan.innerText = sender + ": ";
-
-    var textSpan = document.createElement("span");
-    textSpan.innerText = text;
-
-    messageDiv.append(senderSpan, textSpan);
-    chatBox.appendChild(messageDiv);
-  }
   //TODO --------------------------------------------------
 
   try {
@@ -173,10 +176,42 @@
 
   createPostCancelButton.onclick = function () {
     createPostSection.style.display = "none";
+
+    btnHome.src = "../images/icon-home-on.png";
+    btnPost.src = "../images/icon-post-off.png";
+    btnSearch.src = "../images/icon-search-off.png";
+    btnReels.src = "../images/icon-reels-off.png";
+    btnProfile.src = "../images/icon-profile-off.png";
   };
 
-  createPostButton.onclick = function () {
+  btnHome.onclick = function () {
+    listSection.innerHTML = "";
+
+    btnChat.style.display = "";
+    btnPost.style.display = "";
+    title.style.display = "";
+    body.style.overflow = "";
+    main.style.overflow = "";
+
+    btnHome.src = "../images/icon-home-on.png";
+
+    btnPost.src = "../images/icon-post-off.png";
+    btnSearch.src = "../images/icon-search-off.png";
+    btnReels.src = "../images/icon-reels-off.png";
+    btnProfile.src = "../images/icon-profile-off.png";
+
+    renderPosts();
+  };
+
+  btnPost.onclick = function () {
     createPostSection.style.display = "block";
+
+    btnPost.src = "../images/icon-post-on.png";
+
+    btnHome.src = "../images/icon-home-off.png";
+    btnSearch.src = "../images/icon-search-off.png";
+    btnReels.src = "../images/icon-reels-off.png";
+    btnProfile.src = "../images/icon-profile-off.png";
   };
 
   logoutButton.onclick = function () {
@@ -224,7 +259,7 @@
         deleteButton.style.display = "none";
 
         if (post.author.id === logic.getLoggedInUserId()) {
-          deleteButton.style.display = "block";
+          deleteButton.style.display = "";
           deleteButton.onclick = function () {
             if (confirm("delete post?"))
               try {
@@ -245,18 +280,57 @@
 
         var paragraph = document.createElement("p");
         paragraph.innerText = post.text;
+        paragraph.className = "post-text";
 
         var dateTime = document.createElement("time");
         dateTime.innerText = post.date;
         dateTime.className = "date";
 
+        var divPostButtons = document.createElement("div");
+        divPostButtons.className = "divPostButtons";
+
+        var btnLike = document.createElement("button");
+        btnLike.style.backgroundImage = 'url("../images/icon-heart.png")';
+        btnLike.className = "btn-like";
+
+        var btnComment = document.createElement("button");
+        btnComment.style.backgroundImage = 'url("../images/icon-comment.png")';
+        btnComment.className = "btn-comment";
+
+        var btnShare = document.createElement("button");
+        btnShare.style.backgroundImage = 'url("../images/icon-share.png")';
+        btnShare.className = "btn-share";
+
         var divPost = document.createElement("div");
         divPost.className = "divPost";
 
-        article.append(authorHeading, deleteButton, image, divPost);
+        article.append(
+          authorHeading,
+          deleteButton,
+          image,
+          divPostButtons,
+          divPost
+        );
+        divPostButtons.append(btnLike, btnComment, btnShare);
         divPost.append(paragraph, dateTime);
 
         listSection.appendChild(article);
+
+        divPost.addEventListener("click", function () {
+          if (post.author.id === logic.getLoggedInUserId()) {
+            var newText = prompt("Enter the new text:", post.text);
+
+            if (newText !== null) {
+              try {
+                logic.changePost(post.id, newText);
+                renderPosts();
+              } catch (error) {
+                console.error(error);
+                alert(error.message);
+              }
+            }
+          }
+        });
       });
     } catch (error) {
       console.error(error);
@@ -270,9 +344,15 @@
   //todo boton chat ---------------------------------------
   btnChat.onclick = function () {
     btnChat.style.display = "none";
-    createPostButton.style.display = "none";
     title.style.display = "none";
     body.style.overflow = "hidden";
+    main.style.overflow = "hidden";
+
+    btnHome.src = "../images/icon-home-off.png";
+    btnPost.src = "../images/icon-post-off.png";
+    btnSearch.src = "../images/icon-search-off.png";
+    btnReels.src = "../images/icon-reels-off.png";
+    btnProfile.src = "../images/icon-profile-off.png";
 
     openChat();
 

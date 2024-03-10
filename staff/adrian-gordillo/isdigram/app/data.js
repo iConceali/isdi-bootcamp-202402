@@ -89,6 +89,23 @@ var data = (function () {
     return post;
   }
 
+  function editPost(postId, newText) {
+    try {
+      var posts = loadPosts();
+
+      var index = posts.findIndex(function (post) {
+        return post.id === postId;
+      });
+
+      if (index > -1) {
+        posts[index].text = newText;
+        savePosts(posts);
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
   function deletePost(callback) {
     try {
       var posts = loadPosts();
@@ -113,5 +130,6 @@ var data = (function () {
     getAllPosts: getAllPosts,
     findPost: findPost,
     deletePost: deletePost,
+    editPost: editPost,
   };
 })();
