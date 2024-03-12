@@ -1,3 +1,5 @@
+// presentation
+
 (function () {
   if (logic.isUserLoggedIn()) {
     location.href = "../home";
@@ -6,18 +8,26 @@
   }
 
   var form = document.querySelector("form");
-  var a = document.querySelector("a");
-
-  a.href = "../login";
 
   form.addEventListener("submit", function (event) {
+    console.log("form submit");
+
     event.preventDefault();
 
-    var name = document.getElementById("name").value;
-    var birthdate = document.getElementById("birthdate").value;
-    var email = document.getElementById("email").value;
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
+    var nameInput = document.getElementById("name");
+    var name = nameInput.value;
+
+    var birthdateInput = document.getElementById("birthdate");
+    var birthdate = birthdateInput.value;
+
+    var emailInput = document.getElementById("email");
+    var email = emailInput.value;
+
+    var usernameInput = document.getElementById("username");
+    var username = usernameInput.value;
+
+    var passwordInput = document.getElementById("password");
+    var password = passwordInput.value;
 
     try {
       logic.registerUser(name, birthdate, email, username, password);

@@ -1,5 +1,4 @@
-// business (logic)
-
+//logic.js
 var logic = (function () {
   // constants
 
@@ -13,7 +12,7 @@ var logic = (function () {
 
   function validateText(text, explain, checkEmptySpaceInside) {
     if (typeof text !== "string")
-      throw new TypeError(explain + " " + text + " is not a string");
+      throw new Error(explain + " " + text + " is not a string");
     if (!text.trim().length)
       throw new Error(explain + " >" + text + "< is empty or blank");
 
@@ -23,10 +22,8 @@ var logic = (function () {
   }
 
   function validateDate(date, explain) {
-    if (typeof date !== "string")
-      throw new TypeError(explain + " " + date + " is not a string");
     if (!DATE_REGEX.test(date))
-      throw new Error(explain + " " + date + " does not have a valid format");
+      throw new Error(explain + " " + date + " is not a date");
   }
 
   function validateEmail(email, explain) {
@@ -47,53 +44,54 @@ var logic = (function () {
   // logic
 
   function registerUser(name, birthdate, email, username, password) {
+    // TODO input validation
+
     validateText(name, "name");
     validateDate(birthdate, "birthdate");
     validateEmail(email, "email");
     validateText(username, "username", true);
     validatePassword(password, "password");
 
-    // TODO input validation
-
-    var user = db.users.findOne(function (user) {
+    var user = data.users.findOne(function (user) {
       return user.email === email || user.username === username;
     });
 
     if (user) throw new Error("user already exists");
 
-    user = {
+    var user = {
       name: name.trim(),
       birthdate: birthdate,
       email: email,
       username: username,
       password: password,
       status: "offline",
+      avatar: "",
     };
 
-    db.users.insertOne(user);
+    data.insertUser(user);
   }
 
   function loginUser(username, password) {
+    // TODO input validation
+
     validateText(username, "username", true);
     validatePassword(password, "password");
 
-    var user = db.users.findOne(function (user) {
-      return user.username === username;
+    var user = data.users.findOne(function (user) {
+      return user.username === username && user.password === password;
     });
 
-    if (!user) throw new Error("user not found");
-
-    if (user.password !== password) throw new Error("wrong password");
+    if (!user) throw new Error("wrong credentials");
 
     user.status = "online";
 
-    db.users.updateOne(user);
+    data.users.updateOne(user);
 
     sessionStorage.userId = user.id;
   }
 
   function retrieveUser() {
-    var user = db.users.findOne(function (user) {
+    var user = data.users.findOne(function (user) {
       return user.id === sessionStorage.userId;
     });
 
@@ -103,15 +101,15 @@ var logic = (function () {
   }
 
   function logoutUser() {
-    var user = db.users.findOne(function (user) {
+    var user = data.users.findOne(function (user) {
       return user.id === sessionStorage.userId;
     });
 
-    if (!user) throw new Error("user not found");
+    if (!user) throw new Error("wrong credentials");
 
     user.status = "offline";
 
-    db.users.updateOne(user);
+    data.users.updateOne(user);
 
     delete sessionStorage.userId;
   }
@@ -124,12 +122,8 @@ var logic = (function () {
     return !!sessionStorage.userId;
   }
 
-  function cleanUpLoggedInUserId() {
-    delete sessionStorage.userId;
-  }
-
-  function retrieveUsersWithStatus() {
-    var users = db.users.getAll();
+  function retrieveUsers() {
+    var users = data.users.getAll();
 
     var index = users.findIndex(function (user) {
       return user.id === sessionStorage.userId;
@@ -155,54 +149,6 @@ var logic = (function () {
     return users;
   }
 
-  function sendMessageToUser(userId, text) {
-    validateText(userId, "userId", true);
-    validateText(text, "text");
-
-    // { id, users: [id, id], messages: [{ from: id, text, date }, { from: id, text, date }, ...] }
-
-    // find chat in chats (by user ids)
-    // if no chat yet, then create it
-    // add message in chat
-    // update or insert chat in chats
-    // save chats
-
-    var chat = db.chats.findOne(function (chat) {
-      return (
-        chat.users.includes(userId) &&
-        chat.users.includes(sessionStorage.userId)
-      );
-    });
-
-    if (!chat) chat = { users: [userId, sessionStorage.userId], messages: [] };
-
-    var message = {
-      from: sessionStorage.userId,
-      text: text,
-      date: new Date().toISOString(),
-    };
-
-    chat.messages.push(message);
-
-    if (!chat.id) db.chats.insertOne(chat);
-    else db.chats.updateOne(chat);
-  }
-
-  function retrieveMessagesWithUser(userId) {
-    validateText(userId, "userId", true);
-
-    var chat = db.chats.findOne(function (chat) {
-      return (
-        chat.users.includes(userId) &&
-        chat.users.includes(sessionStorage.userId)
-      );
-    });
-
-    if (chat) return chat.messages;
-
-    return [];
-  }
-
   function createPost(image, text) {
     validateUrl(image, "image");
 
@@ -215,14 +161,14 @@ var logic = (function () {
       date: new Date().toLocaleDateString("en-CA"),
     };
 
-    db.posts.insertOne(post);
+    data.posts.insertOne(post);
   }
 
   function retrievePosts() {
-    var posts = db.posts.getAll();
+    var posts = data.posts.getAll();
 
     posts.forEach(function (post) {
-      var user = db.users.findOne(function (user) {
+      var user = data.users.findOne(function (user) {
         return user.id === post.author;
       });
 
@@ -232,10 +178,32 @@ var logic = (function () {
     return posts.reverse();
   }
 
-  function removePost(postId) {
+  function changePost(postId, newText) {
     validateText(postId, "postId", true);
 
-    var post = db.posts.findOne(function (post) {
+    try {
+      var post = data.posts.findOne(function (post) {
+        return post.id === postId;
+      });
+
+      if (!post) throw new Error("post not found");
+
+      if (post.author !== getLoggedInUserId())
+        throw new Error("post does not belong to user");
+
+      data.posts.editPost(postId, newText);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  }
+
+  function removePost(postId) {
+    // TODO input validation---------------------------
+
+    validateText(postId, "postId", true);
+
+    var post = data.posts.findOne(function (post) {
       return post.id === postId;
     });
 
@@ -244,28 +212,75 @@ var logic = (function () {
     if (post.author !== sessionStorage.userId)
       throw new Error("post does not belong to user");
 
-    db.deletePost(function (post) {
+    data.posts.deleteOne(function (post) {
       return post.id === postId;
     });
   }
 
-  function modifyPost(postId, text) {
-    validateText(postId, "postId", true);
+  //TODO chat logic-------------------------------------
+  function sendMessageToUser(text) {
     validateText(text, "text");
 
-    var post = db.posts.findOne(function (post) {
-      return post.id === postId;
+    // { id, users: [id, id], messages: [{ from: id, text, date }, { from: id, text, date }, ...] }
+
+    var chat = data.chats.findOne(function (chat) {
+      return chat.users.includes(sessionStorage.userId);
     });
 
-    if (!post) throw new Error("post not found");
+    if (!chat) chat = { users: [userId, sessionStorage.userId], messages: [] };
 
-    if (post.author !== sessionStorage.userId)
-      throw new Error("post does not belong to user");
+    var message = {
+      from: sessionStorage.userId,
+      text: text,
+      date: new Date().toISOString(),
+    };
 
-    post.text = text;
+    chat.messages.push(message);
 
-    db.posts.updateOne(post);
+    if (!chat.id) data.chats.insertOne(chat);
+    else data.chats.updateOne(chat);
   }
+
+  function retrieveMessagesWithUser(userId) {
+    validateText(userId, "userId", true);
+
+    var chat = data.chats.findOne(function (chat) {
+      return chat.users.includes(sessionStorage.userId);
+    });
+
+    if (chat) return chat.messages;
+
+    return [];
+  }
+
+  function retrieveUsersWithStatus() {
+    var users = data.users.getAll();
+
+    var index = users.findIndex(function (user) {
+      return user.id === sessionStorage.userId;
+    });
+
+    users.splice(index, 1);
+
+    users.forEach(function (user) {
+      delete user.name;
+      delete user.email;
+      delete user.password;
+      delete user.birthdate;
+    });
+
+    users
+      .sort(function (a, b) {
+        return a.username < b.username ? -1 : 1;
+      })
+      .sort(function (a, b) {
+        return a.status > b.status ? -1 : 1;
+      });
+
+    return users;
+  }
+
+  //todo ----------------------------------------------
 
   return {
     registerUser: registerUser,
@@ -274,15 +289,13 @@ var logic = (function () {
     logoutUser: logoutUser,
     getLoggedInUserId: getLoggedInUserId,
     isUserLoggedIn: isUserLoggedIn,
-    cleanUpLoggedInUserId: cleanUpLoggedInUserId,
-
+    retrieveUsers: retrieveUsers,
     retrieveUsersWithStatus: retrieveUsersWithStatus,
-    sendMessageToUser: sendMessageToUser,
-    retrieveMessagesWithUser: retrieveMessagesWithUser,
-
     createPost: createPost,
     retrievePosts: retrievePosts,
     removePost: removePost,
-    modifyPost: modifyPost,
+    changePost: changePost,
+    sendMessageToUser: sendMessageToUser,
+    retrieveMessagesWithUser: retrieveMessagesWithUser,
   };
 })();

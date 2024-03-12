@@ -55,7 +55,7 @@
 
       chatInput.type = "text";
       chatInput.placeholder = "Type your message";
-      chatSendButton.type = "submit";
+      // C.type = "submit";
       chatSendButton.innerText = "Send";
 
       chatForm.append(chatInput, chatSendButton);
@@ -68,8 +68,8 @@
         var text = chatInput.value.trim();
 
         if (text !== "") {
-          logic.sendMessageToUser(userId, text);
-          logic.displayChatMessage(logic.retrieveUser().username, text);
+          logic.sendMessageToUser(text);
+          displayChatMessage(text);
           chatInput.value = "";
         }
       });
@@ -107,7 +107,7 @@
         avatarText.innerText = user.username;
 
         item.addEventListener("click", function () {
-          openChat(user.id);
+          openChat(userId);
         });
 
         item.append(avatarImg, avatarText);
@@ -118,6 +118,19 @@
       console.error(error);
       alert(error.message);
     }
+  }
+
+  function displayChatMessage(text) {
+    var chatBox = document.querySelector(".chat-box");
+
+    var messageDiv = document.createElement("div");
+    messageDiv.className = "chat-message";
+
+    var textSpan = document.createElement("span");
+    textSpan.innerText = text;
+
+    messageDiv.append(textSpan);
+    chatBox.insertBefore(messageDiv, chatBox.firstChild);
   }
   //TODO --------------------------------------------------
 
@@ -161,6 +174,8 @@
   });
 
   //todo fin avatar---------------------------------------
+
+  //todo boton chat ---------------------------------------
 
   createPostCancelButton.onclick = function () {
     createPostSection.style.display = "none";
@@ -328,23 +343,6 @@
   }
 
   renderPosts();
-
-  //todo boton chat ---------------------------------------
-  btnChat.onclick = function () {
-    btnChat.style.display = "none";
-    title.style.display = "none";
-    body.style.overflow = "hidden";
-    main.style.overflow = "hidden";
-
-    btnHome.src = "../images/icon-home-off.png";
-    btnPost.src = "../images/icon-post-off.png";
-    btnSearch.src = "../images/icon-search-off.png";
-    btnReels.src = "../images/icon-reels-off.png";
-    btnProfile.src = "../images/icon-profile-off.png";
-
-    openChat(user.id);
-  };
-
   // homeButton.onclick = function () {
   //   homeButton.style.display = "none";
   //   chatSection.style.display = "none";

@@ -1,4 +1,5 @@
-//home.js
+// presentation
+
 (function () {
   if (!logic.isUserLoggedIn()) {
     location.href = "../login";
@@ -6,213 +7,55 @@
     return;
   }
 
-  var body = document.querySelector("body");
-  var main = document.querySelector(".main-home");
   var title = document.querySelector("h1");
-  var logoutButton = document.querySelector("#btn-logout");
+  var logoutButton = document.querySelector("#logout-button");
   var createPostSection = document.querySelector("#create-post-section");
   var createPostForm = createPostSection.querySelector("form");
-  var createPostCancelButton = document.querySelector("#btn-cancel-post");
-  var btnHome = document.querySelector("#btn-home img");
+  var createPostCancelButton = createPostSection.querySelector(
+    "#create-post-cancel-button"
+  );
+  var postListSection = document.querySelector("#post-list-section");
+  var chatButton = document.querySelector("#chat-button");
+  var chatSection = document.querySelector("#chat-section");
+  chatSection.style.display = "none";
+  var chatPanel = chatSection.querySelector("#chat-panel");
+  var chatForm = chatPanel.querySelector("form");
+  var footer = document.querySelector("#footer");
+  var homeButton = document.querySelector("#home-button");
+  var editPostSection = document.querySelector("#edit-post-section");
+  var editPostCancelButton = editPostSection.querySelector(
+    "#edit-post-cancel-button"
+  );
+  var editPostForm = editPostSection.querySelector("form");
+
+  var btnHome = document.querySelector("#home-button img");
   btnHome.src = "../images/icon-home-on.png";
-  var btnSearch = document.querySelector("#btn-search img");
+  var btnSearch = document.querySelector("#search-button img");
   btnSearch.src = "../images/icon-search-off.png";
-  var btnPost = document.querySelector("#btn-post img");
-  btnPost.src = "../images/icon-post-off.png";
-  var btnReels = document.querySelector("#btn-reels img");
+  var createPostButton = document.querySelector("#create-post-button img");
+  createPostButton.src = "../images/icon-post-off.png";
+  var btnReels = document.querySelector("#reels-button img");
   btnReels.src = "../images/icon-reels-off.png";
-  var btnProfile = document.querySelector("#btn-profile img");
+  var btnProfile = document.querySelector("#profile-button img");
   btnProfile.src = "../images/icon-profile-off.png";
-  var listSection = document.querySelector(".users-frame");
-  var btnChat = document.querySelector("#btn-chat");
-  var avatar = document.querySelector("#user-avatar");
-
-  var userList = document.createElement("div");
-  userList.className = "user-list";
-
-  var chatBox = document.createElement("div");
-  chatBox.className = "chat-box";
-
-  //TODO START CHAT ---------------------------------------
-  function openChat(receiverId) {
-    try {
-      listSection.innerHTML = "";
-
-      listSection.appendChild(userList);
-      listSection.appendChild(chatBox);
-
-      var chatForm = document.createElement("form");
-      chatForm.className = "chat-form";
-
-      var chatInput = document.createElement("input");
-      chatInput.className = "chat-input";
-
-      var chatSendButton = document.createElement("button");
-      chatSendButton.className = "btn-send-chat";
-
-      chatInput.type = "text";
-      chatInput.placeholder = "Type your message";
-      chatSendButton.type = "submit";
-      chatSendButton.innerText = "Send";
-
-      chatForm.append(chatInput, chatSendButton);
-
-      listSection.appendChild(chatForm);
-
-      //todo userList--------------------
-
-      userList.innerHTML = "";
-
-      try {
-        var users = logic.retrieveUsers();
-
-        users.forEach(function (user) {
-          var item = document.createElement("div");
-
-          if (user.status === "online")
-            item.classList.add("user-list__item--online");
-          else if (user.status === "offline")
-            item.classList.add("user-list__item--offline");
-
-          var avatarImg = document.createElement("img");
-          avatarImg.src = user.avatar || "../images/avatar-empty.webp";
-          avatarImg.alt = user.username;
-
-          var avatarText = document.createElement("p");
-          avatarText.innerText = user.username;
-
-          item.addEventListener("click", function () {
-            openChat(user.id);
-          });
-
-          item.append(avatarImg, avatarText);
-
-          userList.appendChild(item);
-        });
-      } catch (error) {
-        console.error(error);
-
-        alert(error.message);
-      }
-
-      //todo acaba---------------------
-
-      chatForm.onsubmit = function (event) {
-        event.preventDefault();
-        var message = chatInput.value;
-
-        logic.sendChatMessage(message, receiverId);
-
-        chatInput.value = "";
-      };
-
-      renderChatMessages(receiverId);
-    } catch (error) {
-      console.error(error);
-
-      alert(error.message);
-    }
-  }
-
-  function renderChatMessages(receiverId) {
-    var chatBox = document.querySelector(".chat-box");
-    chatBox.innerHTML = "";
-
-    try {
-      var messages = logic.retrieveChatMessages(receiverId);
-
-      messages.forEach(function (message) {
-        logic.displayChatMessage(message.sender, message.text);
-      });
-    } catch (error) {
-      console.error(error);
-
-      alert(error.message);
-    }
-  }
-
-  //TODO --------------------------------------------------
 
   try {
     var user = logic.retrieveUser();
 
     title.innerText = "Hello, " + user.name + "!";
-    avatar.src = user.avatar || "../images/avatar-empty.webp";
   } catch (error) {
     console.error(error);
 
     alert(error.message);
+
+    try {
+      logic.logoutUser();
+    } catch (error) {
+      logic.cleanUpLoggedInUserId();
+    }
+
+    location.href = "../login";
   }
-
-  //todo cambiar avatar ----------------------------------
-
-  avatar.addEventListener("click", function () {
-    var avatarInput = document.createElement("input");
-    avatarInput.type = "file";
-    avatarInput.accept = "image/*";
-
-    avatarInput.addEventListener("change", function (event) {
-      var file = event.target.files[0];
-      var reader = new FileReader();
-
-      reader.onloadend = function () {
-        var user = logic.retrieveUser();
-        user.avatar = reader.result;
-        data.updateUser(user);
-        avatar.src = user.avatar;
-      };
-
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-
-      avatarInput.remove();
-    });
-
-    avatarInput.click();
-  });
-
-  //todo fin avatar---------------------------------------
-
-  createPostCancelButton.onclick = function () {
-    createPostSection.style.display = "none";
-
-    btnHome.src = "../images/icon-home-on.png";
-    btnPost.src = "../images/icon-post-off.png";
-    btnSearch.src = "../images/icon-search-off.png";
-    btnReels.src = "../images/icon-reels-off.png";
-    btnProfile.src = "../images/icon-profile-off.png";
-  };
-
-  btnHome.onclick = function () {
-    listSection.innerHTML = "";
-
-    btnChat.style.display = "";
-    btnPost.style.display = "";
-    title.style.display = "";
-    body.style.overflow = "";
-    main.style.overflow = "";
-
-    btnHome.src = "../images/icon-home-on.png";
-
-    btnPost.src = "../images/icon-post-off.png";
-    btnSearch.src = "../images/icon-search-off.png";
-    btnReels.src = "../images/icon-reels-off.png";
-    btnProfile.src = "../images/icon-profile-off.png";
-
-    renderPosts();
-  };
-
-  btnPost.onclick = function () {
-    createPostSection.style.display = "block";
-
-    btnPost.src = "../images/icon-post-on.png";
-
-    btnHome.src = "../images/icon-home-off.png";
-    btnSearch.src = "../images/icon-search-off.png";
-    btnReels.src = "../images/icon-reels-off.png";
-    btnProfile.src = "../images/icon-profile-off.png";
-  };
 
   logoutButton.onclick = function () {
     logic.logoutUser();
@@ -223,8 +66,11 @@
   createPostForm.onsubmit = function (event) {
     event.preventDefault();
 
-    var image = document.getElementById("image").value;
-    var text = document.getElementById("text").value;
+    var imageInput = createPostForm.querySelector("#image");
+    var image = imageInput.value;
+
+    var textInput = createPostForm.querySelector("#text");
+    var text = textInput.value;
 
     try {
       logic.createPost(image, text);
@@ -241,15 +87,22 @@
     }
   };
 
+  createPostButton.onclick = function () {
+    createPostSection.style.display = "block";
+  };
+
+  createPostCancelButton.onclick = function () {
+    createPostSection.style.display = "none";
+  };
+
   function renderPosts() {
     try {
       var posts = logic.retrievePosts();
 
-      listSection.innerHTML = "";
+      postListSection.innerHTML = "";
 
       posts.forEach(function (post) {
         var article = document.createElement("article");
-        article.className = "post";
 
         var authorHeading = document.createElement("h3");
         authorHeading.innerText = post.author.username;
@@ -280,11 +133,9 @@
 
         var paragraph = document.createElement("p");
         paragraph.innerText = post.text;
-        paragraph.className = "post-text";
 
         var dateTime = document.createElement("time");
         dateTime.innerText = post.date;
-        dateTime.className = "date";
 
         var divPostButtons = document.createElement("div");
         divPostButtons.className = "divPostButtons";
@@ -304,6 +155,8 @@
         var divPost = document.createElement("div");
         divPost.className = "divPost";
 
+        // article.append(authorHeading, image, paragraph, dateTime);
+
         article.append(
           authorHeading,
           deleteButton,
@@ -314,23 +167,62 @@
         divPostButtons.append(btnLike, btnComment, btnShare);
         divPost.append(paragraph, dateTime);
 
-        listSection.appendChild(article);
+        postListSection.appendChild(article);
 
-        divPost.addEventListener("click", function () {
-          if (post.author.id === logic.getLoggedInUserId()) {
-            var newText = prompt("Enter the new text:", post.text);
+        if (post.author.id === logic.getLoggedInUserId()) {
+          // var deleteButton = document.createElement("button");
 
-            if (newText !== null) {
+          // deleteButton.innerText = "🗑️";
+
+          // deleteButton.onclick = function () {
+          //   if (confirm("delete post?"))
+          //     try {
+          //       logic.removePost(post.id);
+
+          //       renderPosts();
+          //     } catch (error) {
+          //       console.error(error);
+
+          //       alert(error.message);
+          //     }
+          // };
+
+          var editButton = document.createElement("button");
+
+          editButton.innerText = "📝";
+
+          editButton.onclick = function () {
+            var textInput = editPostForm.querySelector("#text");
+
+            textInput.value = post.text;
+
+            editPostForm.onsubmit = function (event) {
+              event.preventDefault();
+
+              var text = textInput.value;
+
               try {
-                logic.changePost(post.id, newText);
+                logic.modifyPost(post.id, text);
+
+                editPostForm.reset();
+
+                editPostSection.style.display = "";
+
                 renderPosts();
               } catch (error) {
                 console.error(error);
+
                 alert(error.message);
               }
-            }
-          }
-        });
+            };
+
+            editPostSection.style.display = "block";
+          };
+
+          article.append(editButton);
+        }
+
+        postListSection.appendChild(article);
       });
     } catch (error) {
       console.error(error);
@@ -341,32 +233,110 @@
 
   renderPosts();
 
-  //todo boton chat ---------------------------------------
-  btnChat.onclick = function () {
-    btnChat.style.display = "none";
-    title.style.display = "none";
-    body.style.overflow = "hidden";
-    main.style.overflow = "hidden";
+  var renderMessagesIntervalId;
 
-    btnHome.src = "../images/icon-home-off.png";
-    btnPost.src = "../images/icon-post-off.png";
-    btnSearch.src = "../images/icon-search-off.png";
-    btnReels.src = "../images/icon-reels-off.png";
-    btnProfile.src = "../images/icon-profile-off.png";
+  chatButton.onclick = function () {
+    postListSection.style.display = "none";
+    chatButton.style.display = "none";
 
-    openChat();
+    homeButton.style.display = "block";
+    chatSection.style.display = "block";
 
-    renderChatMessages();
+    var userList = chatSection.querySelector("#user-list");
+
+    userList.innerHTML = "";
+
+    try {
+      var users = logic.retrieveUsersWithStatus();
+
+      users.forEach(function (user) {
+        var item = document.createElement("li");
+
+        item.classList.add("user-list__item");
+
+        if (user.status === "online")
+          item.classList.add("user-list__item--online");
+        else if (user.status === "offline")
+          item.classList.add("user-list__item--offline");
+
+        item.innerText = user.username;
+
+        item.onclick = function () {
+          var usernameTitle = chatPanel.querySelector("#chat-panel__username");
+
+          usernameTitle.innerText = user.username;
+
+          function renderMessages() {
+            try {
+              var messages = logic.retrieveMessagesWithUser(user.id);
+
+              var messageList = chatPanel.querySelector("#message-list");
+
+              messageList.innerHTML = "";
+
+              messages.forEach(function (message) {
+                var messageParagraph = document.createElement("p");
+
+                messageParagraph.innerText = message.text;
+
+                if (message.from === logic.getLoggedInUserId())
+                  messageParagraph.classList.add("message-list__item--right");
+                else messageParagraph.classList.add("message-list__item--left");
+
+                messageList.appendChild(messageParagraph);
+              });
+            } catch (error) {
+              console.error(error);
+
+              alert(error.message);
+            }
+          }
+
+          renderMessages();
+
+          clearInterval(renderMessagesIntervalId);
+
+          renderMessagesIntervalId = setInterval(renderMessages, 1000);
+
+          chatForm.onsubmit = function (event) {
+            event.preventDefault();
+
+            var textInput = chatForm.querySelector("#text");
+            var text = textInput.value;
+
+            try {
+              logic.sendMessageToUser(user.id, text);
+
+              chatForm.reset();
+
+              renderMessages();
+            } catch (error) {
+              console.error(error);
+
+              alert(error.message);
+            }
+          };
+
+          chatPanel.style.display = "block";
+        };
+
+        userList.appendChild(item);
+      });
+    } catch (error) {
+      console.error(error);
+
+      alert(error.message);
+    }
   };
 
-  // homeButton.onclick = function () {
-  //   homeButton.style.display = "none";
-  //   chatSection.style.display = "none";
+  homeButton.onclick = function () {
+    chatSection.style.display = "none";
 
-  //   postListSection.style.display = "";
-  //   footer.style.display = "";
-  //   btnChat.style.display = "";
-  // };
+    postListSection.style.display = "";
+    chatButton.style.display = "";
+  };
 
-  //TODO --------------------------------------------------
+  editPostCancelButton.onclick = function () {
+    editPostSection.style.display = "";
+  };
 })();

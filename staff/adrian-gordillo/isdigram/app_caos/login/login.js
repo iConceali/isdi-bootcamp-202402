@@ -1,5 +1,3 @@
-// presentation
-
 (function () {
   if (logic.isUserLoggedIn()) {
     location.href = "../home";
@@ -8,17 +6,15 @@
   }
 
   var form = document.querySelector("form");
+  var a = document.querySelector("a");
+
+  a.href = "../register";
 
   form.addEventListener("submit", function (event) {
-    console.log("form submit");
-
     event.preventDefault();
 
-    var usernameInput = document.getElementById("username");
-    var username = usernameInput.value;
-
-    var passwordInput = document.getElementById("password");
-    var password = passwordInput.value;
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
 
     try {
       logic.loginUser(username, password);
@@ -27,6 +23,8 @@
 
       location.href = "../home";
     } catch (error) {
+      console.log(error);
+
       alert(error.message);
     }
   });

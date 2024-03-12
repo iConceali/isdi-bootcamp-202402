@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+
+  <body>
+    <header>
+      <img src="" alt="User Avatar" id="user-avatar" class="user-avatar" />
+      <button class="btn-logout" id="btn-logout"></button>
+      <button class="" id="btn-chat"></button>
+    </header>
+    <main class="main-home">
+      <h1>Hello, World!</h1>
+
+      <section class="users-frame"></section>
+
+ 
+
+      <section class="post-list"></section>
+
+      <section id="create-post-section">
+        <form>
+          <input type="text" placeholder="Image Link" id="image" />
+
+          <input type="text" placeholder="Text" id="text" />
+
+          <button class="btn-general-post" id="btn-createPost" type="submit">
+            Create Post
+          </button>
+        </form>
+
+        <button class="btn-general-post" id="btn-cancel-post">Cancel</button>
+      </section>
+
+      <!-- <button class="btn-createPost" id="btn-viewPost">+</button> -->
+    </main>
+    <footer>
+      
+        <div class="btns-bottom">
+          <div id="btn-home">
+            <img class="btn-home"></img>
+          </div>
+
+            <div id="btn-search">
+              <img class="btn-search"></img>
+            </div>
+       
+            <div id="btn-post">
+              <img class="btn-post"></img>
+            </div>
+
+            <div id="btn-reels">
+              <img class="btn-reels"></img>
+            </div>
+
+            <div id="btn-profile">
+              <img class="btn-profile"></img>
+            </div>
+         
+        </div>
+      
+
+      <!-- <button class="btn-floating-post" id="btn-floating-form-post">+</button> -->
+    </footer>
+    <script src="../data/Collection.js"></script>
+    <script src="../data/data.js"></script>
+
+    <script src="../logic.js"></script>
+    
+    <script src="home.js"></script>
+  </body>
+</html>

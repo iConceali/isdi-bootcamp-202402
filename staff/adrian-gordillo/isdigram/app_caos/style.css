@@ -32,7 +32,7 @@ main {
   padding-top: 30px;
 }
 
-/* #div-buttons-create-post {
+#div-buttons-create-post {
   width: 290px;
   display: flex;
   flex-direction: row;
@@ -40,7 +40,7 @@ main {
   justify-content: space-between;
   box-sizing: border-box;
   margin: 5px;
-} */
+}
 
 form {
   color: white;
@@ -196,20 +196,7 @@ p {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-#edit-post-section {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(216, 209, 209, 0.521);
-  padding: 20px;
-  border-radius: 10px;
-  z-index: 1;
-  display: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.4);
-}
-
-#post-list-section {
+.post-list {
   margin-top: 10px;
   margin-bottom: 90px;
 }
@@ -229,7 +216,7 @@ p {
   margin-right: 10px;
 }
 
-.send-chat-button {
+.btn-send-chat {
   border: none;
   background-color: #445bdd;
   border-radius: 20px;
@@ -240,7 +227,7 @@ p {
   height: 30px;
 }
 
-.chat-section {
+.chat-box {
   border: none;
   border-radius: 10px;
   height: 60vh;
@@ -278,7 +265,7 @@ p {
   gap: 15px;
 }
 
-#post-list-section {
+.users-frame {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -328,7 +315,7 @@ p {
   margin-top: 5px;
 }
 
-#logout-button {
+.btn-logout {
   border: none;
   background: none;
   background-image: url("./images/icon-exit.png");
@@ -341,7 +328,7 @@ p {
   margin-top: 5px;
 }
 
-#chat-button {
+#btn-chat {
   border: none;
   background: none;
   background-image: url("./images/icon-chat.png");
@@ -380,11 +367,11 @@ footer {
   margin-bottom: 3px;
 }
 
-.home-button,
-.search-button,
-.create-post-button,
-.reels-button,
-.profile-button {
+.btn-home,
+.btn-search,
+.btn-post,
+.btn-reels,
+.btn-profile {
   align-items: center;
   background-color: transparent;
   display: flex;
@@ -394,11 +381,11 @@ footer {
   width: 11vw;
 }
 
-#home-button,
-#search-button,
-#create-post-button,
-#reels-button,
-#profile-button {
+#btn-home,
+#btn-search,
+#btn-post,
+#btn-reels,
+#btn-profile {
   align-items: center;
   background-color: transparent;
   display: flex;
