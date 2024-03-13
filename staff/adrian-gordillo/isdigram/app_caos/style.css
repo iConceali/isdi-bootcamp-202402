@@ -233,12 +233,9 @@ p {
   height: 60vh;
   max-height: 60vh;
   overflow-y: auto;
-
   padding-bottom: 10px;
   width: 100%;
-
   display: flex;
-  flex-direction: column-reverse;
 }
 
 .message-list__item--left {

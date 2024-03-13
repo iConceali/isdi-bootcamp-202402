@@ -11,7 +11,7 @@ header {
   background-color: #0f1224;
   position: fixed;
   top: 0;
-  right: 0;
+  /* right: 0; */
   padding: 10px;
   width: 100vw;
   z-index: 2;
@@ -29,7 +29,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 30px;
+  /* padding-top: 30px; */
 }
 
 /* #div-buttons-create-post {
@@ -219,14 +219,21 @@ p {
   color: rgba(255, 255, 255, 0.459);
 }
 
-.chat-form {
+/* .chat-form {
   display: flex;
   margin-top: 10px;
+} */
+
+#chat-form {
+  display: flex;
+  flex-direction: row;
+  margin-right: 10px;
 }
 
-.chat-input {
-  flex-grow: 1;
+#chat-input {
+  width: 92vw;
   margin-right: 10px;
+  margin-left: 10px;
 }
 
 .send-chat-button {
@@ -237,29 +244,7 @@ p {
   font-weight: bold;
   cursor: pointer;
   width: 100px;
-  height: 30px;
-}
-
-.chat-section {
-  border: none;
-  border-radius: 10px;
-  height: 60vh;
-  max-height: 60vh;
-  overflow-y: auto;
-
-  padding-bottom: 10px;
-  width: 100%;
-
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.message-list__item--left {
-  align-self: flex-start;
-}
-
-.message-list__item--right {
-  align-self: flex-end;
+  height: 62px;
 }
 
 .chat-message {
@@ -269,13 +254,56 @@ p {
   max-width: 100%;
 }
 
-.user-list {
+#chat-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100%;
+}
+
+/* .chat-section */
+#message-list {
+  border: none;
+  height: 68vh;
+  max-height: 68vh;
+  overflow-y: auto;
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  padding: 0;
+  /* gap: 20px; */
+}
+
+.message-list__item--left {
+  margin-left: 20px;
+  align-self: flex-start;
+  background-color: rgba(128, 128, 128, 0.459);
+  border-radius: 20px;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.message-list__item--right {
+  margin-right: 20px;
+  align-self: flex-end;
+  background-color: #445bdd;
+  border-radius: 20px;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+#user-list {
   display: flex;
   width: 100%;
   justify-content: space-between;
   margin-left: 12px;
   overflow-x: auto;
   gap: 15px;
+  margin-top: 20px;
 }
 
 #post-list-section {

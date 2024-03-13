@@ -7,6 +7,7 @@
     return;
   }
 
+  var body = document.querySelector("body");
   var title = document.querySelector("h1");
   var logoutButton = document.querySelector("#logout-button");
   var createPostSection = document.querySelector("#create-post-section");
@@ -14,13 +15,15 @@
   var createPostCancelButton = createPostSection.querySelector(
     "#create-post-cancel-button"
   );
+  var avatarUser = document.querySelector("#user-avatar");
+
   var postListSection = document.querySelector("#post-list-section");
   var chatButton = document.querySelector("#chat-button");
   var chatSection = document.querySelector("#chat-section");
   chatSection.style.display = "none";
   var chatPanel = chatSection.querySelector("#chat-panel");
   var chatForm = chatPanel.querySelector("form");
-  var footer = document.querySelector("#footer");
+  var footer = document.querySelector("footer");
   var homeButton = document.querySelector("#home-button");
   var editPostSection = document.querySelector("#edit-post-section");
   var editPostCancelButton = editPostSection.querySelector(
@@ -232,12 +235,51 @@
   }
 
   renderPosts();
+  //todo CAMBIAR AVATAR--------------------------
+  // Agrega un evento de clic al avatar del usuario para cambiarlo
+  avatarUser.addEventListener("click", function () {
+    var avatarInput = document.createElement("input");
+    avatarInput.type = "file";
+    avatarInput.accept = "image/*";
 
+    avatarInput.addEventListener("change", function (event) {
+      var file = event.target.files[0];
+      var reader = new FileReader();
+
+      reader.onloadend = function () {
+        // Actualizar la imagen del avatar en la página
+        avatarUser.src = reader.result;
+
+        // Actualizar el avatar del usuario en la base de datos
+        try {
+          logic.updateUserAvatar(reader.result);
+        } catch (error) {
+          console.error(error);
+          alert(error.message);
+        }
+      };
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+
+      avatarInput.remove();
+    });
+
+    avatarInput.click();
+  });
+
+  //todo fin cambio avatar--------------------------------------------
   var renderMessagesIntervalId;
 
   chatButton.onclick = function () {
     postListSection.style.display = "none";
     chatButton.style.display = "none";
+    title.style.display = "none";
+    body.style.overflow = "hidden";
+    footer.style.display = "none";
+
+    avatarUser.style.display = "none";
 
     homeButton.style.display = "block";
     chatSection.style.display = "block";
@@ -258,8 +300,19 @@
           item.classList.add("user-list__item--online");
         else if (user.status === "offline")
           item.classList.add("user-list__item--offline");
+        //todo añadido AVATAR--------------------------------------
+        var avatarImg = document.createElement("img");
+        avatarImg.src = user.avatar || "../images/avatar-empty.webp";
+        avatarImg.alt = user.username;
 
-        item.innerText = user.username;
+        var avatarText = document.createElement("p");
+        avatarText.innerText = user.username;
+        //todo añadido AVATAR--------------------------------------
+
+        item.append(avatarImg, avatarText);
+
+        userList.appendChild(item);
+        // item.innerText = user.username;
 
         item.onclick = function () {
           var usernameTitle = chatPanel.querySelector("#chat-panel__username");
@@ -268,9 +321,12 @@
 
           function renderMessages() {
             try {
-              var messages = logic.retrieveMessagesWithUser(user.id);
-
               var messageList = chatPanel.querySelector("#message-list");
+              var isScrolledToBottom =
+                messageList.scrollHeight - messageList.clientHeight <=
+                messageList.scrollTop + 1;
+
+              var messages = logic.retrieveMessagesWithUser(user.id);
 
               messageList.innerHTML = "";
 
@@ -285,6 +341,11 @@
 
                 messageList.appendChild(messageParagraph);
               });
+
+              if (isScrolledToBottom) {
+                // Scroll hasta el final del elemento messageList
+                messageList.scrollTop = messageList.scrollHeight;
+              }
             } catch (error) {
               console.error(error);
 
@@ -334,6 +395,7 @@
 
     postListSection.style.display = "";
     chatButton.style.display = "";
+    body.style.overflow = "";
   };
 
   editPostCancelButton.onclick = function () {
