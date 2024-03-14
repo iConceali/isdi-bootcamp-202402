@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+
+  <body>
+    
+    <header>
+      <img src="" alt="User Avatar" id="user-avatar" class="user-avatar" />
+      <button class="logout-button" id="logout-button"></button>
+      <button class="chat-button" id="chat-button"></button>
+    </header>
+
+    <main class="main-home">
+      <h1>Hello, World!</h1>
+      
+      <section id="post-list-section"></section>
+
+      <section id="chat-section">
+        <div id="user-list"></div>
+
+        <div id="chat-panel">
+          <h3 id="chat-panel__username">username</h3>
+
+          <ul class="message-list" id="message-list"></ul>
+
+          <form id="chat-form">
+            <input id="chat-input" type="text" id="text" placeholder="Text" />
+            <button class="send-chat-button" type="submit"></button>
+          </form>
+
+        </div>
+      </section>
+
+      <section id="create-post-section">
+        <h2>Create Post</h2>
+
+        <form>
+          <label for="image">Image</label>
+          <input type="text" id="image" />
+
+          <label for="text">Text</label>
+          <input type="text" id="text" />
+
+          <button type="submit">Create</button>
+        </form>
+
+        <button id="create-post-cancel-button">Cancel</button>
+      </section>
+
+      <section id="edit-post-section">
+        <h2>Edit Post</h2>
+
+        <form>
+          <label for="text">Text</label>
+          <input type="text" id="text" />
+
+          <button type="submit">Save</button>
+        </form>
+
+        <button id="edit-post-cancel-button">Cancel</button>
+      </section>
+    </main>
+
+    <footer>
+      
+      <div class="btns-bottom">
+        <div id="home-button">
+          <img class="home-button"></img>
+        </div>
+
+          <div id="search-button">
+            <img class="search-button"></img>
+          </div>
+     
+          <div id="create-post-button">
+            <img class="create-post-button"></img>
+          </div>
+
+          <div id="reels-button">
+            <img class="reels-button"></img>
+          </div>
+
+          <div id="profile-button">
+            <img class="profile-button"></img>
+          </div>
+       
+      </div>
+    
+
+    <!-- <button class="btn-floating-post" id="btn-floating-form-post">+</button> -->
+  </footer>
+
+    <script src="../data/Collection.js"></script>
+    <script src="../data/data.js"></script>
+
+    <script src="../logic.js"></script>
+
+    <script src="home.js"></script>
+  </body>
+</html>
