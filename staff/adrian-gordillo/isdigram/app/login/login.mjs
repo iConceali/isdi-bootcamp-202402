@@ -1,7 +1,7 @@
-// register.js
+// login.js
 import logic from "../logic.mjs";
 
-import utils from "../utils";
+import utils from "../utils.mjs";
 
 if (logic.isUserLoggedIn()) location.href = "../home";
 else {
@@ -12,15 +12,6 @@ else {
 
     event.preventDefault();
 
-    const nameInput = document.getElementById("name");
-    const name = nameInput.value;
-
-    const birthdateInput = document.getElementById("birthdate");
-    const birthdate = birthdateInput.value;
-
-    const emailInput = document.getElementById("email");
-    const email = emailInput.value;
-
     const usernameInput = document.getElementById("username");
     const username = usernameInput.value;
 
@@ -28,11 +19,11 @@ else {
     const password = passwordInput.value;
 
     try {
-      logic.registerUser(name, birthdate, email, username, password);
+      logic.loginUser(username, password);
 
       form.reset();
 
-      location.href = "../login";
+      location.href = "../home";
     } catch (error) {
       utils.showFeedback(error);
     }

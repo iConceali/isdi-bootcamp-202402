@@ -24,6 +24,10 @@ h1 {
   flex-direction: column;
 }
 
+h2 {
+  color: black;
+}
+
 main {
   width: 100vw;
   display: flex;
@@ -62,6 +66,20 @@ input {
 
 input:hover {
   background-color: #2e3966;
+}
+
+.btn-cancel-post {
+  position: fixed;
+  top: 10px;
+  right: 5px;
+  background-color: transparent;
+  background: none;
+  border: none;
+}
+
+.img-cancel-post {
+  width: 30px;
+  height: 30px;
 }
 
 .btn-general {
@@ -191,7 +209,7 @@ time {
   background-image: url("./images/icon-share.png");
 }
 
-#create-post-section {
+.create-post-section {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -200,7 +218,7 @@ time {
   padding: 20px;
   border-radius: 10px;
   z-index: 1;
-  display: none;
+  display: block;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
@@ -364,7 +382,7 @@ time {
   margin-top: 5px;
 }
 
-#logout-button {
+.logout-button {
   border: none;
   background: none;
   background-image: url("./images/icon-exit.png");
@@ -377,7 +395,7 @@ time {
   margin-top: 5px;
 }
 
-#chat-button {
+.chat-button {
   border: none;
   background: none;
   background-image: url("./images/icon-chat.png");
@@ -406,7 +424,7 @@ footer {
   background-repeat: no-repeat;
 }
 
-.btns-bottom {
+.btns-footer {
   align-items: flex-start;
   display: inline-flex;
   flex: 0 0 auto;
@@ -428,18 +446,5 @@ footer {
   position: relative;
   height: 100%;
   width: 11vw;
-}
-
-#home-button,
-#search-button,
-#create-post-button,
-#reels-button,
-#profile-button {
-  align-items: center;
-  background-color: transparent;
-  display: flex;
-  justify-content: center;
-  position: relative;
-  height: 100%;
-  width: 11vw;
+  border: none;
 }
