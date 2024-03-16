@@ -14,9 +14,6 @@ class Header extends Component {
     avatarImg.addClass("user-avatar");
     avatarImg.setSource("../images/avatar-empty.webp");
 
-    const backButton = new Button();
-    backButton.addClass("back-button");
-
     const logoutButton = new Button();
     logoutButton.addClass("logout-button");
 
@@ -43,26 +40,16 @@ class Header extends Component {
 
     this.add(avatarImg, logoutButton, chatButton);
 
-    backButton.onClick(() => {
-      location.href = "../home";
-
-      this.remove(backButton);
-    });
-
     this._avatarImg = avatarImg;
     this._logoutButton = logoutButton;
     this._chatButton = chatButton;
-    this._backButton = backButton;
   }
 
   onChatClick(callback) {
     if (typeof callback !== "function")
       throw new TypeError("callback is not a function");
 
-    this._chatButton.onClick(() => {
-      this.add(this._backButton);
-      callback();
-    });
+    this._chatButton.onClick(() => callback());
   }
 
   // onCreatePostClick(callback) {

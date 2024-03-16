@@ -33,7 +33,7 @@ else {
     utils.showFeedback(error);
   }
 
-  // const menu = new Menu();
+  const menu = new Menu();
 
   const chat = new Chat();
 
@@ -51,7 +51,7 @@ else {
   //   home.add(footer);
   // });
 
-  // home.add(menu);
+  home.add(menu);
 
   const posts = new Posts();
 
@@ -60,9 +60,10 @@ else {
   const footer = new Footer();
 
   footer.onHomeClick(() => {
-    // home.remove(chat);
-    // home.add(posts);
-    // home.add(footer);
+    home.remove(chat);
+
+    home.add(posts);
+    home.add(footer);
   });
 
   footer.onCreatePostClick(() => {

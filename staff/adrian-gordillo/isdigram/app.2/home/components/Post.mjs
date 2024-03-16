@@ -12,7 +12,7 @@ class Post extends Component {
     // this.addClass("post");
 
     const divPostButtons = new Component("div");
-    divPostButtons.addClass("div-post-buttons");
+    divPostButtons.addClass("divPostButtons");
 
     const likeButton = new Component("button");
     likeButton.addClass("btn-like");
@@ -25,23 +25,34 @@ class Post extends Component {
 
     divPostButtons.add(likeButton, commentButton, shareButton);
 
-    const author = new Component("h3");
+    var author = new Component("h3");
     author.setText(post.author.username);
 
-    const picture = new Image();
+    var picture = new Image();
     picture.setSource(post.image);
     picture.addClass("imgPost");
 
-    const divPostText = new Component("div");
-    divPostText.addClass("div-post-text");
-
-    const paragraph = new Component("p");
+    var paragraph = new Component("p");
     paragraph.setText(post.text);
 
-    const dateTime = new Component("time");
+    var dateTime = new Component("time");
     dateTime.setText(post.date);
 
-    divPostText.add(paragraph, dateTime);
+    /* var deleteButton = new Component("button");
+  deleteButton.setText("🗑️");
+
+  var editButton = new Component("button");
+  editButton.setText("📝");
+
+  this.add(
+    author,
+    editButton,
+    deleteButton,
+    picture,
+    divPostButtons,
+    paragraph,
+    dateTime
+  );*/
 
     if (post.author.id === logic.getLoggedInUserId()) {
       const deleteButton = new Component("button");
@@ -74,7 +85,8 @@ class Post extends Component {
       // deleteButton,
       picture,
       divPostButtons,
-      divPostText
+      paragraph,
+      dateTime
     );
   }
 }

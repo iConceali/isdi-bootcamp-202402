@@ -11,13 +11,6 @@ class Image extends Component {
 
     this._container.src = source;
   }
-
-  setAlt(altText) {
-    if (typeof altText !== "string")
-      throw new TypeError("altText is not a string");
-
-    this._container.alt = altText;
-  }
 }
 
 export default Image;

@@ -14,7 +14,7 @@ header {
   /* right: 0; */
   padding: 10px;
   width: 100vw;
-  /* z-index: 2; */
+  z-index: 2;
 }
 
 h1 {
@@ -33,6 +33,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* padding-top: 30px; */
 }
 
 /* #div-buttons-create-post {
@@ -160,10 +161,9 @@ h3 {
   color: white;
   margin: 0;
   padding-left: 10px;
-  margin-top: 10px;
 }
 
-.div-post-text {
+.divPost {
   padding-left: 10px;
   margin-top: 5px;
 }
@@ -180,7 +180,7 @@ time {
   max-width: 80vw;
 }
 
-.div-post-buttons {
+.divPostButtons {
   margin-left: 10px;
   margin-bottom: 5px;
   margin-top: 10px;
@@ -280,7 +280,7 @@ time {
   max-width: 100%;
 }
 
-.chat-section {
+#chat-section {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -290,7 +290,7 @@ time {
 }
 
 /* .chat-section */
-.message-list {
+#message-list {
   border: none;
   height: 68vh;
   max-height: 68vh;
@@ -322,7 +322,7 @@ time {
   margin-top: 20px;
 }
 
-.user-list {
+#user-list {
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -380,19 +380,6 @@ time {
   float: left;
   margin-left: 15px;
   /* margin-top: 5px; */
-}
-
-.back-button {
-  border: none;
-  background: none;
-  background-image: url("./images/icon-back.png");
-  background-size: cover;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  float: left;
-  margin-left: 15px;
-  margin-top: 5px;
 }
 
 .logout-button {

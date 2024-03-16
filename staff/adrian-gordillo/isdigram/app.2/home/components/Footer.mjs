@@ -95,7 +95,7 @@ class Footer extends Component {
       throw new TypeError("callback is not a function");
 
     this._homeButton.onClick(() => {
-      // this._homeImg.setSource("../images/icon-home-on.png");
+      this._homeImg.setSource("../images/icon-home-on.png");
 
       callback();
     });
