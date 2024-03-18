@@ -21,6 +21,10 @@ class Posts extends Component {
       posts.forEach((post) => {
         const post2 = new Post(post);
 
+        post2.onDeleted(() => this.refresh());
+
+        post2.onEdited(() => this.refresh());
+
         this.add(post2);
       });
     } catch (error) {
