@@ -71,6 +71,10 @@ class Component {
     this._container.classList.add(classname);
   }
 
+  removeClass(classname) {
+    this._container.classList.remove(classname);
+  }
+
   getElement() {
     return this.element;
   }

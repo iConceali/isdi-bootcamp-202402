@@ -8,8 +8,10 @@ import Post from "./Post.mjs";
 class Posts extends Component {
   constructor() {
     super("section");
-
+    this.addClass("post-list-section");
     this.refresh();
+
+    this._refreshIntervalId = setInterval(() => this.refresh(), 50000);
   }
 
   refresh() {
@@ -30,6 +32,10 @@ class Posts extends Component {
     } catch (error) {
       utils.showFeedback(error);
     }
+  }
+
+  stopAutoRefresh() {
+    clearInterval(this._refreshIntervalId);
   }
 }
 

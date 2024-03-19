@@ -16,7 +16,12 @@ class Post extends Component {
     divPostButtons.addClass("div-post-buttons");
 
     const likeButton = new Component("button");
-    likeButton.addClass("btn-like");
+    likeButton.addClass("btn-like-off");
+
+    // Verificar si el usuario actual ha dado like al post
+    if (post.likes.includes(logic.getLoggedInUserId())) {
+      likeButton.addClass("btn-like-on");
+    }
 
     const commentButton = new Component("button");
     commentButton.addClass("btn-comment");
@@ -31,7 +36,7 @@ class Post extends Component {
 
     const picture = new Image();
     picture.setSource(post.image);
-    picture.addClass("imgPost");
+    picture.addClass("img-post");
 
     const divPostText = new Component("div");
     divPostText.addClass("div-post-text");
@@ -43,12 +48,21 @@ class Post extends Component {
     dateTime.setText(post.date);
 
     divPostText.add(paragraph, dateTime);
+    this.add(author, picture, divPostButtons, divPostText);
+
+    likeButton.onClick(() => {
+      likeButton.removeClass("btn-like-off");
+      likeButton.addClass("btn-like-on");
+
+      logic.likePost(post.id);
+    });
 
     if (post.author.id === logic.getLoggedInUserId()) {
       const deleteButton = new Component("button");
       deleteButton.setText("🗑️");
+      deleteButton.addClass("btn-delete-post");
 
-      deleteButton.onClick(function () {
+      deleteButton.onClick(() => {
         if (confirm("delete post?"))
           try {
             logic.removePost(post.id);
@@ -61,6 +75,7 @@ class Post extends Component {
 
       const editButton = new Component("button");
       editButton.setText("📝");
+      editButton.addClass("btn-edit-post");
 
       editButton.onClick(() => {
         if (!EditPost.active) {
@@ -74,17 +89,9 @@ class Post extends Component {
         }
       });
 
-      this.add(deleteButton, editButton);
+      divPostButtons.add(deleteButton, editButton);
     }
 
-    this.add(
-      author,
-      // editButton,
-      // deleteButton,
-      picture,
-      divPostButtons,
-      divPostText
-    );
     this._onDeletedCallback = null;
     this._onEditedCallback = null;
   }

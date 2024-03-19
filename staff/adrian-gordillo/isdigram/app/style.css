@@ -143,9 +143,11 @@ a {
   position: relative;
 }
 
-.imgPost {
+.img-post {
   max-width: 100%;
   margin-top: 10px;
+  display: block;
+  margin: auto;
 }
 
 .btn-delete-post {
@@ -155,6 +157,20 @@ a {
   background-size: cover;
   background-color: transparent;
   border: none;
+  position: absolute;
+  right: 5px;
+  margin: -7px 0;
+}
+
+.btn-edit-post {
+  /* width: 30px;
+  height: 30px; */
+  font-size: 25px;
+  background-color: transparent;
+  border: none;
+  position: absolute;
+  right: 30px;
+  margin: -10px 0;
 }
 
 h3 {
@@ -187,7 +203,8 @@ time {
   margin-top: 10px;
 }
 
-.btn-like,
+.btn-like-off,
+.btn-like-on,
 .btn-comment,
 .btn-share {
   background-color: transparent;
@@ -198,8 +215,12 @@ time {
   margin-right: 15px;
 }
 
-.btn-like {
+.btn-like-off {
   background-image: url("./images/icon-heart.png");
+}
+
+.btn-like-on {
+  background-image: url("./images/icon-heart-on.png");
 }
 
 .btn-comment {
@@ -236,7 +257,7 @@ time {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-#post-list-section {
+.post-list-section {
   margin-top: 10px;
   margin-bottom: 90px;
 }
@@ -304,7 +325,7 @@ time {
   height: 55vh;
   max-height: 55vh;
   overflow-y: auto;
-
+  color: white;
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -320,6 +341,7 @@ time {
   border-radius: 20px;
   padding: 10px;
   margin-top: 20px;
+  list-style-type: none;
 }
 
 .message-list__item--right {
@@ -329,6 +351,7 @@ time {
   border-radius: 20px;
   padding: 10px;
   margin-top: 20px;
+  list-style-type: none;
 }
 
 .user-list {
