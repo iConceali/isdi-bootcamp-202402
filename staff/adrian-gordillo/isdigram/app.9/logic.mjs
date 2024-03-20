@@ -270,7 +270,7 @@ function modifyPost(postId, text) {
 }
 
 function updateUserAvatar(avatarUrl) {
-  // validateUrl(avatarUrl, "avatarUrl");
+  validateUrl(avatarUrl, "avatarUrl");
 
   var userId = sessionStorage.userId;
 

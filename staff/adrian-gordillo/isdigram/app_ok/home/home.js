@@ -43,6 +43,8 @@
   var btnProfile = document.querySelector("#profile-button img");
   btnProfile.src = "../images/icon-profile-off.png";
 
+  logic.updateUserAvatar(user.avatar);
+
   try {
     var user = logic.retrieveUser();
 
