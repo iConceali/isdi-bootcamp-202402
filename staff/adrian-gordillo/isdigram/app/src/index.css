@@ -161,7 +161,7 @@ a {
 .btn-edit-post {
   width: 30px;
   height: 30px;
-  background-image: url("./public/images/icon-edit.png");
+  background-image: url("./src/assets/icon-edit.png");
   background-size: cover;
   background-color: transparent;
   border: none;
@@ -230,19 +230,19 @@ time {
 }
 
 .btn-like-off {
-  background-image: url("./public/images/icon-heart.png");
+  background-image: url("./src/assets/icon-heart.png");
 }
 
 .btn-like-on {
-  background-image: url("./public/images/icon-heart-on.png");
+  background-image: url("./src/assets/icon-heart-on.png");
 }
 
 .btn-comment {
-  background-image: url("./public/images/icon-comment.png");
+  background-image: url("./src/assets/icon-comment.png");
 }
 
 .btn-share {
-  background-image: url("./public/images/icon-share.png");
+  background-image: url("./src/assets/icon-share.png");
 }
 
 .create-post-section {
@@ -314,7 +314,7 @@ time {
   cursor: pointer;
   width: 62px;
   height: 62px;
-  background-image: url("./public/images/icon-send.png");
+  background-image: url("./src/assets/icon-send.png");
   background-size: cover;
   position: fixed;
   right: 5vw;
@@ -438,7 +438,7 @@ time {
 .back-button {
   border: none;
   background: none;
-  background-image: url("./public/images/icon-back.png");
+  background-image: url("./src/assets/icon-back.png");
   background-size: cover;
   cursor: pointer;
   width: 30px;
@@ -451,7 +451,7 @@ time {
 .logout-button {
   border: none;
   background: none;
-  background-image: url("./public/images/icon-exit.png");
+  background-image: url("./src/assets/icon-exit.png");
   background-size: cover;
   cursor: pointer;
   width: 30px;
@@ -464,7 +464,7 @@ time {
 .chat-button {
   border: none;
   background: none;
-  background-image: url("./public/images/icon-chat.png");
+  background-image: url("./src/assets/icon-chat.png");
   background-size: cover;
   cursor: pointer;
   width: 30px;
@@ -486,7 +486,7 @@ footer {
   justify-content: center;
   /*padding: 10px; */
   box-sizing: border-box;
-  background-image: url("./public/images/footer-empty.png");
+  background-image: url("./src/assets/footer-empty.png");
   background-size: 100%;
   background-repeat: no-repeat;
 }
@@ -535,7 +535,7 @@ footer {
   width: 10px;
   height: 20px;
   background: none;
-  background-image: url("./public/images/icon-menu1.png");
+  background-image: url("./src/assets/icon-menu1.png");
   background-size: cover;
   background-repeat: no-repeat;
   border: none;

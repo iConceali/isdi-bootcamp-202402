@@ -1,3 +1,5 @@
+import logic from "./logic";
+
 import { Component } from "react";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -8,7 +10,7 @@ class App extends Component {
   constructor() {
     super();
 
-    this.state = { view: "landing" };
+    this.state = { view: logic.isUserLoggedIn() ? "home" : "landing" };
   }
 
   render() {
