@@ -8,8 +8,6 @@ class Header extends Component {
   constructor() {
     super("header");
 
-    // this.addClass("header");
-
     const avatarImg = new Image();
     avatarImg.addClass("user-avatar");
     avatarImg.setSource("../images/avatar-empty.webp");
@@ -26,20 +24,8 @@ class Header extends Component {
       location.href = "../login";
     });
 
-    // const logoutButtonImg = new Image();
-    // logoutButtonImg.addClass("logout-button");
-    // logoutButtonImg.setSource("../images/icon-search-off.png");
-
-    // searchButton.add(searchImg);
-
     const chatButton = new Button();
     chatButton.addClass("chat-button");
-
-    // const createPostImg = new Image();
-    // createPostImg.addClass("create-post-button");
-    // createPostImg.setSource("../images/icon-post-off.png");
-
-    // createPostButton.add(createPostImg);
 
     this.add(avatarImg, logoutButton, chatButton);
 
@@ -64,21 +50,6 @@ class Header extends Component {
       callback();
     });
   }
-
-  // onCreatePostClick(callback) {
-  //   this._createPostButton.onClick(callback);
-  // }
-
-  // onHomeClick(callback) {
-  //   if (typeof callback !== "function")
-  //     throw new TypeError("callback is not a function");
-
-  //   this._homeButton.onClick(() => {
-  //     this.replace(this._homeButton, this._chatButton);
-
-  //     callback();
-  //   });
-  // }
 }
 
 export default Header;
