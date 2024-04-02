@@ -1,47 +1,40 @@
-describe("insertOne", () => {
-  it("should inserts a document at the end of the original document", (done) => {
-    fs.writeFile(
-      "./data/cars.json",
-      '[{"brand":"porsche","model":"911"},{"brand":"fiat","model":"500"}]',
-      (error) => {
-        if (error) {
-          console.error(error);
+function retrieveUsersWithStatus(userId, callback) {
+  try {
+    validateText(userId, "userId", true);
+    validateCallback(callback);
 
-          return;
-        }
-
-        const cars = new Collection("cars");
-
-        const docuObject = JSON.parse(
-          '{"brand":"lamborghini","model":"huracan"}'
-        );
-
-        cars.insertOne(docuObject, (error) => {
-          if (error) {
-            console.error(error);
-
-            return;
-          }
-          cars._loadDocuments((error, documents) => {
-            if (error) {
-              console.error(error);
-
-              return;
-            }
-
-            // console.log(documents);
-            expect(error).to.be.null;
-
-            expect(documents).to.be.instanceOf(Array);
-
-            expect(documents.length).to.equal(3);
-            expect(documents[2].brand).to.equal("lamborghini");
-            expect(documents[2].model).to.equal("huracan");
-          });
-
-          done();
-        });
+    db.users.getAll((error, users) => {
+      if (error) {
+        callback(error);
+        return;
       }
-    );
-  });
-});
+
+      if (!users || users.length === 0) {
+        callback(new Error("No users found"));
+        return;
+      }
+
+      // Sort users by status
+      users.sort((a, b) => {
+        if (a.status === b.status) {
+          return a.username.localeCompare(b.username); // If status is the same, sort by username
+        } else {
+          return a.status === "online" ? -1 : 1; // Sort online users before offline users
+        }
+      });
+
+      // Omit sensitive data
+      users.forEach((user) => {
+        delete user.name;
+        delete user.email;
+        delete user.birthdate;
+        delete user.id;
+        delete user.password;
+      });
+
+      callback(null, users);
+    });
+  } catch (error) {
+    callback(error);
+  }
+}
