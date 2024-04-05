@@ -1,27 +1,73 @@
-function retrieveUser(userId, callback) {
-  validateText(userId, "userId", true);
-  validateCallback(callback);
+import { logger, showFeedback } from "../utils";
 
-  db.users.findOne(
-    (user) => user.id === userId,
-    (error, user) => {
-      if (error) {
-        callback(error);
+import logic from "../logic";
 
-        return;
-      }
+import { Component } from "react";
+import Post from "./Post";
 
-      if (!user) {
-        callback(new Error("user not found"));
+class PostList extends Component {
+  constructor() {
+    logger.debug("PostList -> constructor");
 
-        return;
-      }
+    super();
 
-      delete user.id;
-      delete user.password;
-      delete user.status;
+    this.state = { posts: [] };
+  }
 
-      callback(null, user);
+  loadPosts() {
+    logger.debug("PostList -> loadPosts");
+
+    try {
+      logic.retrievePosts((error, posts) => {
+        if (error) {
+          showFeedback(error);
+
+          return;
+        }
+
+        this.setState({ posts });
+      });
+    } catch (error) {
+      showFeedback(error);
     }
-  );
+  }
+
+  componentWillReceiveProps(newProps) {
+    logger.debug(
+      "PostList -> componentWillReceiveProps",
+      JSON.stringify(this.props),
+      JSON.stringify(newProps)
+    );
+
+    //if (newProps.stamp !== this.props.stamp) this.loadPosts()
+    newProps.stamp !== this.props.stamp && this.loadPosts();
+  }
+
+  componentDidMount() {
+    logger.debug("PostList -> componentDidMount");
+
+    this.loadPosts();
+  }
+
+  handlePostDeleted = () => this.loadPosts();
+
+  handleEditClick = (post) => this.props.onEditPostClick(post);
+
+  render() {
+    logger.debug("PostList -> render");
+
+    return (
+      <section>
+        {this.state.posts.map((post) => (
+          <Post
+            item={post}
+            onEditClick={this.handleEditClick}
+            onDeleted={this.handlePostDeleted}
+          />
+        ))}
+      </section>
+    );
+  }
 }
+
+export default PostList;

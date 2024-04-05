@@ -7,7 +7,7 @@ import Post from "./Post";
 
 class PostList extends Component {
   constructor() {
-    logger.debug("PostList");
+    logger.debug("PostList -> constructor");
 
     super();
 
@@ -18,9 +18,15 @@ class PostList extends Component {
     logger.debug("PostList -> loadPosts");
 
     try {
-      const posts = logic.retrievePosts();
+      logic.retrievePosts((error, posts) => {
+        if (error) {
+          showFeedback(error);
 
-      this.setState({ posts });
+          return;
+        }
+
+        this.setState({ posts });
+      });
     } catch (error) {
       showFeedback(error);
     }

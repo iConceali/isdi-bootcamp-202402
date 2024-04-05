@@ -14,11 +14,17 @@ function Login(props) {
     logger.debug("Login -> handleSubmit", username, password);
 
     try {
-      logic.loginUser(username, password);
+      logic.loginUser(username, password, (error) => {
+        if (error) {
+          showFeedback(error);
 
-      form.reset();
+          return;
+        }
 
-      props.onUserLoggedIn();
+        form.reset();
+
+        props.onUserLoggedIn();
+      });
     } catch (error) {
       showFeedback(error);
     }

@@ -1,6 +1,6 @@
-//logic.js
 //@ts-nocheck
-import db from "../data/index.js";
+
+import db from "../data/index.ts";
 
 // constants
 
@@ -12,7 +12,7 @@ const URL_REGEX = /^(http|https):\/\//;
 
 // helpers
 
-function validateText(text, explain, checkEmptySpaceInside) {
+function validateText(text, explain, checkEmptySpaceInside?) {
   if (typeof text !== "string")
     throw new TypeError(explain + " " + text + " is not a string");
   if (!text.trim().length)
@@ -30,14 +30,14 @@ function validateDate(date, explain) {
     throw new Error(explain + " " + date + " does not have a valid format");
 }
 
-function validateEmail(email, explain) {
+function validateEmail(email, explain = "email") {
   if (!EMAIL_REGEX.test(email))
-    throw new Error(explain + " " + email + " is not an email");
+    throw new Error(`${explain} ${email} is not an email`);
 }
 
-function validatePassword(password, explain) {
+function validatePassword(password, explain = "password") {
   if (!PASSWORD_REGEX.test(password))
-    throw new Error(explain + " " + password + " is not acceptable");
+    throw new Error(`${explain} password is not acceptable`);
 }
 
 function validateUrl(url, explain) {
@@ -170,139 +170,74 @@ function retrieveUser(userId, callback) {
   );
 }
 
-function logoutUser(username, callback) {
-  validateText(username, "username", true);
-  validateCallback(callback);
+// TODO next ...
 
-  db.users.findOne(
-    (user) => user.username === username,
-    (error, user) => {
-      if (error) {
-        callback(error);
+function logoutUser() {
+  const user = db.users.findOne((user) => user.id === sessionStorage.userId);
 
-        return;
-      }
+  if (!user) throw new Error("user not found");
 
-      if (!user) {
-        callback(new Error("user not found"));
+  user.status = "offline";
 
-        return;
-      }
-
-      user.status = "offline";
-
-      db.users.updateOne(
-        (user2) => user2.id === user.id,
-        user,
-        (error) => {
-          if (error) {
-            callback(error);
-
-            return;
-          }
-
-          callback(null, user.id);
-        }
-      );
-    }
-  );
+  db.users.updateOne(user);
 }
 
-function getLoggedInUserId() {
-  return sessionStorage.userId;
-}
+function retrieveUsersWithStatus() {
+  const users = db.users.getAll();
 
-function isUserLoggedIn() {
-  return !!sessionStorage.userId;
-}
+  const index = users.findIndex((user) => user.id === sessionStorage.userId);
 
-function cleanUpLoggedInUserId() {
-  delete sessionStorage.userId;
-}
+  users.splice(index, 1);
 
-function retrieveUsersWithStatus(callback) {
-  validateCallback(callback);
-
-  db.users.getAll((error, users) => {
-    if (error) {
-      callback(error);
-
-      return;
-    }
-
-    if (!users) {
-      callback(new Error("No users found"));
-
-      return;
-    }
-
-    users.sort((a, b) => {
-      if (a.status === b.status) {
-        return a.username.localeCompare(b.username);
-      } else {
-        return a.status === "online" ? -1 : 1;
-      }
-    });
-
-    users.forEach((user) => {
-      delete user.name;
-      delete user.email;
-      delete user.birthdate;
-      delete user.id;
-      delete user.password;
-    });
-
-    callback(null, users);
+  users.forEach(function (user) {
+    delete user.name;
+    delete user.email;
+    delete user.password;
+    delete user.birthdate;
   });
+
+  users
+    .sort(function (a, b) {
+      return a.username < b.username ? -1 : 1;
+    })
+    .sort(function (a, b) {
+      return a.status > b.status ? -1 : 1;
+    });
+
+  return users;
 }
 
-function sendMessageToUser(userId, text, callback) {
+function sendMessageToUser(userId, text) {
   validateText(userId, "userId", true);
   validateText(text, "text");
-  validateCallback(callback);
 
-  db.users.findOne(
-    (user) => user.id === userId,
-    (error, user) => {
-      if (error) {
-        callback(error);
+  // { id, users: [id, id], messages: [{ from: id, text, date }, { from: id, text, date }, ...] }
 
-        return;
-      }
+  // find chat in chats (by user ids)
+  // if no chat yet, then create it
+  // add message in chat
+  // update or insert chat in chats
+  // save chats
 
-      if (!user) {
-        callback(new Error("user not found"));
-
-        return;
-      }
-
-      db.chats.findOne(
-        (chat) => chat.users.includes(userId) && chat.users.includes(user.id),
-        (error, chat) => {
-          if (error) {
-            callback(error);
-
-            return;
-          }
-
-          if (!chat) chat = { users: [userId, user.id], messages: [] };
-
-          const message = {
-            from: user.id,
-            text: text,
-            date: new Date().toISOString(),
-          };
-
-          chat.messages.push(message);
-
-          if (!chat.id) db.chats.insertOne(chat);
-          else db.chats.updateOne(chat);
-        }
-      );
-    }
+  let chat = db.chats.findOne(
+    (chat) =>
+      chat.users.includes(userId) && chat.users.includes(sessionStorage.userId)
   );
+
+  if (!chat) chat = { users: [userId, sessionStorage.userId], messages: [] };
+
+  const message = {
+    from: sessionStorage.userId,
+    text: text,
+    date: new Date().toISOString(),
+  };
+
+  chat.messages.push(message);
+
+  if (!chat.id) db.chats.insertOne(chat);
+  else db.chats.updateOne(chat);
 }
-// todo -----------------------------------------------
+
 function retrieveMessagesWithUser(userId) {
   validateText(userId, "userId", true);
 
@@ -326,42 +261,63 @@ function createPost(image, text) {
     image: image,
     text: text,
     date: new Date().toLocaleDateString("en-CA"),
-    likes: [],
   };
 
   db.posts.insertOne(post);
 }
 
-function likePost(postId) {
-  validateText(postId, "postId", true);
+function retrievePosts(userId, callback) {
+  validateText(userId, "userId", true);
+  validateCallback(callback);
 
-  const post = db.posts.findOne((post) => post.id === postId);
+  db.users.findOne(
+    (user) => user.id === userId,
+    (error, user) => {
+      if (error) {
+        callback(error);
 
-  if (!post) throw new Error("post not found");
+        return;
+      }
 
-  const userId = sessionStorage.userId;
+      if (!user) {
+        callback(new Error("user not found"));
 
-  if (post.likes.includes(userId)) {
-    // Si el usuario ya ha dado like, lo eliminamos
-    post.likes = post.likes.filter((id) => id !== userId);
-  } else {
-    // Si el usuario no ha dado like, lo añadimos
-    post.likes.push(userId);
-  }
+        return;
+      }
 
-  db.posts.updateOne(post);
-}
+      db.posts.getAll((error, posts) => {
+        if (error) {
+          callback(error);
 
-function retrievePosts() {
-  const posts = db.posts.getAll();
+          return;
+        }
 
-  posts.forEach(function (post) {
-    const user = db.users.findOne((user) => user.id === post.author);
+        let count = 0;
 
-    post.author = { id: user.id, username: user.username };
-  });
+        posts.forEach((post) => {
+          db.users.findOne(
+            (user) => user.id === post.author,
+            (error, user) => {
+              if (error) {
+                callback(error);
 
-  return posts.reverse();
+                return;
+              }
+
+              post.author = {
+                id: user.id,
+                username: user.username,
+              };
+
+              count++;
+
+              if (count === posts.length) callback(null, posts.reverse());
+            }
+          );
+        });
+      });
+    }
+  );
 }
 
 function removePost(postId) {
@@ -393,31 +349,11 @@ function modifyPost(postId, text) {
   db.posts.updateOne(post);
 }
 
-function updateUserAvatar(avatarUrl) {
-  // validateUrl(avatarUrl, "avatarUrl");
-
-  var userId = sessionStorage.userId;
-
-  var user = db.users.findOne(function (user) {
-    return user.id === userId;
-  });
-
-  if (!user) throw new Error("user not found");
-
-  user.avatar = avatarUrl;
-
-  db.users.updateOne(user);
-}
-
 const logic = {
   registerUser,
   loginUser,
   retrieveUser,
   logoutUser,
-  getLoggedInUserId,
-  isUserLoggedIn,
-  cleanUpLoggedInUserId,
-  updateUserAvatar,
 
   retrieveUsersWithStatus,
   sendMessageToUser,
@@ -427,7 +363,6 @@ const logic = {
   retrievePosts,
   removePost,
   modifyPost,
-  likePost,
 };
 
 export default logic;

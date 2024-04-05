@@ -10,7 +10,7 @@ import Home from "./pages/Home";
 
 class App extends Component {
   constructor() {
-    logger.debug("App");
+    logger.debug("App -> constructor");
 
     super();
 
@@ -62,9 +62,8 @@ class App extends Component {
         />
       );
     else if (this.state.view === "home")
-      return (
-        <Home onUserLoggedOut={this.handleUserLoggedOut} />
-      ); // new Home().render(...)
+      return <Home onUserLoggedOut={this.handleUserLoggedOut} />;
+    // new Home().render(...)
     else return <h1>🧨</h1>;
   }
 }

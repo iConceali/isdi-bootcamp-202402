@@ -32,13 +32,16 @@ function CreatePost(props) {
         <h2>Create Post</h2>
         <input id="image" type="text" placeholder="Image" />
         <input id="text" type="text" placeholder="Text" />
-        <button type="submit" class="btn-general-post">
+        <button type="submit" className="btn-general-post">
           Create
         </button>
       </form>
 
       <button className="btn-cancel-post" onClick={handleCancelClick}>
-        <img class="img-cancel-post" src="./src/assets/icon-cancel-post.png" />
+        <img
+          className="img-cancel-post"
+          src="./src/assets/icon-cancel-post.png"
+        />
       </button>
     </section>
   );

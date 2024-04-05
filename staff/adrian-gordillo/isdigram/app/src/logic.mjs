@@ -12,7 +12,7 @@ const URL_REGEX = /^(http|https):\/\//;
 
 // helpers
 
-function validateText(text, explain, checkEmptySpaceInside) {
+function validateText(text, explain = "text", checkEmptySpaceInside) {
   if (typeof text !== "string")
     throw new TypeError(explain + " " + text + " is not a string");
   if (!text.trim().length)
@@ -23,80 +23,153 @@ function validateText(text, explain, checkEmptySpaceInside) {
       throw new Error(explain + " " + text + " has empty spaces");
 }
 
-function validateDate(date, explain) {
+function validateDate(date, explain = "date") {
   if (typeof date !== "string")
-    throw new TypeError(explain + " " + date + " is not a string");
+    throw new TypeError(`${explain} is not a string`);
   if (!DATE_REGEX.test(date))
-    throw new Error(explain + " " + date + " does not have a valid format");
+    throw new Error(`${explain} does not have a valid format`);
 }
 
-function validateEmail(email, explain) {
-  if (!EMAIL_REGEX.test(email))
-    throw new Error(explain + " " + email + " is not an email");
+function validateEmail(email, explain = "email") {
+  if (!EMAIL_REGEX.test(email)) throw new Error(`${explain} is not an email`);
 }
 
-function validatePassword(password, explain) {
+function validatePassword(password, explain = "password") {
   if (!PASSWORD_REGEX.test(password))
-    throw new Error(explain + " " + password + " is not acceptable");
+    throw new Error(`${explain} is not valid`);
 }
 
-function validateUrl(url, explain) {
-  if (!URL_REGEX.test(url))
-    throw new Error(explain + " " + url + " is not an url");
+function validateUrl(url, explain = "url") {
+  if (!URL_REGEX.test(url)) throw new Error(`${explain} is not a url`);
+}
+
+function validateCallback(callback, explain = "callback") {
+  if (typeof callback !== "function")
+    throw new TypeError(`${explain} is not a function`);
 }
 
 // logic
 
-function registerUser(name, birthdate, email, username, password) {
+function registerUser(name, birthdate, email, username, password, callback) {
   validateText(name, "name");
   validateDate(birthdate, "birthdate");
-  validateEmail(email, "email");
+  validateEmail(email);
   validateText(username, "username", true);
-  validatePassword(password, "password");
+  validatePassword(password);
+  validateCallback(callback);
 
-  // TODO input validation
+  var xhr = new XMLHttpRequest();
 
-  let user = db.users.findOne(
-    (user) => user.email === email || user.username === username
-  );
+  xhr.onload = function () {
+    const { status, responseText: json } = xhr;
 
-  if (user) throw new Error("user already exists");
+    if (status >= 500) {
+      callback(new Error("system error"));
 
-  user = {
-    name: name.trim(),
-    birthdate: birthdate,
-    email: email,
-    username: username,
-    password: password,
-    status: "offline",
+      return;
+    } else if (status >= 400) {
+      // 400 - 499
+      const { error, message } = JSON.parse(json);
+
+      const constructor = window[error];
+
+      callback(new constructor(message));
+    } else if (status >= 300) {
+      callback(new Error("system error"));
+
+      return;
+    } else callback(null);
   };
 
-  db.users.insertOne(user);
+  xhr.open("POST", "http://localhost:8080/users");
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  const user = { name, birthdate, email, username, password };
+
+  const json = JSON.stringify(user);
+
+  xhr.send(json);
 }
 
-function loginUser(username, password) {
+function loginUser(username, password, callback) {
   validateText(username, "username", true);
-  validatePassword(password, "password");
+  validatePassword(password);
+  validateCallback(callback);
 
-  const user = db.users.findOne((user) => user.username === username);
+  var xhr = new XMLHttpRequest();
 
-  if (!user) throw new Error("user not found");
+  xhr.onload = function () {
+    const { status, responseText: json } = xhr;
 
-  if (user.password !== password) throw new Error("wrong password");
+    if (status >= 500) {
+      callback(new Error("system error"));
 
-  user.status = "online";
+      return;
+    } else if (status >= 400) {
+      // 400 - 499
+      const { error, message } = JSON.parse(json);
 
-  db.users.updateOne(user);
+      const constructor = window[error];
 
-  sessionStorage.userId = user.id;
+      callback(new constructor(message));
+    } else if (status >= 300) {
+      callback(new Error("system error"));
+
+      return;
+    } else {
+      const userId = JSON.parse(json);
+
+      sessionStorage.userId = userId;
+
+      callback(null);
+    }
+  };
+
+  xhr.open("POST", "http://localhost:8080/users/auth");
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+
+  const user = { username, password };
+
+  const json = JSON.stringify(user);
+
+  xhr.send(json);
 }
 
-function retrieveUser() {
-  const user = db.users.findOne((user) => user.id === sessionStorage.userId);
+function retrieveUser(callback) {
+  validateCallback(callback);
 
-  if (!user) throw new Error("user not found");
+  var xhr = new XMLHttpRequest();
 
-  return user;
+  xhr.onload = function () {
+    const { status, responseText: json } = xhr;
+
+    if (status >= 500) {
+      callback(new Error("system error"));
+
+      return;
+    } else if (status >= 400) {
+      // 400 - 499
+      const { error, message } = JSON.parse(json);
+
+      const constructor = window[error];
+
+      callback(new constructor(message));
+    } else if (status >= 300) {
+      callback(new Error("system error"));
+
+      return;
+    } else {
+      const user = JSON.parse(json);
+
+      callback(null, user);
+    }
+  };
+
+  xhr.open("GET", `http://localhost:8080/users/${sessionStorage.userId}`);
+
+  xhr.send();
 }
 
 function logoutUser() {
@@ -202,42 +275,46 @@ function createPost(image, text) {
     image: image,
     text: text,
     date: new Date().toLocaleDateString("en-CA"),
-    likes: [],
   };
 
   db.posts.insertOne(post);
 }
 
-function likePost(postId) {
-  validateText(postId, "postId", true);
+function retrievePosts(callback) {
+  validateCallback(callback);
 
-  const post = db.posts.findOne((post) => post.id === postId);
+  var xhr = new XMLHttpRequest();
 
-  if (!post) throw new Error("post not found");
+  xhr.onload = function () {
+    const { status, responseText: json } = xhr;
 
-  const userId = sessionStorage.userId;
+    if (status >= 500) {
+      callback(new Error("system error"));
 
-  if (post.likes.includes(userId)) {
-    // Si el usuario ya ha dado like, lo eliminamos
-    post.likes = post.likes.filter((id) => id !== userId);
-  } else {
-    // Si el usuario no ha dado like, lo añadimos
-    post.likes.push(userId);
-  }
+      return;
+    } else if (status >= 400) {
+      // 400 - 499
+      const { error, message } = JSON.parse(json);
 
-  db.posts.updateOne(post);
-}
+      const constructor = window[error];
 
-function retrievePosts() {
-  const posts = db.posts.getAll();
+      callback(new constructor(message));
+    } else if (status >= 300) {
+      callback(new Error("system error"));
 
-  posts.forEach(function (post) {
-    const user = db.users.findOne((user) => user.id === post.author);
+      return;
+    } else {
+      const posts = JSON.parse(json);
 
-    post.author = { id: user.id, username: user.username };
-  });
+      callback(null, posts);
+    }
+  };
 
-  return posts.reverse();
+  xhr.open("GET", `http://localhost:8080/posts`);
+
+  xhr.setRequestHeader("Authorization", sessionStorage.userId);
+
+  xhr.send();
 }
 
 function removePost(postId) {
@@ -269,6 +346,26 @@ function modifyPost(postId, text) {
   db.posts.updateOne(post);
 }
 
+function likePost(postId) {
+  validateText(postId, "postId", true);
+
+  const post = db.posts.findOne((post) => post.id === postId);
+
+  if (!post) throw new Error("post not found");
+
+  const userId = sessionStorage.userId;
+
+  if (post.likes.includes(userId)) {
+    // Si el usuario ya ha dado like, lo eliminamos
+    post.likes = post.likes.filter((id) => id !== userId);
+  } else {
+    // Si el usuario no ha dado like, lo añadimos
+    post.likes.push(userId);
+  }
+
+  db.posts.updateOne(post);
+}
+
 function updateUserAvatar(avatarUrl) {
   // validateUrl(avatarUrl, "avatarUrl");
 
@@ -289,11 +386,11 @@ const logic = {
   registerUser,
   loginUser,
   retrieveUser,
+  updateUserAvatar,
   logoutUser,
   getLoggedInUserId,
   isUserLoggedIn,
   cleanUpLoggedInUserId,
-  updateUserAvatar,
 
   retrieveUsersWithStatus,
   sendMessageToUser,

@@ -1,3 +1,5 @@
+//Collection.ts
+
 import { readFile, writeFile } from "fs";
 
 class Collection {
@@ -109,36 +111,6 @@ class Collection {
     });
   }
 
-  insertMany(documents, callback) {
-    if (!Array.isArray(documents))
-      throw new TypeError("documents is not an array");
-    if (typeof callback !== "function")
-      throw new TypeError("callback is not a function");
-
-    documents.forEach((document) => {
-      if (typeof document !== "object")
-        throw new TypeError("a document in documents is not an object");
-    });
-
-    this._loadDocuments((error, existingDocuments) => {
-      if (error) {
-        callback(error);
-        return;
-      }
-
-      const mergedDocuments = existingDocuments.concat(documents);
-
-      this._saveDocuments(mergedDocuments, (error) => {
-        if (error) {
-          callback(error);
-          return;
-        }
-
-        callback(null);
-      });
-    });
-  }
-
   updateOne(condition, document, callback) {
     if (typeof condition !== "function")
       throw new TypeError("condition callback is not a function");
@@ -210,31 +182,6 @@ class Collection {
       callback(null, false);
     });
   }
-  //todo ------------------------------- VIGILAR ESTA FUNCIÓN
-
-  deleteAll(callback) {
-    if (typeof callback !== "function")
-      throw new TypeError("callback is not a function");
-
-    this._loadDocuments((error, documents) => {
-      if (error) {
-        callback(error);
-
-        return;
-      }
-
-      documents = [];
-
-      this._saveDocuments([], (error) => {
-        if (error) {
-          callback(error);
-          return;
-        }
-
-        callback(null, 0);
-      });
-    });
-  }
 
   getAll(callback) {
     if (typeof callback !== "function")
@@ -248,6 +195,21 @@ class Collection {
       }
 
       callback(null, documents);
+    });
+  }
+
+  deleteAll(callback) {
+    if (typeof callback !== "function")
+      throw new TypeError("callback is not a function");
+
+    this._saveDocuments([], (error) => {
+      if (error) {
+        callback(error);
+
+        return;
+      }
+
+      callback(null);
     });
   }
 }
