@@ -2,16 +2,8 @@ import { logger, showFeedback } from "../utils";
 
 import logic from "../logic";
 
-import { Component } from "react";
-
-class Register extends Component {
-  constructor() {
-    logger.debug("Register");
-
-    super();
-  }
-
-  handleSubmit = (event) => {
+function Register(props) {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     const form = event.target;
@@ -27,47 +19,45 @@ class Register extends Component {
 
       form.reset();
 
-      this.props.onUserRegistered();
+      props.onUserRegistered();
     } catch (error) {
       showFeedback(error);
     }
   };
 
-  handleLoginClick = (event) => {
+  const handleLoginClick = (event) => {
     event.preventDefault();
 
-    this.props.onLoginClick();
+    props.onLoginClick();
   };
 
-  render() {
-    logger.debug("Register -> render");
+  logger.debug("Register -> render");
 
-    return (
-      <main>
-        <h1>Register</h1>
+  return (
+    <main>
+      <h1>Register</h1>
 
-        <form onSubmit={this.handleSubmit}>
-          <input type="text" id="name" placeholder="Name" />
+      <form onSubmit={handleSubmit}>
+        <input type="text" id="name" placeholder="Name" />
 
-          <input type="date" id="birthdate" placeholder="Birthdate" />
+        <input type="date" id="birthdate" placeholder="Birthdate" />
 
-          <input type="email" id="email" placeholder="Email" />
+        <input type="email" id="email" placeholder="Email" />
 
-          <input type="text" id="username" placeholder="Username" />
+        <input type="text" id="username" placeholder="Username" />
 
-          <input type="password" id="password" placeholder="Password" />
+        <input type="password" id="password" placeholder="Password" />
 
-          <button className="btn-general" type="submit">
-            Register
-          </button>
-        </form>
+        <button className="btn-general" type="submit">
+          Register
+        </button>
+      </form>
 
-        <a href="" onClick={this.handleLoginClick}>
-          Have an account? Sign in
-        </a>
-      </main>
-    );
-  }
+      <a href="" onClick={handleLoginClick}>
+        Have an account? Sign in
+      </a>
+    </main>
+  );
 }
 
 export default Register;

@@ -2,16 +2,8 @@ import { logger, showFeedback } from "../utils";
 
 import logic from "../logic";
 
-import { Component } from "react";
-
-class Login extends Component {
-  constructor() {
-    logger.debug("Login");
-
-    super();
-  }
-
-  handleSubmit = (event) => {
+function Login(props) {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     const form = event.target;
@@ -26,41 +18,39 @@ class Login extends Component {
 
       form.reset();
 
-      this.props.onUserLoggedIn();
+      props.onUserLoggedIn();
     } catch (error) {
       showFeedback(error);
     }
   };
 
-  handleRegisterClick = (event) => {
+  const handleRegisterClick = (event) => {
     event.preventDefault();
 
-    this.props.onRegisterClick();
+    props.onRegisterClick();
   };
 
-  render() {
-    logger.debug("Login -> render");
+  logger.debug("Login -> render");
 
-    return (
-      <main>
-        <h1>Login</h1>
+  return (
+    <main>
+      <h1>Login</h1>
 
-        <form onSubmit={this.handleSubmit}>
-          <input type="text" id="username" placeholder="Username" />
+      <form onSubmit={handleSubmit}>
+        <input type="text" id="username" placeholder="Username" />
 
-          <input type="password" id="password" placeholder="Password" />
+        <input type="password" id="password" placeholder="Password" />
 
-          <button className="btn-general" type="submit">
-            Login
-          </button>
-        </form>
+        <button className="btn-general" type="submit">
+          Login
+        </button>
+      </form>
 
-        <a href="" onClick={this.handleRegisterClick}>
-          New user? Sign up
-        </a>
-      </main>
-    );
-  }
+      <a href="" onClick={handleRegisterClick}>
+        New user? Sign up
+      </a>
+    </main>
+  );
 }
 
 export default Login;

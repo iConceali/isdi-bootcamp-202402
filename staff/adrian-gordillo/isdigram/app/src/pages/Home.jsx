@@ -6,7 +6,7 @@ import { Component } from "react";
 import PostList from "../components/PostList";
 import CreatePost from "../components/CreatePost";
 import EditPost from "../components/EditPost";
-import Header from "../components/Header";
+// import Header from "../components/Header";
 
 class Home extends Component {
   constructor() {
@@ -19,7 +19,7 @@ class Home extends Component {
 
       this.user = user;
     } catch (error) {
-      showFeedBack(error);
+      showFeedback(error);
     }
     this.state = { view: null, stamp: null, post: null };
   }
