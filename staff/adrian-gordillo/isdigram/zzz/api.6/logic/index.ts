@@ -1,6 +1,6 @@
-//index.ts
-
 //@ts-nocheck
+
+import db from "../data/index.ts";
 
 // constants
 
@@ -60,9 +60,15 @@ function registerUser(name, birthdate, email, username, password, callback) {
   validatePassword(password);
   validateCallback(callback);
 
-  this.users
-    .findOne({ $or: [{ email }, { username }] })
-    .then((user) => {
+  db.users.findOne(
+    (user) => user.email === email || user.username === username,
+    (error, user) => {
+      if (error) {
+        callback(error);
+
+        return;
+      }
+
       if (user) {
         callback(new Error("user already exists"));
 
@@ -78,12 +84,17 @@ function registerUser(name, birthdate, email, username, password, callback) {
         status: "offline",
       };
 
-      this.users
-        .insertOne(user)
-        .then(() => callback(null))
-        .catch((error) => callback(error));
-    })
-    .catch((error) => callback(error));
+      db.users.insertOne(user, (error) => {
+        if (error) {
+          callback(error);
+
+          return;
+        }
+
+        callback(null);
+      });
+    }
+  );
 }
 
 function loginUser(username, password, callback) {
@@ -91,49 +102,45 @@ function loginUser(username, password, callback) {
   validatePassword(password);
   validateCallback(callback);
 
-  this.users
-    .findOne({ username: username, password: password })
-    .then((user) => {
-      if (!user) {
-        // No se encontró un usuario con las credenciales proporcionadas
-        callback(new Error("Usuario o contraseña incorrectos"));
+  db.users.findOne(
+    (user) => user.username === username,
+    (error, user) => {
+      if (error) {
+        callback(error);
+
         return;
       }
 
-      // Autenticación exitosa: establecer el estado en "online"
+      if (!user) {
+        callback(new Error("user not found"));
+
+        return;
+      }
+
+      if (user.password !== password) {
+        callback(new Error("wrong password"));
+
+        return;
+      }
+
       user.status = "online";
 
-      this.users
-        .updateOne({ _id: user._id }, { $set: { status: "online" } })
-        .then(() => callback(null))
-        .catch((error) => callback(error));
-    })
-    .catch((error) => callback(error));
+      db.users.updateOne(
+        (user2) => user2.id === user.id,
+        user,
+        (error) => {
+          if (error) {
+            callback(error);
+
+            return;
+          }
+
+          callback(null, user.id);
+        }
+      );
+    }
+  );
 }
-
-// function loginUser(username, password, callback) {
-//   validateText(username, "username", true);
-//   validatePassword(password);
-//   validateCallback(callback);
-
-//   this.users
-//     .findOne({ username: username, password: password })
-//     .then((user) => {
-//       if (error) {
-//         callback(error);
-
-//         return;
-//       }
-
-//       user.status = "online";
-
-//       this.users
-//         .updateOne(user)
-//         .then(() => callback(null))
-//         .catch((error) => callback(error));
-//     })
-//     .catch((error) => callback(error));
-// }
 
 function retrieveUser(userId, callback) {
   validateText(userId, "userId", true);
@@ -244,28 +251,19 @@ function retrieveMessagesWithUser(userId) {
   return [];
 }
 
-function createPost(userId, image, text, callback) {
-  validateText(userId, "userId", true);
+function createPost(image, text) {
   validateUrl(image, "image");
+
   if (text) validateText(text, "text");
-  validateCallback(callback);
 
   const post = {
-    author: userId,
+    author: sessionStorage.userId,
     image: image,
     text: text,
     date: new Date().toLocaleDateString("en-CA"),
   };
 
-  db.posts.insertOne(post, (error) => {
-    if (error) {
-      callback(error);
-
-      return;
-    }
-
-    callback(null);
-  });
+  db.posts.insertOne(post);
 }
 
 function retrievePosts(userId, callback) {
@@ -295,7 +293,6 @@ function retrievePosts(userId, callback) {
         }
 
         let count = 0;
-        let errorDetected = false;
 
         posts.forEach((post) => {
           db.users.findOne(
@@ -307,14 +304,6 @@ function retrievePosts(userId, callback) {
                 return;
               }
 
-              if (!user) {
-                callback(new Error("post owner not found"));
-
-                errorDetected = true;
-
-                return;
-              }
-
               post.author = {
                 id: user.id,
                 username: user.username,
@@ -322,8 +311,7 @@ function retrievePosts(userId, callback) {
 
               count++;
 
-              if (!errorDetected && count === posts.length)
-                callback(null, posts.reverse());
+              if (count === posts.length) callback(null, posts.reverse());
             }
           );
         });
@@ -362,8 +350,6 @@ function modifyPost(postId, text) {
 }
 
 const logic = {
-  users: null,
-
   registerUser,
   loginUser,
   retrieveUser,
