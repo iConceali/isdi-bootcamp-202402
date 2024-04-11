@@ -1,12 +1,13 @@
 import { logger, showFeedback } from "../utils";
 
-import logic from "../logic";
+import getLoggedInUserId from "../logic/getLoggedInUserId";
+import removePost from "../logic/removePost";
 
 function Post(props) {
   const handleDeleteClick = (postId) => {
     if (confirm("delete post?"))
       try {
-        logic.removePost(postId);
+        removePost(postId);
 
         props.onDeleted();
       } catch (error) {
@@ -34,7 +35,7 @@ function Post(props) {
         <time>{post.date}</time>
       </div>
 
-      {logic.getLoggedInUserId() === post.author.id && (
+      {getLoggedInUserId() === post.author.id && (
         <>
           <button
             className="btn-delete-post"

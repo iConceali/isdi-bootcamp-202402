@@ -1,6 +1,6 @@
 import { logger, showFeedback } from "../utils";
 
-import logic from "../logic";
+import retrievePosts from "../logic/retrievePosts";
 
 import { Component } from "react";
 import Post from "./Post";
@@ -18,7 +18,7 @@ class PostList extends Component {
     logger.debug("PostList -> loadPosts");
 
     try {
-      logic.retrievePosts((error, posts) => {
+      retrievePosts((error, posts) => {
         if (error) {
           showFeedback(error);
 

@@ -1,141 +1,134 @@
 import { logger, showFeedback } from "../utils";
 
-import logic from "../logic";
+import retrieveUser from "../logic/retrieveUser";
+import logoutUser from "../logic/logoutUser";
+import cleanUpLoggedInUserId from "../logic/cleanUpLoggedInUserId";
 
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import PostList from "../components/PostList";
 import CreatePost from "../components/CreatePost";
 import EditPost from "../components/EditPost";
-// import Header from "../components/Header";
 
-class Home extends Component {
-  constructor() {
-    logger.debug("Home constructor");
+function Home(props) {
+  const [user, setUser] = useState(null);
+  const [view, setView] = useState(null);
+  const [stamp, setStamp] = useState(null);
+  const [post, setPost] = useState(null);
 
-    super();
-
-    this.state = { user: null, view: null, stamp: null, post: null };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     try {
-      logic.retrieveUser((error, user) => {
+      retrieveUser((error, user) => {
         if (error) {
           showFeedback(error);
 
           return;
         }
 
-        this.setState({ user });
+        setUser(user);
       });
     } catch (error) {
       showFeedback(error);
     }
-  }
+  }, []);
 
-  setState(state) {
-    logger.debug("Home -> setState", JSON.stringify(state));
+  const clearView = () => setView(null);
 
-    super.setState(state);
-  }
+  const handleCreatePostCancelClick = () => clearView();
 
-  clearView = () => this.setState({ view: null });
+  const handlePostCreated = () => {
+    clearView();
+    setStamp(Date.now());
+  };
 
-  handleCreatePostCancelClick = () => this.clearView();
+  const handleCreatePostClick = () => setView("create-post");
 
-  handlePostCreated = () => this.setState({ view: null, stamp: Date.now() });
-
-  handleCreatePostClick = () => this.setState({ view: "create-post" });
-
-  handleLogoutClick = () => {
+  const handleLogoutClick = () => {
     try {
-      logic.logoutUser();
+      logoutUser();
     } catch (error) {
-      logic.cleanUpLoggedInUser();
+      cleanUpLoggedInUserId();
     } finally {
-      this.props.onUserLoggedOut();
+      props.onUserLoggedOut();
     }
   };
 
-  handleEditPostCancelClick = () => this.clearView();
+  const handleEditPostCancelClick = () => clearView();
 
-  handleEditPostClick = (post) => this.setState({ view: "edit-post", post });
+  const handleEditPostClick = (post) => {
+    setView("edit-post");
+    setPost(post);
+  };
 
-  handlePostEdited = () =>
-    this.setState({ view: null, stamp: Date.now(), post: null });
+  const handlePostEdited = () => {
+    clearView();
+    setStamp(Date.now());
+    setPost(null);
+  };
 
-  render() {
-    logger.debug("Home -> render");
+  logger.debug("Home -> render");
 
-    return (
-      <>
-        <header>
-          <img className="user-avatar" src="../src/assets/avatar-empty.webp" />
-          <button className="logout-button"></button>
-          <button className="chat-button"></button>
-        </header>
+  return (
+    <>
+      <header>
+        <img className="user-avatar" src="../src/assets/avatar-empty.webp" />
+        <button className="logout-button"></button>
+        <button className="chat-button"></button>
+      </header>
 
-        <main className="main">
-          {this.state.user && <h1>Hello, {this.state.user.name}!</h1>}
-          <PostList
-            stamp={this.state.stamp}
-            onEditPostClick={this.handleEditPostClick}
+      <main className="main">
+        {user && <h1>Hello, {user.name}!</h1>}
+        <PostList stamp={stamp} onEditPostClick={handleEditPostClick} />
+        {view === "create-post" && (
+          <CreatePost
+            onCancelClick={handleCreatePostCancelClick}
+            onPostCreated={handlePostCreated}
           />
-          {this.state.view === "create-post" && (
-            <CreatePost
-              onCancelClick={this.handleCreatePostCancelClick}
-              onPostCreated={this.handlePostCreated}
-            />
-          )}
-          {this.state.view === "edit-post" && (
-            <EditPost
-              post={this.state.post}
-              onCancelClick={this.handleEditPostCancelClick}
-              onPostEdited={this.handlePostEdited}
-            />
-          )}
-        </main>
+        )}
+        {view === "edit-post" && (
+          <EditPost
+            post={post}
+            onCancelClick={handleEditPostCancelClick}
+            onPostEdited={handlePostEdited}
+          />
+        )}
+      </main>
 
-        <footer>
-          <div className="btns-footer">
-            <button className="home-button">
-              <img
-                className="home-button"
-                src="./src/assets/icon-home-on.png"
-              />
-            </button>
-            <button className="search-button">
-              <img
-                className="search-button"
-                src="./src/assets/icon-search-off.png"
-              />
-            </button>
-            <button
-              onClick={this.handleCreatePostClick}
+      <footer>
+        <div className="btns-footer">
+          <button className="home-button">
+            <img className="home-button" src="./src/assets/icon-home-on.png" />
+          </button>
+          <button className="search-button">
+            <img
+              className="search-button"
+              src="./src/assets/icon-search-off.png"
+            />
+          </button>
+          <button
+            onClick={handleCreatePostClick}
+            className="create-post-button"
+          >
+            <img
               className="create-post-button"
-            >
-              <img
-                className="create-post-button"
-                src="./src/assets/icon-post-off.png"
-              />
-            </button>
-            <button className="reels-button">
-              <img
-                className="reels-button"
-                src="./src/assets/icon-reels-off.png"
-              />
-            </button>
-            <button className="profile-button">
-              <img
-                className="profile-button"
-                src="./src/assets/icon-profile-off.png"
-              />
-            </button>
-          </div>
-        </footer>
-      </>
-    );
-  }
+              src="./src/assets/icon-post-off.png"
+            />
+          </button>
+          <button className="reels-button">
+            <img
+              className="reels-button"
+              src="./src/assets/icon-reels-off.png"
+            />
+          </button>
+          <button className="profile-button">
+            <img
+              className="profile-button"
+              src="./src/assets/icon-profile-off.png"
+            />
+          </button>
+        </div>
+      </footer>
+    </>
+  );
 }
 
 export default Home;

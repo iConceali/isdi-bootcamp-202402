@@ -1,6 +1,7 @@
 import { logger, showFeedback } from "../utils";
 
-import logic from "../logic";
+import logoutUser from "../logic/logoutUser";
+import cleanUpLoggedInUserId from "../logic/cleanUpLoggedInUserId";
 
 import { Component } from "react";
 import PostList from "../components/PostList";
@@ -30,9 +31,9 @@ class Footer extends Component {
 
   handleLogoutClick = () => {
     try {
-      logic.logoutUser();
+      logoutUser();
     } catch (error) {
-      logic.cleanUpLoggedInUser();
+      cleanUpLoggedInUserId();
     } finally {
       this.props.onUserLoggedOut();
     }

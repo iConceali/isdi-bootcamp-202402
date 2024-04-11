@@ -1,6 +1,6 @@
 import { logger, showFeedback } from "../utils";
 
-import logic from "../logic";
+import loginUser from "../logic/loginUser";
 
 function Login(props) {
   const handleSubmit = (event) => {
@@ -14,7 +14,7 @@ function Login(props) {
     logger.debug("Login -> handleSubmit", username, password);
 
     try {
-      logic.loginUser(username, password, (error) => {
+      loginUser(username, password, (error) => {
         if (error) {
           showFeedback(error);
 

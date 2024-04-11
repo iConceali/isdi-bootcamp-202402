@@ -1,6 +1,6 @@
 import { logger, showFeedback } from "../utils";
 
-import logic from "../logic";
+import createPost from "../logic/createPost";
 
 function CreatePost(props) {
   const handleSubmit = (event) => {
@@ -12,7 +12,7 @@ function CreatePost(props) {
     const text = form.text.value;
 
     try {
-      logic.createPost(image, text);
+      createPost(image, text);
 
       form.reset();
 

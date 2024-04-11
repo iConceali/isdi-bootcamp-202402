@@ -1,7 +1,5 @@
 import { logger, showFeedback } from "../utils";
 
-import logic from "../logic";
-
 import { Component } from "react";
 
 class Header extends Component {

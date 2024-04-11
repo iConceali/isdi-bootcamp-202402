@@ -1,6 +1,6 @@
 import { logger, showFeedback } from "../utils";
 
-import logic from "../logic";
+import modifyPost from "../logic/modifyPost";
 
 function EditPost(props) {
   const handleSubmit = (event) => {
@@ -13,7 +13,7 @@ function EditPost(props) {
     logger.debug("EditPost -> handleSubmit", text);
 
     try {
-      logic.modifyPost(props.post.id, text);
+      modifyPost(props.post.id, text);
 
       form.reset();
 
