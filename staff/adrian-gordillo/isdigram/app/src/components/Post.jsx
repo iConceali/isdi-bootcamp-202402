@@ -32,7 +32,7 @@ function Post(props) {
       </div>
       <div className="div-post-text">
         <p>{post.text}</p>
-        <time>{post.date}</time>
+        <time>{new Date(post.date).toLocaleString("es-ES")}</time>
       </div>
 
       {getLoggedInUserId() === post.author.id && (

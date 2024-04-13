@@ -1,103 +1,33 @@
-import { logger, showFeedback } from "../utils";
+import { validate, errors } from "com";
 
-import retrieveUser from "../logic/retrieveUser";
-import logoutUser from "../logic/logoutUser";
-import cleanUpLoggedInUserId from "../logic/cleanUpLoggedInUserId";
+function retrievePosts(callback) {
+  validate.callback(callback);
 
-import { useState, useEffect } from "react";
-import PostList from "../components/PostList";
-import CreatePost from "../components/CreatePost";
-import EditPost from "../components/EditPost";
+  var xhr = new XMLHttpRequest();
 
-function Home(props) {
-  const [user, setUser] = useState(null);
-  const [view, setView] = useState(null);
-  const [stamp, setStamp] = useState(null);
-  const [post, setPost] = useState(null);
+  xhr.onload = () => {
+    const { status, responseText: json } = xhr;
 
-  useEffect(() => {
-    try {
-      retrieveUser((error, user) => {
-        if (error) {
-          showFeedback(error);
+    if (status == 200) {
+      const posts = JSON.parse(json);
 
-          return;
-        }
+      callback(null, posts);
 
-        setUser(user);
-      });
-    } catch (error) {
-      showFeedback(error);
+      return;
     }
-  }, []);
 
-  const clearView = () => setView(null);
+    const { error, message } = JSON.parse(json);
 
-  const handleCreatePostCancelClick = () => clearView();
+    const constructor = errors[error];
 
-  const handlePostCreated = () => {
-    clearView();
-    setStamp(Date.now());
+    callback(new constructor(message));
   };
 
-  const handleCreatePostClick = () => setView("create-post");
+  xhr.open("GET", `http://localhost:8080/posts`);
 
-  const handleLogoutClick = () => {
-    try {
-      logoutUser();
-    } catch (error) {
-      cleanUpLoggedInUserId();
-    } finally {
-      props.onUserLoggedOut();
-    }
-  };
+  xhr.setRequestHeader("Authorization", sessionStorage.userId);
 
-  const handleEditPostCancelClick = () => clearView();
-
-  const handleEditPostClick = (post) => {
-    setView("edit-post");
-    setPost(post);
-  };
-
-  const handlePostEdited = () => {
-    clearView();
-    setStamp(Date.now());
-    setPost(null);
-  };
-
-  logger.debug("Home -> render");
-
-  return (
-    <main className="main">
-      {user && <h1>Hello, {user.name}!</h1>}
-
-      <nav>
-        <button>💬</button>
-        <button onClick={handleLogoutClick}>🚪</button>
-      </nav>
-
-      <PostList stamp={stamp} onEditPostClick={handleEditPostClick} />
-
-      {view === "create-post" && (
-        <CreatePost
-          onCancelClick={handleCreatePostCancelClick}
-          onPostCreated={handlePostCreated}
-        />
-      )}
-
-      {view === "edit-post" && (
-        <EditPost
-          post={post}
-          onCancelClick={handleEditPostCancelClick}
-          onPostEdited={handlePostEdited}
-        />
-      )}
-
-      <footer className="footer">
-        <button onClick={handleCreatePostClick}>➕</button>
-      </footer>
-    </main>
-  );
+  xhr.send();
 }
 
-export default Home;
+export default retrievePosts;

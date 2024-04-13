@@ -12,11 +12,17 @@ function CreatePost(props) {
     const text = form.text.value;
 
     try {
-      createPost(image, text);
+      logic.createPost(image, text, (error) => {
+        if (error) {
+          showFeedback(error);
 
-      form.reset();
+          return;
+        }
 
-      props.onPostCreated();
+        form.reset();
+
+        props.onPostCreated();
+      });
     } catch (error) {
       showFeedback(error);
     }

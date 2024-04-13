@@ -30,8 +30,10 @@ client
     const db = connection.db("isdigram");
 
     const users = db.collection("users");
+    const posts = db.collection("posts");
 
     logic.users = users;
+    logic.posts = posts;
 
     const api = express();
 

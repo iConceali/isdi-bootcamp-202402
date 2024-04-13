@@ -1,22 +1,29 @@
+import { validate, errors } from "com";
+import { ObjectId } from "mongodb";
+
+const { SystemError, NotFoundError } = errors;
+
 function createPost(userId, image, text, callback) {
-  // validate.text(userId, 'userId', true)
-  // validateUrl(image, 'image')
-  // if (text)
-  //     validate.text(text, 'text')
-  // validate.callback(callback)
-  // const post = {
-  //     author: userId,
-  //     image: image,
-  //     text: text,
-  //     date: new Date().toLocaleDateString('en-CA')
-  // }
-  // db.posts.insertOne(post, error => {
-  //     if (error) {
-  //         callback(error)
-  //         return
-  //     }
-  //     callback(null)
-  // })
+  validate.text(userId, "userId", true);
+  validate.url(image, "image");
+  if (text) validate.text(text, "text");
+  validate.callback(callback);
+
+  this.users
+    .findOne({ _id: new ObjectId(userId) })
+    .then((user) => {
+      if (!user) {
+        callback(new NotFoundError("user not found"));
+
+        return;
+      }
+
+      this.posts
+        .insertOne({ author: user._id, image, text, date: new Date() })
+        .then(() => callback(null))
+        .catch((error) => callback(new SystemError(error.message)));
+    })
+    .catch((error) => callback(new SystemError(error.message)));
 }
 
 export default createPost;

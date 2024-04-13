@@ -1,6 +1,6 @@
 import { logger, showFeedback } from "../utils";
 
-import modifyPost from "../logic/modifyPost";
+import logic from "../logic/modifyPost";
 
 function EditPost(props) {
   const handleSubmit = (event) => {
@@ -33,17 +33,10 @@ function EditPost(props) {
         <label>Text</label>
         <input id="text" type="text" defaultValue={props.post.text} />
 
-        <button className="round-button submit-button" type="submit">
-          Edit
-        </button>
+        <SubmitButton>Save</SubmitButton>
       </form>
 
-      <button
-        className="round-button cancel-button"
-        onClick={handleCancelClick}
-      >
-        Cancel
-      </button>
+      <CancelButton onClick={handleCancelClick} />
     </section>
   );
 }
