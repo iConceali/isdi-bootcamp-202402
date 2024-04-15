@@ -1,83 +1,56 @@
-import { MongoClient, ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
-let client, users, posts;
+import { User, Post } from ".";
 
-client = new MongoClient("mongodb://localhost:27017");
+mongoose
+  .connect("mongodb://localhost:27017/insdigram")
+  .then(() => User.deleteMany())
+  .then(() => Post.deleteMany())
+  .then(() =>
+    User.create({
+      name: "Pepe Roni",
+      birthdate: "2000-01-01",
+      email: "pepe@roni.com",
+      username: "peperoni",
+      password: "123qwe123",
+    })
+  )
+  .then((user1) => {
+    let count = 1;
 
-client
-  .connect()
-  .then((connection) => {
-    const db = connection.db("isdigram");
+    const post1 = {
+      author: user1._id,
+      image: `https://fakeimg.pl/500x400/ff0000?text=Hello+${count}&font=lobster`,
+      text: `hello post ${count}`,
+      date: new Date(),
+    };
 
-    users = db.collection("users");
-    posts = db.collection("posts");
-
-    users
-      .deleteMany({})
+    return Post.create(post1)
       .then(() => {
-        posts
-          .deleteMany({})
-          .then(() => {
-            users
-              .insertOne({
-                name: "Pepe Roni",
-                birthdate: "2000-01-01",
-                email: "pepe@roni.com",
-                username: "peperoni",
-                password: "123qwe123",
-              })
-              .then((result) => {
-                let count = 1;
+        count++;
 
-                const insertedPost1 = {
-                  author: result.insertedId,
-                  image: `https://fakeimg.pl/500x400/ff0000?text=Hello+${count}&font=lobster`,
-                  text: `hello post ${count}`,
-                  date: new Date(),
-                };
+        const post2 = {
+          author: user1._id,
+          image: `https://fakeimg.pl/500x400/ff0000?text=Hello+${count}&font=lobster`,
+          text: `hello post ${count}`,
+          date: new Date(),
+        };
 
-                posts
-                  .insertOne(insertedPost1)
-                  .then(() => {
-                    count++;
-
-                    const insertedPost2 = {
-                      author: result.insertedId,
-                      image: `https://fakeimg.pl/500x400/ff0000?text=Hello+${count}&font=lobster`,
-                      text: `hello post ${count}`,
-                      date: new Date(),
-                    };
-
-                    posts
-                      .insertOne(insertedPost2)
-                      .then(() => {
-                        count++;
-
-                        const insertedPost3 = {
-                          author: result.insertedId,
-                          image: `https://fakeimg.pl/500x400/ff0000?text=Hello+${count}&font=lobster`,
-                          text: `hello post ${count}`,
-                          date: new Date(),
-                        };
-
-                        posts
-                          .insertOne(insertedPost3)
-                          .then(() => {
-                            connection
-                              .close()
-                              .then(() => console.log("populated"))
-                              .catch(console.error);
-                          })
-                          .catch(console.error);
-                      })
-                      .catch(console.error);
-                  })
-                  .catch(console.error);
-              })
-              .catch(console.error);
-          })
-          .catch(console.error);
+        return Post.create(post2);
       })
-      .catch(console.error);
+      .then(() => {
+        count++;
+
+        const post3 = {
+          author: user1._id,
+          image: `https://fakeimg.pl/500x400/ff0000?text=Hello+${count}&font=lobster`,
+          text: `hello post ${count}`,
+          date: new Date(),
+        };
+
+        return Post.create(post3);
+      });
   })
+  .then(() => mongoose.disconnect())
+  .then(() => console.log("populated"))
   .catch(console.error);

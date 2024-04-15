@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 import express from "express";
 import logic from "./logic/index.ts";
 import { errors } from "com";
@@ -22,12 +22,10 @@ const {
   CredentialsError,
 } = errors;
 
-const client = new MongoClient("mongodb://localhost:27017");
-
-client
-  .connect()
-  .then((connection) => {
-    const db = connection.db("isdigram");
+mongoose
+  .connect("mongodb://localhost:27017/isdigram")
+  .then(() => {
+    const db = mongoose.connection.db;
 
     const users = db.collection("users");
     const posts = db.collection("posts");
@@ -51,40 +49,30 @@ client
       try {
         const { name, birthdate, email, username, password } = req.body;
 
-        logic.registerUser(
-          name,
-          birthdate,
-          email,
-          username,
-          password,
-          (error) => {
-            if (error) {
-              if (error instanceof SystemError) {
-                logger.error(error.message);
+        logic
+          .registerUser(name, birthdate, email, username, password)
+          .then(() => res.status(201).send())
+          .catch((error) => {
+            if (error instanceof SystemError) {
+              logger.error(error.message);
 
-                res
-                  .status(500)
-                  .json({
-                    error: error.constructor.name,
-                    message: error.message,
-                  });
-              } else if (error instanceof DuplicityError) {
-                logger.warn(error.message);
+              res
+                .status(500)
+                .json({
+                  error: error.constructor.name,
+                  message: error.message,
+                });
+            } else if (error instanceof DuplicityError) {
+              logger.warn(error.message);
 
-                res
-                  .status(409)
-                  .json({
-                    error: error.constructor.name,
-                    message: error.message,
-                  });
-              }
-
-              return;
+              res
+                .status(409)
+                .json({
+                  error: error.constructor.name,
+                  message: error.message,
+                });
             }
-
-            res.status(201).send();
-          }
-        );
+          });
       } catch (error) {
         if (error instanceof TypeError || error instanceof ContentError) {
           logger.warn(error.message);
@@ -106,8 +94,10 @@ client
       try {
         const { username, password } = req.body;
 
-        logic.loginUser(username, password, (error, userId) => {
-          if (error) {
+        logic
+          .authenticateUser(username, password)
+          .then((userId) => res.json(userId))
+          .catch((error) => {
             if (error instanceof SystemError) {
               logger.error(error.message);
 
@@ -136,12 +126,7 @@ client
                   message: error.message,
                 });
             }
-
-            return;
-          }
-
-          res.json(userId);
-        });
+          });
       } catch (error) {
         if (error instanceof TypeError || error instanceof ContentError) {
           logger.warn(error.message);
@@ -165,8 +150,10 @@ client
 
         const { targetUserId } = req.params;
 
-        logic.retrieveUser(userId, targetUserId, (error, user) => {
-          if (error) {
+        logic
+          .retrieveUser(userId, targetUserId)
+          .then((user) => res.json(user))
+          .catch((error) => {
             if (error instanceof SystemError) {
               logger.error(error.message);
 
@@ -186,12 +173,7 @@ client
                   message: error.message,
                 });
             }
-
-            return;
-          }
-
-          res.json(user);
-        });
+          });
       } catch (error) {
         if (error instanceof TypeError || error instanceof ContentError) {
           logger.warn(error.message);
