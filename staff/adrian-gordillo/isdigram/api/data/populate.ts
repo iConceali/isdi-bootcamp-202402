@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { User, Post } from ".";
 
 mongoose
-  .connect("mongodb://localhost:27017/insdigram")
+  .connect("mongodb://localhost:27017/isdigram")
   .then(() => User.deleteMany())
   .then(() => Post.deleteMany())
   .then(() =>

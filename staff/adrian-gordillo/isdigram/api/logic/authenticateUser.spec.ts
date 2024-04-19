@@ -62,6 +62,7 @@ describe("authenticateUser", () => {
         expect(error).to.be.instanceOf(NotFoundError);
         expect(error.message).to.equal("user not found");
       }));
+
   // TODO add other unhappy test cases
 
   after(() => mongoose.disconnect());

@@ -1,14 +1,15 @@
 import { logger } from "./utils";
 
+import logic from "./logic";
+
 import { useState } from "react";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
-import isUserLoggedIn from "./logic/isUserLoggedIn";
 
 function App() {
-  const [view, setView] = useState(isUserLoggedIn() ? "home" : "landing");
+  const [view, setView] = useState(logic.isUserLoggedIn() ? "home" : "landing");
 
   const goToLogin = () => setView("login");
 

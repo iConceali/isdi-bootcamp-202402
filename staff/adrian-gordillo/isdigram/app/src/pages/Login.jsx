@@ -1,6 +1,6 @@
 import { logger, showFeedback } from "../utils";
 
-import loginUser from "../logic/loginUser";
+import logic from "../logic";
 
 function Login(props) {
   const handleSubmit = (event) => {
@@ -14,17 +14,14 @@ function Login(props) {
     logger.debug("Login -> handleSubmit", username, password);
 
     try {
-      loginUser(username, password, (error) => {
-        if (error) {
-          showFeedback(error);
+      logic
+        .loginUser(username, password)
+        .then(() => {
+          form.reset();
 
-          return;
-        }
-
-        form.reset();
-
-        props.onUserLoggedIn();
-      });
+          props.onUserLoggedIn();
+        })
+        .catch(showFeedback);
     } catch (error) {
       showFeedback(error);
     }

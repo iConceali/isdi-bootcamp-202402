@@ -1,6 +1,6 @@
 import { logger, showFeedback } from "../utils";
 
-import registerUser from "../logic/registerUser";
+import logic from "../logic";
 
 function Register(props) {
   const handleSubmit = (event) => {
@@ -15,17 +15,15 @@ function Register(props) {
     const password = form.password.value;
 
     try {
-      registerUser(name, birthdate, email, username, password, (error) => {
-        if (error) {
-          showFeedback(error);
+      logic
+        .registerUser(name, birthdate, email, username, password)
+        .then(() => {
+          form.reset();
 
-          return;
-        }
-
-        form.reset();
-
-        props.onUserRegistered();
-      });
+          props.onUserRegistered();
+        })
+        //.catch(error => showFeedback(error))
+        .catch(showFeedback);
     } catch (error) {
       showFeedback(error);
     }

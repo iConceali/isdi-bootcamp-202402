@@ -1,8 +1,6 @@
 import { logger, showFeedback } from "../utils";
 
-import retrieveUser from "../logic/retrieveUser";
-import logoutUser from "../logic/logoutUser";
-import cleanUpLoggedInUserId from "../logic/cleanUpLoggedInUserId";
+import logic from "../logic";
 
 import { useState, useEffect } from "react";
 import PostList from "../components/PostList";
@@ -17,15 +15,11 @@ function Home(props) {
 
   useEffect(() => {
     try {
-      retrieveUser((error, user) => {
-        if (error) {
-          showFeedback(error);
-
-          return;
-        }
-
-        setUser(user);
-      });
+      logic
+        .retrieveUser()
+        //.then(user => setUser(user))
+        .then(setUser)
+        .catch(showFeedback);
     } catch (error) {
       showFeedback(error);
     }
@@ -44,9 +38,9 @@ function Home(props) {
 
   const handleLogoutClick = () => {
     try {
-      logoutUser();
+      logic.logoutUser();
     } catch (error) {
-      cleanUpLoggedInUserId();
+      logic.cleanUpLoggedInUserId();
     } finally {
       props.onUserLoggedOut();
     }
