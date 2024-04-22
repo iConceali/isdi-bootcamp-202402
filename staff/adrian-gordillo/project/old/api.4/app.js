@@ -2,14 +2,14 @@
 
 import dotenv from "dotenv";
 dotenv.config();
-// import priceController from "./controllers/priceController"; // Asumiendo que actualizarás priceController a ES6
+import priceController from "./controllers/priceController"; // Asumiendo que actualizarás priceController a ES6
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-import { arbitrageRoutes, userRoutes } from "./routes/index.js"; // Asegúrate de que estos sean exportados correctamente
-import priceRoutes from "./routes/priceRoutes.js";
+import { arbitrageRoutes, userRoutes } from "./routes"; // Asegúrate de que estos sean exportados correctamente
+import priceRoutes from "./routes/priceRoutes";
 import EventEmitter from "events";
 
 EventEmitter.defaultMaxListeners = 15;

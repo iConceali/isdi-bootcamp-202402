@@ -5,14 +5,14 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
   service: "gmail", // Cambia esto según tu proveedor de email
   auth: {
-    user: "conitek-tools@gmail.com",
-    pass: "Anonadado41",
+    user: "tu_email@gmail.com",
+    pass: "tu_contraseña",
   },
 });
 
 const sendNotificationEmail = (userEmail, message) => {
   const mailOptions = {
-    from: "conitek-tools@gmail.com",
+    from: "tu_email@gmail.com",
     to: userEmail,
     subject: "Notificación de Oportunidad de Arbitraje",
     text: message,

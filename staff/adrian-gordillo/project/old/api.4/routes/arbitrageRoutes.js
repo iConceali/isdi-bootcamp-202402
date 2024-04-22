@@ -10,14 +10,13 @@ import {
   updateConfig,
   deleteConfig,
   detectArbitrageAndNotify,
-} from "../controllers/arbitrageController.js";
-
-router.get("/detect", detectArbitrageAndNotify);
+} from "../controllers/arbitrageController";
 
 router.get("/", getAllConfigs);
 router.post("/", createConfig);
 router.get("/:id", getConfig);
 router.put("/:id", updateConfig);
 router.delete("/:id", deleteConfig);
+router.get("/detect", detectArbitrageAndNotify);
 
 export default router;

@@ -1,7 +1,15 @@
-// app/src/components/ArbritageOpportunities.jsx
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  Avatar,
+  Box,
+  Container,
+} from "@mui/material";
+import { green } from "@mui/material/colors";
 
 const ArbitrageOpportunities = () => {
   const [opportunities, setOpportunities] = useState([]);
@@ -15,71 +23,164 @@ const ArbitrageOpportunities = () => {
         setOpportunities(data);
       } catch (error) {
         console.error("Failed to fetch arbitrage opportunities:", error);
-        // Añadir manejo del estado de error aquí si es necesario
       }
     };
 
     fetchOpportunities();
+    const intervalId = setInterval(fetchOpportunities, 10000); // Actualizar cada 10 segundos
+
+    return () => clearInterval(intervalId); // Limpiar intervalo cuando el componente se desmonte
   }, []);
+
+  const getExchangeLogo = (exchange) => {
+    const logos = {
+      Binance: "/binance2.png",
+      Kraken: "/kraken2.png",
+      Coinbase: "/coinbase.png",
+      Bitfinex: "/bitfinex.png",
+      "Crypto.com": "/crypto.png",
+      "Gate.io": "/gateio.png",
+      KuCoin: "/kucoin.svg",
+    };
+    return logos[exchange] || "/placeholder.png";
+  };
+
+  const getLogoUrl = (symbol) => {
+    // Ejemplo simple de mapeo, expandir según sea necesario
+    const logos = {
+      "BTC/USDT": "/BTC.png",
+      "ETH/USDT":
+        "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+      "LTC/USDT": "https://s2.coinmarketcap.com/static/img/coins/64x64/2.png",
+      "ADA/USDT":
+        "https://s2.coinmarketcap.com/static/img/coins/64x64/2010.png",
+      "SOL/USDT":
+        "https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png",
+      "DOT/USDT":
+        "https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png",
+      "MATIC/USDT":
+        "https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png",
+    };
+    return logos[symbol];
+  };
+
+  const calculateProfitPercentage = (buyPrice, sellPrice) => {
+    return ((sellPrice - buyPrice) / buyPrice) * 100; // Calcula el porcentaje de ganancia
+  };
+
+  const calculateProfitDollars = (buyPrice, sellPrice) => {
+    return sellPrice - buyPrice; // Calcula la ganancia en dólares
+  };
+
   return (
-    <div>
-      <h1>Oportunidades de Arbitraje</h1>
-      {opportunities.map((op, index) => (
-        <div key={index}>
-          <p>
-            Compra en: {op.buyExchange} por {op.buyPrice}
-          </p>
-          <p>
-            Vende en: {op.sellExchange} por {op.sellPrice}
-          </p>
-          <p>Beneficio potencial: {op.profit}</p>
-        </div>
-      ))}
-    </div>
+    <Container>
+      <Typography variant="h4" color="text.primary" sx={{ mb: 2 }}>
+        Oportunidades de Arbitraje
+      </Typography>
+      <Grid container spacing={2}>
+        {opportunities.map((op, index) => (
+          <Grid item xs={12} sm={6} key={index}>
+            <Card
+              sx={{
+                backgroundColor: "#E5E7EB",
+                borderRadius: 5,
+                color: "black",
+              }}
+            >
+              {" "}
+              <CardContent>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={4} textAlign="center">
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Avatar
+                        src={getExchangeLogo(op.buyExchange)}
+                        alt={op.buyExchange}
+                        sx={{ width: 56, height: 56, mb: 1 }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        Compras en {op.buyExchange}
+                      </Typography>
+                      <Typography variant="h6">
+                        ${op.buyPrice.toFixed(2)}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={4} textAlign="center">
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Avatar
+                        src={getLogoUrl(op.symbol)}
+                        alt={op.symbol}
+                        sx={{ width: 40, height: 40, mb: 1 }}
+                      />
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mb: 1 }}
+                      >
+                        {op.symbol}
+                      </Typography>
+                      <Typography
+                        variant="h6"
+                        color="text.secondary"
+                        sx={{ mb: 1 }}
+                      >
+                        Ganancia
+                      </Typography>
+                      <Typography variant="h3" sx={{ color: green[500] }}>
+                        {calculateProfitPercentage(
+                          op.buyPrice,
+                          op.sellPrice
+                        ).toFixed(2)}
+                        %
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        ($
+                        {calculateProfitDollars(
+                          op.buyPrice,
+                          op.sellPrice
+                        ).toFixed(2)}
+                        )
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={4} textAlign="center">
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Avatar
+                        src={getExchangeLogo(op.sellExchange)}
+                        alt={op.sellExchange}
+                        sx={{ width: 56, height: 56, mb: 1 }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        Vendes en {op.sellExchange}
+                      </Typography>
+                      <Typography variant="h6">
+                        ${op.sellPrice.toFixed(2)}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 };
 
 export default ArbitrageOpportunities;
-
-// import React, { useState, useEffect } from "react";
-// import { toast } from "react-toastify";
-
-// function ArbitrageOpportunities({ socket }) {
-//   const [opportunities, setOpportunities] = useState([]);
-
-//   // Escuchar oportunidades de arbitraje desde el servidor
-//   useEffect(() => {
-//     socket.on("arbitrageOpportunity", (data) => {
-//       setOpportunities((prev) => [...prev, data]);
-//       toast.info(`Nueva oportunidad de arbitraje: ${data.description}`);
-//     });
-
-//     return () => {
-//       socket.off("arbitrageOpportunity");
-//     };
-//   }, [socket]);
-
-//   return (
-//     <div>
-//       <h1>Oportunidades de Arbitraje</h1>
-//       <ul>
-//         {opportunities.map((opp, index) => (
-//           <li key={index}>
-//             <div>
-//               <strong>Par: </strong>
-//               {opp.pair}
-//               <strong> Ganancia Esperada: </strong>
-//               {opp.expectedProfit}
-//             </div>
-//             <div>
-//               <button onClick={() => handleAccept(opp)}>Aceptar</button>
-//               <button onClick={() => handleReject(opp)}>Rechazar</button>
-//             </div>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-// export default ArbitrageOpportunities;

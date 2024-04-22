@@ -1,145 +1,159 @@
 import axios from "axios";
-import sendNotificationEmail from "./mailer";
+// import sendNotificationEmail from "./mailer.js";
 
-// Definición de los exchanges con sus URLs y métodos de formato
 const exchanges = [
   {
     name: "Binance",
     url: "https://api.binance.com/api/v3/ticker/price?symbol=",
-    symbols: [
-      "BTCUSDT",
-      "ETHUSDT",
-      "LTCUSDT",
-      "ADAUSDT",
-      "SOLUSDT",
-      "DOTUSDT",
-      "MATICUSDT",
-    ],
-    format: (data) => ({ price: parseFloat(data.price) }),
+    format: (data) => parseFloat(data.price),
   },
   {
     name: "Kraken",
     url: "https://api.kraken.com/0/public/Ticker?pair=",
-    symbols: [
-      "XXBTZUSD",
-      "XETHZUSD",
-      "XLTCZUSD",
-      "ADAUSD",
-      "SOLUSD",
-      "DOTUSD",
-      "MATICUSD",
-    ],
-    format: (data) => {
+    format: (data, symbol) => {
       const key = Object.keys(data.result)[0];
-      return { price: parseFloat(data.result[key].c[0]) };
+      return parseFloat(data.result[key].c[0]);
     },
   },
   {
     name: "Coinbase",
     url: "https://api.coinbase.com/v2/prices/",
-    symbols: [
-      "BTC-USD",
-      "ETH-USD",
-      "LTC-USD",
-      "ADA-USD",
-      "SOL-USD",
-      "DOT-USD",
-      "MATIC-USD",
-    ],
-    format: (data) => ({ price: parseFloat(data.data.amount) }),
+    format: (data) => parseFloat(data.data.amount),
+    endpointSuffix: "/spot",
   },
   {
     name: "Bitfinex",
     url: "https://api-pub.bitfinex.com/v2/ticker/",
-    symbols: ["tBTCUSD", "tETHUSD", "tLTCUSD", "tADAUSD", "tSOLUSD", "tDOTUSD"],
-    format: (data) => ({ price: parseFloat(data[6]) }),
+    format: (data) => parseFloat(data[6]),
   },
   {
     name: "Crypto.com",
     url: "https://api.crypto.com/v2/public/get-ticker?instrument_name=",
-    symbols: [
-      "BTC_USDT",
-      "ETH_USDT",
-      "LTC_USDT",
-      "ADA_USDT",
-      "SOL_USDT",
-      "DOT_USDT",
-      "MATIC_USDT",
-    ],
-    format: (data) => ({ price: parseFloat(data.result.data[0].a) }),
+    format: (data) => parseFloat(data.result.data[0].a),
   },
   {
     name: "Gate.io",
     url: "https://api.gateio.ws/api/v4/spot/tickers?currency_pair=",
-    symbols: [
-      "BTC_USDT",
-      "ETH_USDT",
-      "LTC_USDT",
-      "ADA_USDT",
-      "SOL_USDT",
-      "DOT_USDT",
-      "MATIC_USDT",
-    ],
-    format: (data) => ({ price: parseFloat(data[0].last) }),
+    format: (data) => parseFloat(data[0].last),
   },
   {
     name: "KuCoin",
     url: "https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=",
-    symbols: [
-      "BTC-USDT",
-      "ETH-USDT",
-      "LTC-USDT",
-      "ADA-USDT",
-      "SOL-USDT",
-      "DOT-USDT",
-      "MATIC-USDT",
-    ],
-    format: (data) => ({ price: parseFloat(data.data.price) }),
+    format: (data) => parseFloat(data.data.price),
   },
 ];
 
-async function fetchPrice(exchange, symbol) {
-  const url = exchange.url + symbol;
+const symbolMappings = {
+  "BTC/USDT": {
+    Binance: "BTCUSDT",
+    Kraken: "XXBTZUSD",
+    Coinbase: "BTC-USD",
+    Bitfinex: "tBTCUSD",
+    "Crypto.com": "BTC_USDT",
+    "Gate.io": "BTC_USDT",
+    KuCoin: "BTC-USDT",
+  },
+  "ETH/USDT": {
+    Binance: "ETHUSDT",
+    Kraken: "XETHZUSD",
+    Coinbase: "ETH-USD",
+    Bitfinex: "tETHUSD",
+    "Crypto.com": "ETH_USDT",
+    "Gate.io": "ETH_USDT",
+    KuCoin: "ETH-USDT",
+  },
+  "LTC/USDT": {
+    Binance: "LTCUSDT",
+    Kraken: "XLTCZUSD",
+    Coinbase: "LTC-USD",
+    Bitfinex: "tLTCUSD",
+    "Crypto.com": "LTC_USDT",
+    "Gate.io": "LTC_USDT",
+    KuCoin: "LTC-USDT",
+  },
+  "ADA/USDT": {
+    Binance: "ADAUSDT",
+    Kraken: "ADAUSD",
+    Coinbase: "ADA-USD",
+    Bitfinex: "tADAUSD",
+    "Crypto.com": "ADA_USDT",
+    "Gate.io": "ADA_USDT",
+    KuCoin: "ADA-USDT",
+  },
+  // Add more mappings for other cryptocurrency pairs
+};
+
+async function fetchPrice(exchange, standardSymbol, commission = 0) {
+  if (!symbolMappings[standardSymbol]) {
+    console.error(
+      `No se encontraron mapeos para ${standardSymbol}. Por favor, revisa tu configuración de symbolMappings.`
+    );
+    return null;
+  }
+  if (!symbolMappings[standardSymbol][exchange.name]) {
+    console.error(
+      `No se encontró mapeo de símbolo para ${exchange.name} y ${standardSymbol}. Por favor, revisa tu configuración de symbolMappings.`
+    );
+    return null;
+  }
+
+  const symbol = symbolMappings[standardSymbol][exchange.name];
+  const url = exchange.url + symbol + (exchange.endpointSuffix || "");
   try {
     const response = await axios.get(url);
+    const price = exchange.format(response.data, symbol);
     return {
       exchange: exchange.name,
-      symbol: symbol,
-      price: exchange.format(response.data).price,
+      symbol: standardSymbol,
+      price: price * (1 - commission / 100),
     };
   } catch (error) {
-    console.error(`Error fetching price from ${exchange.name}:`, error);
+    console.error(
+      `Error al obtener el precio de ${exchange.name} para ${standardSymbol}:`,
+      error
+    );
     return null;
   }
 }
 
-const detectArbitrageOpportunities = async (config) => {
+export async function detectArbitrageOpportunities(config) {
   const prices = await Promise.all(
     exchanges.flatMap((exchange) =>
-      exchange.symbols.map((symbol) => fetchPrice(exchange, symbol))
+      config.paresCriptomonedas.map((pair) =>
+        fetchPrice(exchange, pair, config.comisiones[exchange.name] || 0)
+      )
     )
   );
 
-  const validPrices = prices.filter((p) => p);
-  const sortedPrices = validPrices.sort((a, b) => a.price - b.price);
-  let opportunities = [];
+  const validPrices = prices.filter((price) => price);
+  const opportunities = [];
 
-  for (let i = 0; i < sortedPrices.length - 1; i++) {
-    for (let j = i + 1; j < sortedPrices.length; j++) {
-      const potentialProfit = sortedPrices[j].price - sortedPrices[i].price;
-      if (potentialProfit >= config.umbralRentabilidad) {
-        opportunities.push({
-          buyExchange: sortedPrices[i].exchange,
-          buyPrice: sortedPrices[i].price,
-          sellExchange: sortedPrices[j].exchange,
-          sellPrice: sortedPrices[j].price,
-          profit: potentialProfit,
-        });
+  for (const buy of validPrices) {
+    for (const sell of validPrices) {
+      if (buy.exchange !== sell.exchange && buy.symbol === sell.symbol) {
+        const potentialProfit =
+          sell.price -
+          buy.price -
+          (buy.price * (config.comisiones[buy.exchange] || 0)) / 100 -
+          (sell.price * (config.comisiones[sell.exchange] || 0)) / 100;
+        if (potentialProfit > config.umbralRentabilidad) {
+          const opportunity = {
+            symbol: buy.symbol,
+            buyExchange: buy.exchange,
+            buyPrice: buy.price,
+            sellExchange: sell.exchange,
+            sellPrice: sell.price,
+            profit: potentialProfit,
+          };
+          opportunities.push(opportunity);
+          // sendNotificationEmail({
+          //   subject: "Arbitrage Opportunity Detected",
+          //   body: `Buy at ${buy.exchange} for ${buy.price} and sell at ${sell.exchange} for ${sell.price}. Potential profit: ${potentialProfit}.`,
+          // });
+        }
       }
     }
   }
 
   return opportunities;
-};
-
-export { detectArbitrageOpportunities };
+}
