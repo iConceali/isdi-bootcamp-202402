@@ -1,5 +1,5 @@
 // api/models/CryptoPrice.js
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const cryptoPriceSchema = new mongoose.Schema({
   pair: { type: String, required: true },
@@ -10,4 +10,4 @@ const cryptoPriceSchema = new mongoose.Schema({
 // Aseguramos la unicidad para cada par y exchange
 cryptoPriceSchema.index({ pair: 1, exchange: 1 }, { unique: true });
 
-module.exports = mongoose.model("CryptoPrice", cryptoPriceSchema);
+export default mongoose.model("CryptoPrice", cryptoPriceSchema);

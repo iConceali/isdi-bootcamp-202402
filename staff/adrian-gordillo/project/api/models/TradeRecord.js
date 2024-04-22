@@ -1,6 +1,6 @@
 // api/models/TradeRecord.js
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const tradeRecordSchema = new mongoose.Schema({
   usuario: {
@@ -15,4 +15,4 @@ const tradeRecordSchema = new mongoose.Schema({
   fecha: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("TradeRecord", tradeRecordSchema);
+export default mongoose.model("TradeRecord", tradeRecordSchema);

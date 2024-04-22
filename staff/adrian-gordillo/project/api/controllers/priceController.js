@@ -1,7 +1,7 @@
 // api/controllers/priceController.js
 
-const axios = require("axios");
-const CryptoPrice = require("../models/CryptoPrice");
+import axios from "axios";
+import CryptoPrice from "../models/CryptoPrice.js";
 
 function getUrl(exchange, symbol) {
   if (exchange.name === "Coinbase") {
@@ -134,7 +134,7 @@ const exchanges = [
   },
 ];
 
-exports.getCryptoPrices = async (req, res) => {
+const getCryptoPrices = async (req, res) => {
   try {
     const pricePromises = exchanges.flatMap((exchange) =>
       exchange.symbols.map((symbol) =>
@@ -168,3 +168,5 @@ exports.getCryptoPrices = async (req, res) => {
     res.status(500).send({ message: "Failed to process crypto prices" });
   }
 };
+
+export default getCryptoPrices;

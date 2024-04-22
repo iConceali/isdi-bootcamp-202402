@@ -1,9 +1,9 @@
 // api/routes/priceRoutes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const priceController = require("../controllers/priceController");
+import getCryptoPrices from "../controllers/priceController.js";
 
 // Asociar controlador a la ruta específica
-router.get("/crypto-prices", priceController.getCryptoPrices);
+router.get("/crypto-prices", getCryptoPrices);
 
-module.exports = router;
+export default router;

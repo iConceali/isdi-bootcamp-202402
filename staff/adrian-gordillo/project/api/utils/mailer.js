@@ -1,6 +1,6 @@
 // api/utils/mailer.js
 
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   service: "gmail", // Cambia esto según tu proveedor de email
@@ -27,4 +27,4 @@ const sendNotificationEmail = (userEmail, message) => {
   });
 };
 
-module.exports = sendNotificationEmail;
+export default sendNotificationEmail;

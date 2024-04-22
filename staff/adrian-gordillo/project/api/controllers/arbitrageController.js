@@ -1,10 +1,10 @@
 // api/controllers/arbitrageController.js
 
-const ArbitrageConfig = require("../models/ArbitrageConfig");
-const { getIo } = require("../socket"); // Importa la instancia de socket.io desde socket.js
-const { detectArbitrageOpportunities } = require("../utils/arbitrageDetector");
+import ArbitrageConfig from "../models/ArbitrageConfig.js";
+import sendNotificationEmail from "../utils/mailer.js";
+import { detectArbitrageOpportunities } from "../utils/arbitrageDetector.js";
 
-exports.getAllConfigs = async (req, res) => {
+const getAllConfigs = async (req, res) => {
   try {
     const configs = await ArbitrageConfig.find();
     res.json(configs);
@@ -14,8 +14,7 @@ exports.getAllConfigs = async (req, res) => {
       .json({ message: "Error fetching configs: " + error.message });
   }
 };
-
-exports.createConfig = async (req, res) => {
+const createConfig = async (req, res) => {
   const config = new ArbitrageConfig(req.body);
   try {
     const newConfig = await config.save();
@@ -27,7 +26,7 @@ exports.createConfig = async (req, res) => {
   }
 };
 
-exports.getConfig = async (req, res) => {
+const getConfig = async (req, res) => {
   try {
     const config = await ArbitrageConfig.findById(req.params.id);
     if (!config) {
@@ -39,7 +38,7 @@ exports.getConfig = async (req, res) => {
   }
 };
 
-exports.updateConfig = async (req, res) => {
+const updateConfig = async (req, res) => {
   try {
     const config = await ArbitrageConfig.findByIdAndUpdate(
       req.params.id,
@@ -52,7 +51,7 @@ exports.updateConfig = async (req, res) => {
   }
 };
 
-exports.deleteConfig = async (req, res) => {
+const deleteConfig = async (req, res) => {
   try {
     await ArbitrageConfig.findByIdAndDelete(req.params.id);
     res.json({ message: "Configuration deleted" });
@@ -61,23 +60,44 @@ exports.deleteConfig = async (req, res) => {
   }
 };
 
-exports.detectArbitrageAndNotify = async (req, res) => {
+const detectArbitrageAndNotify = async (req, res) => {
+  console.log("Inicio de detección de oportunidades de arbitraje");
   try {
-    const opportunities = await detectArbitrageOpportunities();
-    const io = getIo();
-    if (opportunities && opportunities.length > 0) {
+    const config = {
+      umbralRentabilidad: 10,
+      paresCriptomonedas: [
+        "BTC/USDT",
+        "ETH/USDT",
+        "LTC/USDT",
+        "ADA/USDT",
+        "SOL/USDT",
+        "DOT/USDT",
+        "MATIC/USDT",
+      ],
+    };
+
+    console.log("Configuración utilizada:", config);
+    const opportunities = await detectArbitrageOpportunities(config);
+    console.log("Oportunidades detectadas:", opportunities);
+
+    if (opportunities.length > 0) {
       opportunities.forEach((opportunity) => {
-        io.emit("arbitrageOpportunity", {
-          message: `Oportunidad de arbitraje detectada: Compra en ${opportunity.buyExchange} por ${opportunity.buyPrice} y vende en ${opportunity.sellExchange} por ${opportunity.sellPrice} para un beneficio potencial.`,
-          details: opportunity,
-        });
+        console.log("Notificando oportunidad:", opportunity);
+        sendNotificationEmail(opportunity);
       });
-      res.send("Detección de arbitraje iniciada y usuarios notificados.");
-    } else {
-      res.send("No se encontraron oportunidades de arbitraje.");
     }
+    res.json(opportunities);
   } catch (error) {
-    console.error("Error al detectar oportunidades de arbitraje:", error);
-    res.status(500).json({ message: "Error interno del servidor" });
+    console.error("Error detecting arbitrage opportunities: ", error);
+    res.status(500).json({ message: "Error during arbitrage detection" });
   }
+};
+
+export {
+  getAllConfigs,
+  createConfig,
+  getConfig,
+  updateConfig,
+  deleteConfig,
+  detectArbitrageAndNotify,
 };

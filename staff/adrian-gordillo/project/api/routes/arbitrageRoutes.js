@@ -1,20 +1,22 @@
 // api/routes/arbitrageRoutes.js
 
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const authenticate = require("../middleware/auth");
-const {
+
+import {
   getAllConfigs,
   createConfig,
   getConfig,
   updateConfig,
   deleteConfig,
-} = require("../controllers/arbitrageController");
+  detectArbitrageAndNotify,
+} from "../controllers/arbitrageController";
 
-router.get("/", authenticate, getAllConfigs); // Solo usuarios autenticados
-router.post("/", authenticate, createConfig); // Solo usuarios autenticados
-router.get("/:id", authenticate, getConfig); // Solo usuarios autenticados
-router.put("/:id", authenticate, updateConfig); // Solo usuarios autenticados
-router.delete("/:id", authenticate, deleteConfig); // Solo usuarios autenticados
+router.get("/", getAllConfigs);
+router.post("/", createConfig);
+router.get("/:id", getConfig);
+router.put("/:id", updateConfig);
+router.delete("/:id", deleteConfig);
+router.get("/detect", detectArbitrageAndNotify);
 
-module.exports = router;
+export default router;

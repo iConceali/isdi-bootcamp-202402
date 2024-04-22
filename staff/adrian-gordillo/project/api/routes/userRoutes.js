@@ -1,16 +1,17 @@
 // api/routes/userRoutes.js
 
-const express = require("express");
-const router = express.Router();
-const authenticate = require("../middleware/auth");
-const {
+import { Router } from "express";
+import authenticate from "../middleware/auth.js";
+import {
   getAllUsers,
   createUser,
   getUser,
   updateUser,
   deleteUser,
   loginUser,
-} = require("../controllers/userController");
+} from "../controllers/userController.js";
+
+const router = Router();
 
 router.get("/", authenticate, getAllUsers); // Solo usuarios autenticados
 router.post("/register", createUser);
@@ -19,4 +20,4 @@ router.get("/:id", authenticate, getUser); // Solo usuarios autenticados
 router.put("/:id", authenticate, updateUser); // Solo usuarios autenticados
 router.delete("/:id", authenticate, deleteUser); // Solo usuarios autenticados
 
-module.exports = router;
+export default router;

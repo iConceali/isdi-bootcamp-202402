@@ -1,11 +1,7 @@
 // api/routes/index.js
 
-const userRoutes = require("./userRoutes");
-const arbitrageRoutes = require("./arbitrageRoutes");
-const priceRoutes = require("./priceRoutes");
+import userRoutes from "./userRoutes.js";
+import arbitrageRoutes from "./arbitrageRoutes.js";
+import priceRoutes from "./priceRoutes.js";
 
-module.exports = {
-  userRoutes,
-  arbitrageRoutes,
-  priceRoutes,
-};
+export { userRoutes, arbitrageRoutes, priceRoutes };

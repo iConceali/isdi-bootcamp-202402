@@ -1,6 +1,6 @@
 // api/db.js
 
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 // URL de conexión a la base de datos MongoDB
 const dbURI = "mongodb://localhost:27017/tradingdb";
@@ -37,4 +37,4 @@ process.on("SIGINT", () => {
   });
 });
 
-module.exports = db;
+export default db;
