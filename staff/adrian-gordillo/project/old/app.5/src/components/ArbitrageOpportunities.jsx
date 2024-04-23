@@ -1,5 +1,3 @@
-// app/src/components/ArbitrageOpportunities.jsx
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -12,28 +10,27 @@ import {
   Container,
 } from "@mui/material";
 import { green } from "@mui/material/colors";
-import CommissionToggle from "./CommissionToggle";
 
 const ArbitrageOpportunities = () => {
   const [opportunities, setOpportunities] = useState([]);
-  const [includeCommissions, setIncludeCommissions] = useState(true);
 
   useEffect(() => {
-    const fetchOpportunities = () => {
-      axios
-        .get(
-          `http://localhost:3000/api/arbitrage/detect?includeCommissions=${includeCommissions}`
-        )
-        .then((response) => setOpportunities(response.data))
-        .catch((error) =>
-          console.error("Failed to fetch arbitrage opportunities:", error)
+    const fetchOpportunities = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:3000/api/arbitrage/detect"
         );
+        setOpportunities(data);
+      } catch (error) {
+        console.error("Failed to fetch arbitrage opportunities:", error);
+      }
     };
 
     fetchOpportunities();
-    const interval = setInterval(fetchOpportunities, 10000);
-    return () => clearInterval(interval);
-  }, [includeCommissions]);
+    const intervalId = setInterval(fetchOpportunities, 10000); // Actualizar cada 10 segundos
+
+    return () => clearInterval(intervalId); // Limpiar intervalo cuando el componente se desmonte
+  }, []);
 
   const getExchangeLogo = (exchange) => {
     const logos = {
@@ -80,10 +77,6 @@ const ArbitrageOpportunities = () => {
       <Typography variant="h4" color="text.primary" sx={{ mb: 2 }}>
         Oportunidades de Arbitraje
       </Typography>
-      <div>
-        <CommissionToggle onToggle={setIncludeCommissions} />
-        {/* Renderizar oportunidades aquí */}
-      </div>
       <Grid container spacing={2}>
         {opportunities.map((op, index) => (
           <Grid item xs={12} sm={6} key={index}>

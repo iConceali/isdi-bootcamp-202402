@@ -1,5 +1,3 @@
-// api/utils/arbitrageDetector.js
-
 import axios from "axios";
 // import sendNotificationEmail from "./mailer.js";
 
@@ -103,32 +101,6 @@ const symbolMappings = {
     "Gate.io": "ADA_USDT",
     KuCoin: "ADA-USDT",
   },
-  "SOL/USDT": {
-    Binance: "SOLUSDT",
-    Kraken: "SOLUSD",
-    Coinbase: "SOL-USD",
-    Bitfinex: "tSOLUSD",
-    "Crypto.com": "SOL_USDT",
-    "Gate.io": "SOL_USDT",
-    KuCoin: "SOL-USDT",
-  },
-  "DOT/USDT": {
-    Binance: "DOTUSDT",
-    Kraken: "DOTUSD",
-    Coinbase: "DOT-USD",
-    Bitfinex: "tDOTUSD",
-    "Crypto.com": "DOT_USDT",
-    "Gate.io": "DOT_USDT",
-    KuCoin: "DOT-USDT",
-  },
-  "MATIC/USDT": {
-    Binance: "MATICUSDT",
-    Kraken: "MATICUSD",
-    Coinbase: "MATIC-USD",
-    "Crypto.com": "MATIC_USDT",
-    "Gate.io": "MATIC_USDT",
-    KuCoin: "MATIC-USDT",
-  },
   // Add more mappings for other cryptocurrency pairs
 };
 
@@ -160,19 +132,13 @@ async function fetchPrice(exchange, standardSymbol, commissionRates) {
   }
 }
 
-export async function detectArbitrageOpportunities(config, includeCommissions) {
+export async function detectArbitrageOpportunities(config) {
   const prices = await Promise.all(
-    config.paresCriptomonedas
-      .map((pair) =>
-        exchanges.map((exchange) =>
-          fetchPrice(
-            exchange,
-            pair,
-            includeCommissions ? config.comisiones[exchange.name] : 0
-          )
-        )
+    exchanges.flatMap((exchange) =>
+      config.paresCriptomonedas.map((pair) =>
+        fetchPrice(exchange, pair, config.comisiones)
       )
-      .flat()
+    )
   );
 
   const validPrices = prices.filter((price) => price !== null);
@@ -181,12 +147,11 @@ export async function detectArbitrageOpportunities(config, includeCommissions) {
   for (const buy of validPrices) {
     for (const sell of validPrices) {
       if (buy.exchange !== sell.exchange && buy.symbol === sell.symbol) {
+        // Calculate profit in terms of percentage
         const potentialProfitPercentage =
           ((sell.bid - buy.ask) / buy.ask) * 100 -
-          (includeCommissions
-            ? (buy.ask * config.comisiones[buy.exchange]) / 100 +
-              (sell.bid * config.comisiones[sell.exchange]) / 100
-            : 0);
+          ((buy.ask * config.comisiones[buy.exchange]) / 100 +
+            (sell.bid * config.comisiones[sell.exchange]) / 100);
 
         if (potentialProfitPercentage > config.umbralRentabilidad) {
           opportunities.push({
@@ -204,26 +169,3 @@ export async function detectArbitrageOpportunities(config, includeCommissions) {
 
   return opportunities;
 }
-
-// export const updateAndDetectArbitrage = async (req, res) => {
-//   try {
-//     const { capital, umbralRentabilidad } = req.body; // Receive settings from the user's input
-//     const config = {
-//       umbralRentabilidad: umbralRentabilidad || 0.01, // Use default if not provided
-//       capital, // This could be used to filter opportunities based on potential transaction sizes
-//       comisiones: {
-//         Binance: 0.1,
-//         Kraken: 0.21,
-//         // Add other exchanges
-//       },
-//       paresCriptomonedas: ["BTC/USDT", "ETH/USDT", "LTC/USDT", "ADA/USDT"],
-//     };
-//     const opportunities = await detectArbitrageOpportunities(config);
-//     res.json(opportunities);
-//   } catch (error) {
-//     console.error("Error detecting arbitrage opportunities: ", error);
-//     res
-//       .status(500)
-//       .json({ message: "Error during arbitrage detection: " + error.message });
-//   }
-// };

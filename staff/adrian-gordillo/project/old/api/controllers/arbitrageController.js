@@ -62,36 +62,40 @@ export const deleteConfig = async (req, res) => {
 };
 
 export const detectArbitrageAndNotify = async (req, res) => {
-  const includeCommissions = req.query.includeCommissions === "true";
-  const config = {
-    umbralRentabilidad: 0.1,
-    comisiones: includeCommissions
-      ? {
-          Binance: 0.1,
-          Kraken: 0.21,
-          Coinbase: 0.5,
-          Bitfinex: 0.15,
-          "Crypto.com": 0.4,
-          "Gate.io": 0.2,
-          KuCoin: 0.1,
-        }
-      : {},
-    paresCriptomonedas: [
-      "BTC/USDT",
-      "ETH/USDT",
-      "LTC/USDT",
-      "ADA/USDT",
-      "SOL/USDT",
-      "DOT/USDT",
-      "MATIC/USDT",
-    ],
-  };
-
+  // console.log("Inicio de detección de oportunidades de arbitraje");
   try {
-    const opportunities = await detectArbitrageOpportunities(
-      config,
-      includeCommissions
-    );
+    const config = {
+      umbralRentabilidad: 0.01,
+      comisiones: {
+        Binance: 0.1,
+        Kraken: 0.21,
+        Coinbase: 0.5,
+        Bitfinex: 0.15,
+        "Crypto.com": 0.4,
+        "Gate.io": 0.2,
+        KuCoin: 0.1,
+      },
+      paresCriptomonedas: [
+        "BTC/USDT",
+        "ETH/USDT",
+        "LTC/USDT",
+        "ADA/USDT",
+        // "SOL/USDT",
+        // "DOT/USDT",
+        // "MATIC/USDT",
+      ],
+    };
+
+    // console.log("Configuración utilizada:", config);
+    const opportunities = await detectArbitrageOpportunities(config);
+    // console.log("Oportunidades detectadas:", opportunities);
+
+    // if (opportunities.length > 0) {
+    //   opportunities.forEach((opportunity) => {
+    //     console.log("Notificando oportunidad:", opportunity);
+    //     // sendNotificationEmail(opportunity);
+    //   });
+    // }
     res.json(opportunities);
   } catch (error) {
     console.error("Error detecting arbitrage opportunities: ", error);

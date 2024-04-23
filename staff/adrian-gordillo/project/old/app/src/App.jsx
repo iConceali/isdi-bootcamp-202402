@@ -18,7 +18,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import io from "socket.io-client";
 import { Box } from "@mui/material";
-import SettingsForm from "./components/SettingsForm";
 
 function ProtectedRoute({ children }) {
   const { user } = useUser();
@@ -90,7 +89,6 @@ function App() {
               path="/opportunities"
               element={
                 <ProtectedRoute>
-                  {/* <SettingsForm /> */}
                   <ArbitrageOpportunities notify={notifyUser} />
                 </ProtectedRoute>
               }
