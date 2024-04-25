@@ -73,11 +73,23 @@ const exchanges = [
   {
     name: "Bitfinex",
     url: "https://api-pub.bitfinex.com/v2/ticker/",
-    symbols: ["tBTCUSD", "tETHUSD", "tLTCUSD", "tADAUSD", "tSOLUSD", "tDOTUSD"],
-    format: (symbol, data) => ({
-      pair: symbol.substring(1, 4) + "/USDT",
-      price: parseFloat(data[6]),
-    }),
+    symbols: [
+      "tBTCUSD",
+      "tETHUSD",
+      "tLTCUSD",
+      "tADAUSD",
+      "tSOLUSD",
+      "tDOTUSD",
+      "tMATIC:USD",
+    ],
+    format: (symbol, data) => {
+      const cleanSymbol = symbol.replace("t", "").replace(":", "");
+      const baseCurrency = cleanSymbol.substring(0, cleanSymbol.length - 3);
+      return {
+        pair: baseCurrency + "/USDT",
+        price: parseFloat(data[6]),
+      };
+    },
   },
   // Crypto.com
   {

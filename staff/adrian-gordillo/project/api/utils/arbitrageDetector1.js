@@ -1,4 +1,4 @@
-// api/utils/arbitrageDetector.js
+// api/utils/arbitrageDetector1.js
 
 import axios from "axios";
 // import sendNotificationEmail from "./mailer.js";
@@ -125,9 +125,37 @@ const symbolMappings = {
     Binance: "MATICUSDT",
     Kraken: "MATICUSD",
     Coinbase: "MATIC-USD",
+    Bitfinex: "tMATIC:USD",
     "Crypto.com": "MATIC_USDT",
     "Gate.io": "MATIC_USDT",
     KuCoin: "MATIC-USDT",
+  },
+  "MKR/USDT": {
+    Binance: "MKRUSDT",
+    Kraken: "MKRUSD",
+    Coinbase: "MKR-USD",
+    Bitfinex: "tMKRUSD",
+    "Crypto.com": "MKR_USDT",
+    "Gate.io": "MKR_USDT",
+    KuCoin: "MKR-USDT",
+  },
+  "BNB/USDT": {
+    Binance: "BNBUSDT",
+    Kraken: "BNBUSD",
+    Coinbase: "BNB-USD",
+    Bitfinex: "tBNBUSD",
+    "Crypto.com": "BNB_USDT",
+    "Gate.io": "BNB_USDT",
+    KuCoin: "BNB-USDT",
+  },
+  "BCH/USDT": {
+    Binance: "BCHUSDT",
+    Kraken: "BCHUSD",
+    Coinbase: "BCH-USD",
+    Bitfinex: "tBCHUSD",
+    "Crypto.com": "BCH_USDT",
+    "Gate.io": "BCH_USDT",
+    KuCoin: "BCH-USDT",
   },
   // Add more mappings for other cryptocurrency pairs
 };

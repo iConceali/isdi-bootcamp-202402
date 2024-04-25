@@ -1,4 +1,4 @@
-// app/src/components/ArbitrageOpportunities.jsx
+// app/src/components/ArbitrageOpportunities1.jsx
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -14,7 +14,7 @@ import {
 import { green } from "@mui/material/colors";
 import CommissionToggle from "./CommissionToggle";
 
-const ArbitrageOpportunities = () => {
+const ArbitrageOpportunities1 = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [includeCommissions, setIncludeCommissions] = useState(true);
 
@@ -64,7 +64,7 @@ const ArbitrageOpportunities = () => {
       "MATIC/USDT":
         "https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png",
     };
-    return logos[symbol];
+    return logos[symbol] || "/placeholder.png";
   };
 
   const calculateProfitPercentage = (buyPrice, sellPrice) => {
@@ -89,7 +89,7 @@ const ArbitrageOpportunities = () => {
           <Grid item xs={12} sm={6} key={index}>
             <Card
               sx={{
-                backgroundColor: "#E5E7EB",
+                backgroundColor: "#272A2F",
                 borderRadius: 5,
                 color: "black",
               }}
@@ -112,7 +112,7 @@ const ArbitrageOpportunities = () => {
                       <Typography variant="body2" color="text.secondary">
                         Compras en {op.buyExchange}
                       </Typography>
-                      <Typography variant="h6">
+                      <Typography variant="h6" color="text.secondary">
                         ${op.buyPrice.toFixed(2)}
                       </Typography>
                     </Box>
@@ -175,7 +175,7 @@ const ArbitrageOpportunities = () => {
                       <Typography variant="body2" color="text.secondary">
                         Vendes en {op.sellExchange}
                       </Typography>
-                      <Typography variant="h6">
+                      <Typography variant="h6" color="text.secondary">
                         ${op.sellPrice.toFixed(2)}
                       </Typography>
                     </Box>
@@ -190,4 +190,4 @@ const ArbitrageOpportunities = () => {
   );
 };
 
-export default ArbitrageOpportunities;
+export default ArbitrageOpportunities1;
