@@ -21,7 +21,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/users/login",
+        `${import.meta.env.VITE_API_URL}/api/users/login`,
         credentials
       );
       if (response.data.token) {
@@ -38,7 +38,7 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth="xs">
+    <Container maxWidth="xs" sx={{ mt: 30 }}>
       <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
         Login
       </Typography>

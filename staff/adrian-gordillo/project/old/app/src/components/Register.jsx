@@ -1,3 +1,5 @@
+// app/src/components/Register.jsx
+
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +21,10 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3000/api/users/register", userData);
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/users/register`,
+        userData
+      );
       navigate("/login");
     } catch (error) {
       console.error("Registration failed:", error);
@@ -27,7 +32,7 @@ const Register = () => {
   };
 
   return (
-    <Container maxWidth="xs">
+    <Container maxWidth="xs" sx={{ mt: 30 }}>
       <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
         Register
       </Typography>

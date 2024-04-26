@@ -1,16 +1,15 @@
-// api/app.js
-
 import dotenv from "dotenv";
 dotenv.config();
-// import priceController from "./controllers/priceController"; // Asumiendo que actualizarás priceController a ES6
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
-import { arbitrageRoutes, userRoutes } from "./routes/index.js"; // Asegúrate de que estos sean exportados correctamente
+import { arbitrageRoutes, userRoutes } from "./routes/index.js";
 import priceRoutes from "./routes/priceRoutes.js";
 import EventEmitter from "events";
+import { detectArbitrageAndNotify } from "./controllers/arbitrageController1.js"; // Asegúrate de importar correctamente
+import { detectTriangular } from "./controllers/arbitrageController2.js"; // Asegúrate de importar correctamente
 
 EventEmitter.defaultMaxListeners = 15;
 
@@ -26,14 +25,28 @@ const io = new Server(server, {
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173", // Asegúrate de permitir tu puerto de Vite
+    origin: `${process.env.APP_URL}`, // Asegúrate de permitir tu puerto de Vite
     methods: ["GET", "POST"],
   })
 );
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("Conexión exitosa a MongoDB"))
+  .then(() => {
+    console.log("Conexión exitosa a MongoDB");
+    server.listen(process.env.PORT || 3000, () => {
+      console.log(
+        `Servidor corriendo en http://localhost:${process.env.PORT || 3000}`
+      );
+
+      // Inicia la búsqueda y registro de oportunidades cada 10 segundos
+      setInterval(() => {
+        console.log("Buscando nuevas oportunidades de arbitraje...");
+        detectArbitrageAndNotify();
+        detectTriangular();
+      }, 10000); // 10 segundos
+    });
+  })
   .catch((error) => console.error("Error al conectar a MongoDB:", error));
 
 io.on("connection", (socket) => {
@@ -60,11 +73,6 @@ app.use((error, req, res, next) => {
       message: error.message || "An unknown error occurred.",
     },
   });
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
 export { app, io };

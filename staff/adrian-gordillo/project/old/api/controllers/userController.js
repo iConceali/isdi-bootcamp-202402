@@ -18,14 +18,10 @@ const createUser = async (req, res) => {
     req.body;
 
   try {
-    // // Hash de la contraseña antes de guardarla en la base de datos
-    // const salt = await bcrypt.genSalt(10);
-    // const hashedPassword = await bcrypt.hash(contraseña, salt);
-
     const user = new User({
       nombre,
       correoElectronico,
-      contraseña, // Guarda la contraseña hasheada
+      contraseña,
       configuracionesArbitraje,
     });
 

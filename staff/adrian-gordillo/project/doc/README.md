@@ -19,7 +19,7 @@ This application is designed to automate the process of cryptocurrency arbitrage
 - view app intro and description (anonymous)
 - view dashboard (orders, graphs, stats, ...)
 - list crypto currency prices
-- list opportunities (standard strategies)
+- list opportunities (standard strategy, traingular strategy)
 - filter opportunities (by exchange, strategy)
 - save filter
 - list saved filters

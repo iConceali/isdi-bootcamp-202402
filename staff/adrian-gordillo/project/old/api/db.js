@@ -2,8 +2,11 @@
 
 import mongoose from "mongoose";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 // URL de conexión a la base de datos MongoDB
-const dbURI = "mongodb://localhost:27017/tradingdb";
+const dbURI = process.env.MONGO_URI;
 
 // Configuración de la conexión a MongoDB
 mongoose.connect(dbURI, {

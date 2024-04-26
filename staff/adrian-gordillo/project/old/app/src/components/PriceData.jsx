@@ -36,7 +36,7 @@ const PriceData = () => {
   useEffect(() => {
     const fetchPrices = () => {
       axios
-        .get("http://localhost:3000/api/prices/crypto-prices")
+        .get(`${import.meta.env.VITE_API_URL}/api/prices/crypto-prices`)
         .then((response) => setPrices(response.data))
         .catch((error) => {
           console.error("Error fetching price data:", error);
@@ -54,15 +54,23 @@ const PriceData = () => {
   };
 
   return (
-    <Box sx={{ Width: "100%", mx: "auto", p: 2 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>
+    <Box
+      sx={{
+        width: "80%", // Ajusta el ancho a un 80% del viewport
+        maxWidth: 1200, // Asegúrate de que no sea demasiado ancha en pantallas grandes
+        mx: "auto",
+        mt: 2, // Reduce el margen superior para que la tabla esté más arriba
+        p: 2,
+      }}
+    >
+      <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
         Crypto Prices
       </Typography>
       <Tabs
         value={selectedTab}
         onChange={handleChangeTab}
         variant={matches ? "scrollable" : "standard"}
-        scrollButtons={matches ? "auto" : false} // Corregido aquí
+        scrollButtons={matches ? "auto" : false}
         allowScrollButtonsMobile
         centered={!matches}
       >
@@ -79,8 +87,18 @@ const PriceData = () => {
         ))}
       </Tabs>
 
-      <TableContainer component={Paper} sx={{ mt: 3 }}>
-        <Table aria-label="crypto prices table">
+      <TableContainer
+        component={Paper}
+        sx={{
+          mt: 2,
+          boxShadow: 3, // Añade sombra para dar profundidad
+          borderRadius: "10px", // Bordes redondeados
+        }}
+      >
+        <Table
+          aria-label="crypto prices table"
+          sx={{ backgroundColor: "#272A2F" }}
+        >
           <TableHead>
             <TableRow>
               <TableCell>Exchange</TableCell>

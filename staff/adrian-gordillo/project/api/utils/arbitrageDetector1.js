@@ -232,26 +232,3 @@ export async function detectArbitrageOpportunities(config, includeCommissions) {
 
   return opportunities;
 }
-
-// export const updateAndDetectArbitrage = async (req, res) => {
-//   try {
-//     const { capital, umbralRentabilidad } = req.body; // Receive settings from the user's input
-//     const config = {
-//       umbralRentabilidad: umbralRentabilidad || 0.01, // Use default if not provided
-//       capital, // This could be used to filter opportunities based on potential transaction sizes
-//       comisiones: {
-//         Binance: 0.1,
-//         Kraken: 0.21,
-//         // Add other exchanges
-//       },
-//       paresCriptomonedas: ["BTC/USDT", "ETH/USDT", "LTC/USDT", "ADA/USDT"],
-//     };
-//     const opportunities = await detectArbitrageOpportunities(config);
-//     res.json(opportunities);
-//   } catch (error) {
-//     console.error("Error detecting arbitrage opportunities: ", error);
-//     res
-//       .status(500)
-//       .json({ message: "Error during arbitrage detection: " + error.message });
-//   }
-// };
