@@ -1,5 +1,3 @@
-// api/models/Opportunity.js
-
 import mongoose from "mongoose";
 
 const opportunitySchema = new mongoose.Schema(
@@ -21,10 +19,10 @@ const opportunitySchema = new mongoose.Schema(
         amount: Number,
       },
     ],
-    exchange: String,
   },
   { timestamps: true }
 );
 
 const Opportunity = mongoose.model("Opportunity", opportunitySchema);
+
 export default Opportunity;

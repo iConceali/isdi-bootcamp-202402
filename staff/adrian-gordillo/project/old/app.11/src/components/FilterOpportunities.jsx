@@ -19,7 +19,7 @@ import {
 const FilterOpportunities = ({ onFiltersChange }) => {
   const [type, setType] = useState("");
   const [selectedExchanges, setSelectedExchanges] = useState([]);
-  const [profitThreshold, setProfitThreshold] = useState(0.02);
+  const [profitThreshold, setProfitThreshold] = useState(0.1);
   const [openExchanges, setOpenExchanges] = useState(false);
 
   const exchanges = [

@@ -2,7 +2,6 @@
 
 import axios from "axios";
 
-// Obtener información de ticker del libro de órdenes para un símbolo específico
 const getSymbolBookTicker = async (symbol) => {
   try {
     const response = await axios.get(
@@ -12,7 +11,6 @@ const getSymbolBookTicker = async (symbol) => {
       symbol,
       bidPrice: parseFloat(response.data.bidPrice),
       askPrice: parseFloat(response.data.askPrice),
-      exchange: "Binance", // Estableciendo explícitamente el exchange como Binance
     };
   } catch (error) {
     throw new Error(`Error al obtener el book ticker para ${symbol}: ${error}`);
@@ -21,9 +19,8 @@ const getSymbolBookTicker = async (symbol) => {
 
 // Función para dividir el símbolo en la moneda base y la moneda cotizada
 const getSymbolParts = (symbol) => {
-  // Regex para dividir los símbolos en base y quote (por ejemplo, BTCUSDT en BTC y USDT)
-  const match = symbol.match(/^(.+?)(USD|USDT|ETH|BTC)$/);
-  return match ? { base: match[1], quote: match[2] } : null;
+  const match = symbol.match(/^(.+)(USD|USDT|ETH|BTC)$/);
+  return match ? [match[2], match[1]] : [symbol, ""]; // Retorna el símbolo base y la moneda de cotización
 };
 
 export const detectTriangularArbitrage = async () => {
@@ -50,42 +47,47 @@ export const detectTriangularArbitrage = async () => {
     ["BTCUSDT", "MATICBTC", "MATICUSDT"],
   ];
 
-  const allArbitrageOpportunities = [];
+  const allArbitrageOpportunities = []; // Almacena todas las oportunidades encontradas
 
   for (const triangle of triangles) {
+    const arbitrageOpportunities = []; // Almacena las oportunidades encontradas para este triángulo
+
     const tickers = await Promise.all(triangle.map(getSymbolBookTicker));
-    let startingAmount = 1000; // Cantidad inicial para la simulación
+    let startingAmount = 1000; // Cantidad inicial en la moneda base del primer par
     let currentAmount = startingAmount;
     let trades = [];
 
     for (let i = 0; i < tickers.length; i++) {
-      const parts = getSymbolParts(triangle[i]);
-      if (!parts) {
-        console.error(`No se pudo interpretar el símbolo ${triangle[i]}`);
-        continue;
+      const [fromCurrency, toCurrency] = getSymbolParts(triangle[i]);
+      let trade;
+      if (i === tickers.length - 1) {
+        // Último trade, cerrando el ciclo
+        trade = currentAmount * tickers[i].bidPrice;
+      } else {
+        // Compras intermedias
+        trade = currentAmount / tickers[i].askPrice;
       }
-      const tradeAmount =
-        i === tickers.length - 1
-          ? currentAmount * tickers[i].bidPrice
-          : currentAmount / tickers[i].askPrice;
       trades.push({
-        from: parts.base,
-        to: parts.quote,
-        amount: tradeAmount,
+        from: fromCurrency,
+        to: toCurrency,
+        amount: trade,
       });
-      currentAmount = tradeAmount;
+      currentAmount = trade;
     }
 
+    const umbralProfit = 0.02;
+
     let profit = currentAmount - startingAmount;
-    if (profit > 0.02) {
-      // Umbral de rentabilidad del 0.02%
-      allArbitrageOpportunities.push({
+    if (profit > umbralProfit) {
+      arbitrageOpportunities.push({
         success: true,
         profit,
+        triangle: triangle.join(" > "),
         trades,
-        exchanges: "Binance",
       });
     }
+
+    allArbitrageOpportunities.push(...arbitrageOpportunities); // Agregar las oportunidades encontradas para este triángulo a la matriz general
   }
 
   return allArbitrageOpportunities.length > 0

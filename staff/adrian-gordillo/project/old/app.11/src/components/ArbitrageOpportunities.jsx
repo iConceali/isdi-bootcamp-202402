@@ -26,6 +26,7 @@ const ArbitrageOpportunities = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Optimizar la carga de oportunidades
   const fetchOpportunities = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -42,19 +43,22 @@ const ArbitrageOpportunities = () => {
   }, []);
 
   useEffect(() => {
-    fetchOpportunities();
-    const intervalId = setInterval(fetchOpportunities, 10000);
-    return () => clearInterval(intervalId);
+    fetchOpportunities(); // Fetch immediately on mount
+    const intervalId = setInterval(fetchOpportunities, 10000); // Fetch every 10 seconds
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, [fetchOpportunities]);
 
   useEffect(() => {
-    const filtered = allOpportunities.filter(
-      (opportunity) =>
+    // Aplicar filtros cuando cambien allOpportunities o filters
+    const filtered = allOpportunities.filter((opportunity) => {
+      return (
         (!filters.type || opportunity.type === filters.type) &&
-        (!opportunity.exchange ||
-          filters.exchanges.includes(opportunity.exchange)) &&
+        (filters.exchanges.length === 0 ||
+          filters.exchanges.includes(opportunity.buyExchange) ||
+          filters.exchanges.includes(opportunity.sellExchange)) &&
         opportunity.profit >= filters.profitThreshold
-    );
+      );
+    });
     setDisplayedOpportunities(filtered);
   }, [filters, allOpportunities]);
 

@@ -36,7 +36,6 @@ const logos = {
 };
 
 const ArbitrageOpportunityCard = ({ opportunity }) => {
-  console.log("Opportunity Data:", opportunity);
   const theme = useTheme();
   const getLogo = (symbol) => logos[symbol] || "/logos/default.png";
 
