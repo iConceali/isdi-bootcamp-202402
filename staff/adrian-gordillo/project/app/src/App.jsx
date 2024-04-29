@@ -1,29 +1,24 @@
-// app/src/App.jsx
-
 import React, { useEffect } from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { UserProvider, useUser } from "./userContext";
+import { createTheme, ThemeProvider, CssBaseline, Box } from "@mui/material";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import PriceData from "./components/PriceData";
-import ArbitrageOpportunities from "./components/ArbitrageOpportunities";
-import ArbitrageOpportunities1 from "./components/ArbitrageOpportunities1";
-import ArbitrageOpportunities2 from "./components/ArbitrageOpportunities2"; // Importar el nuevo componente
-import TradeHistory from "./components/TradeHistory";
-import NavBar from "./components/NavBar";
+import { UserProvider, useUser } from "./userContext";
+import NavBar from "./components/Navbar/NavBar";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import PriceData from "./pages/PriceData";
+import ArbitrageOpportunities from "./pages/ArbitrageOpportunities";
+import TradeHistory from "./pages/TradeHistory";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import io from "socket.io-client";
-import { Box } from "@mui/material";
 
-// Configuración del tema oscuro
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -48,26 +43,76 @@ function ProtectedRoute({ children }) {
   return user ? children : <Navigate to="/login" />;
 }
 
-function App() {
-  const notifyUser = (message) => {
-    toast(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
+function LayoutBox() {
+  const location = useLocation();
+  const isCenteredPage =
+    location.pathname === "/login" || location.pathname === "/register";
 
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        // bgcolor:
+        //   "background: linear-gradient(to right, rgb(0, 0, 0), #010d55);",
+        color: "text.primary",
+        overflow: "auto",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: isCenteredPage ? "center" : "flex-start", // Centra solo para Login y Register
+        pt: isCenteredPage ? 0 : 8, // Añade padding top solo si no es login o register para dar espacio debajo del NavBar
+      }}
+    >
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/prices"
+          element={
+            <ProtectedRoute>
+              <PriceData />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/opportunities"
+          element={
+            <ProtectedRoute>
+              <ArbitrageOpportunities />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <TradeHistory />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Box>
+  );
+}
+
+function App() {
   useEffect(() => {
     const socket = io(`${import.meta.env.VITE_API_URL}`, {
       transports: ["websocket"],
     });
 
     socket.on("arbitrageOpportunity", (data) => {
-      notifyUser(data.message);
+      toast(data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     });
 
     return () => {
@@ -78,77 +123,11 @@ function App() {
 
   return (
     <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
       <UserProvider>
         <Router>
           <NavBar />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: "100vw",
-              height: "100vh",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              padding: 3,
-              bgcolor: "background.default",
-              color: "text.primary",
-              overflow: "auto",
-            }}
-          >
-            <Routes>
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/prices"
-                element={
-                  <ProtectedRoute>
-                    <PriceData />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/opportunities"
-                element={
-                  <ProtectedRoute>
-                    <ArbitrageOpportunities notify={notifyUser} />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/opportunities1"
-                element={
-                  <ProtectedRoute>
-                    <ArbitrageOpportunities1 notify={notifyUser} />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/opportunities2"
-                element={
-                  <ProtectedRoute>
-                    <ArbitrageOpportunities2 notify={notifyUser} />
-                  </ProtectedRoute>
-                }
-              />{" "}
-              {/* Add this line */}
-              <Route
-                path="/history"
-                element={
-                  <ProtectedRoute>
-                    <TradeHistory />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </Box>
+          <LayoutBox />
           <ToastContainer />
         </Router>
       </UserProvider>

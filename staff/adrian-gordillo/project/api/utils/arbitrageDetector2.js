@@ -23,7 +23,7 @@ const getSymbolBookTicker = async (symbol) => {
 const getSymbolParts = (symbol) => {
   // Regex para dividir los símbolos en base y quote (por ejemplo, BTCUSDT en BTC y USDT)
   const match = symbol.match(/^(.+?)(USD|USDT|ETH|BTC)$/);
-  return match ? { base: match[1], quote: match[2] } : null;
+  return match ? { base: match[2], quote: match[1] } : null;
 };
 
 export const detectTriangularArbitrage = async () => {
