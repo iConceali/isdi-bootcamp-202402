@@ -1,3 +1,5 @@
+// api/models/User.js
+
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
@@ -35,9 +37,7 @@ const userSchema = new mongoose.Schema({
       message: "La contraseña debe contener al menos un número y una letra.",
     },
   },
-  configuracionesArbitraje: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "ArbitrageConfig" },
-  ],
+  watchlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "CryptoPrice" }],
 });
 
 // Middleware para hashear la contraseña antes de guardar si se ha modificado

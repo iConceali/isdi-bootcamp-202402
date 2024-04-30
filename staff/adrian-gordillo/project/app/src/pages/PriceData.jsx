@@ -1,4 +1,5 @@
-// app/src/components/PriceData.jsx
+// app/src/pages/PriceData.jsx
+
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -8,40 +9,36 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Tabs,
-  Tab,
   Box,
   TableContainer,
-  useTheme,
-  useMediaQuery,
+  IconButton,
+  TableSortLabel,
+  Avatar,
 } from "@mui/material";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import axios from "axios";
 
-const exchangeIcons = {
-  Binance: "/binance.png",
-  Kraken: "/kraken.png",
-  Coinbase: "/coinbase.png",
-  Bitfinex: "/bitfinex.png",
-  "Crypto.com": "/crypto.png",
-  "Gate.io": "/gateio.png",
-  KuCoin: "/kucoin.svg",
-};
+const getIconUrl = (symbol) =>
+  `../public/crypto-icon/${symbol.toLowerCase()}.png`;
 
 const PriceData = () => {
   const [prices, setPrices] = useState([]);
-  const [selectedTab, setSelectedTab] = useState("BTC/USDT");
-  const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.down("sm"));
+  const [orderDirection, setOrderDirection] = useState("asc");
+  const [orderBy, setOrderBy] = useState("symbol");
 
   useEffect(() => {
-    const fetchPrices = () => {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/prices/crypto-prices`)
-        .then((response) => setPrices(response.data))
-        .catch((error) => {
-          console.error("Error fetching price data:", error);
-          setPrices([]);
-        });
+    const fetchPrices = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/prices/crypto-prices`
+        );
+        setPrices(response.data);
+      } catch (error) {
+        console.error("Error fetching price data:", error);
+        setPrices([]);
+      }
     };
 
     fetchPrices();
@@ -49,82 +46,116 @@ const PriceData = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleChangeTab = (event, newValue) => {
-    setSelectedTab(newValue);
+  const handleSort = (property) => {
+    const isAsc = orderBy === property && orderDirection === "asc";
+    setOrderDirection(isAsc ? "desc" : "asc");
+    setOrderBy(property);
   };
 
+  const sortedPrices = prices.sort((a, b) => {
+    if (a[orderBy] < b[orderBy]) return orderDirection === "asc" ? -1 : 1;
+    if (a[orderBy] > b[orderBy]) return orderDirection === "asc" ? 1 : -1;
+    return 0;
+  });
+
   return (
-    <Box
-      sx={{
-        width: "80%", // Ajusta el ancho a un 80% del viewport
-        maxWidth: 1200, // Asegúrate de que no sea demasiado ancha en pantallas grandes
-        mx: "auto",
-        mt: 0, // Reduce el margen superior para que la tabla esté más arriba
-        p: 2,
-      }}
-    >
+    <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", p: 2 }}>
       <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
         Crypto Prices
       </Typography>
-      <Tabs
-        value={selectedTab}
-        onChange={handleChangeTab}
-        variant={matches ? "scrollable" : "standard"}
-        scrollButtons={matches ? "auto" : false}
-        allowScrollButtonsMobile
-        centered={!matches}
-      >
-        {[
-          "BTC/USDT",
-          "ETH/USDT",
-          "LTC/USDT",
-          "ADA/USDT",
-          "SOL/USDT",
-          "DOT/USDT",
-          "MATIC/USDT",
-        ].map((pair) => (
-          <Tab key={pair} label={pair} value={pair} />
-        ))}
-      </Tabs>
-
       <TableContainer
         component={Paper}
-        sx={{
-          mt: 2,
-          boxShadow: 3, // Añade sombra para dar profundidad
-          borderRadius: "10px", // Bordes redondeados
-        }}
+        sx={{ boxShadow: 3, borderRadius: "10px" }}
       >
         <Table
-          aria-label="crypto prices table"
           sx={{ backgroundColor: "#272A2F" }}
+          aria-label="crypto prices table"
         >
           <TableHead>
             <TableRow>
-              <TableCell>Exchange</TableCell>
-              <TableCell align="right">Pair</TableCell>
-              <TableCell align="right">Price</TableCell>
+              <TableCell sx={{ width: "1rem" }}></TableCell>
+              <TableCell sx={{ width: "1rem" }}>#</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "symbol"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("symbol")}
+                >
+                  Symbol
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "price"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("price")}
+                >
+                  Price
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "price24Hr"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("price24Hr")}
+                >
+                  24 %
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "marketCap"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("marketCap")}
+                >
+                  Market Cap
+                </TableSortLabel>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {prices
-              .filter((price) => price.pair === selectedTab)
-              .map((price, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <img
-                        src={exchangeIcons[price.exchange]}
-                        alt={price.exchange}
-                        style={{ width: 24, height: 24 }}
-                      />
-                      {price.exchange}
-                    </Box>
-                  </TableCell>
-                  <TableCell align="right">{price.pair}</TableCell>
-                  <TableCell align="right">${price.price}</TableCell>
-                </TableRow>
-              ))}
+            {sortedPrices.map((price, index) => (
+              <TableRow key={price.symbol}>
+                <TableCell>
+                  <IconButton>
+                    <StarBorderIcon />
+                  </IconButton>
+                </TableCell>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Avatar
+                      src={getIconUrl(price.symbol)}
+                      alt={price.symbol}
+                      sx={{ width: 24, height: 24 }}
+                    />
+                    {price.symbol.toUpperCase()}
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  ${price.price ? price.price.toFixed(2) : "N/A"}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: price.price24Hr >= 0 ? "green" : "red",
+                    animation: "blinking 2s infinite",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    {price.price24Hr >= 0 ? (
+                      <ArrowDropUpIcon />
+                    ) : (
+                      <ArrowDropDownIcon />
+                    )}
+                    {Math.abs(price.price24Hr).toFixed(2)}%
+                  </Box>
+                </TableCell>
+
+                <TableCell>
+                  ${parseFloat(price.marketCap).toLocaleString()}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

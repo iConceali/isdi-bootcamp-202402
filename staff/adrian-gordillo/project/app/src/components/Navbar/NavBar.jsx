@@ -1,3 +1,5 @@
+// app/src/components/NavBar/NavBar.jsx
+
 import React, { useState } from "react";
 import {
   AppBar,
@@ -132,26 +134,45 @@ const NavBar = () => {
                   <StyledButtons component={StyledLink} to="/prices">
                     Prices
                   </StyledButtons>
+                  <ListItem button component={Link} to="/watchlist">
+                    <ListItemText primary="Watchlist" />
+                  </ListItem>
                   <StyledButtons component={StyledLink} to="/opportunities">
                     Opportunities
                   </StyledButtons>
                   <StyledButtons component={StyledLink} to="/history">
                     History
                   </StyledButtons>
-                  <StyledButtons
-                    sx={{ marginLeft: "auto" }}
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </StyledButtons>
                 </>
               )}
             </div>
           </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "flex-end",
+              width: "100%",
+            }}
+          >
+            <StyledButtons
+              sx={{ display: user ? "" : "none", marginLeft: "auto" }}
+              onClick={handleLogout}
+            >
+              Logout
+            </StyledButtons>
+            <StyledButtons
+              sx={{ display: !user ? "" : "none", marginLeft: "auto" }}
+              component={StyledLink}
+              to="/login"
+            >
+              Login
+            </StyledButtons>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer}>
-        <List>
+        <List sx={{ width: "auto" }}>
           <ListItem button component={Link} to="/">
             <ListItemText primary="Home" />
           </ListItem>
@@ -168,21 +189,6 @@ const NavBar = () => {
               </ListItem>
             </>
           )}
-          <ListItem
-            button
-            onClick={handleLogout}
-            style={{ display: user ? "block" : "none" }}
-          >
-            <ListItemText primary="Logout" />
-          </ListItem>
-          <ListItem
-            button
-            component={Link}
-            to="/login"
-            style={{ display: !user ? "block" : "none" }}
-          >
-            <ListItemText primary="Login" />
-          </ListItem>
         </List>
       </Drawer>
     </ThemeProvider>

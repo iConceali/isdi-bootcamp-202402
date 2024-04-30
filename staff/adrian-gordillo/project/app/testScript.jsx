@@ -1,81 +1,195 @@
-import React from "react";
+// app/src/pages/PriceData.jsx
+
+import React, { useEffect, useState, useCallback } from "react";
 import {
-  Card,
-  CardContent,
   Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper,
   Box,
+  TableContainer,
+  IconButton,
+  TableSortLabel,
   Avatar,
-  Grid,
-  useTheme,
 } from "@mui/material";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarIcon from "@mui/icons-material/Star";
+import axios from "axios";
 
-// Asumiendo que estos logos son los correctos, si no, por favor reemplázalos con los adecuados.
-const logos = {
-  USDT: "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png",
-  BTC: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
-  ETH: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
-};
+const PriceData = () => {
+  const [prices, setPrices] = useState([]);
+  const [favorites, setFavorites] = useState(new Set()); // Almacena los IDs de las criptos favoritas
+  const [orderDirection, setOrderDirection] = useState("asc");
+  const [orderBy, setOrderBy] = useState("symbol");
 
-const ArbitrageOpportunityCard = ({ opportunity }) => {
-  const theme = useTheme();
-  const getLogo = (symbol) => logos[symbol] || "/logos/default.png";
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/prices/crypto-prices`
+        );
+        setPrices(response.data);
+        // Aquí deberías cargar también los favoritos del usuario
+        fetchFavorites();
+      } catch (error) {
+        console.error("Error fetching price data:", error);
+        setPrices([]);
+      }
+    };
 
-  // Aquí deberás calcular el profit en la moneda utilizada para la compra (en este caso, USDT).
-  const profitInBaseCurrency =
-    opportunity.trades.reduce((acc, trade) => acc + trade.amount, 0) *
-    (opportunity.profit / 100);
+    fetchPrices();
+    const intervalId = setInterval(fetchPrices, 10000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const fetchFavorites = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/users/watchlist`
+      );
+      setFavorites(new Set(response.data.map((crypto) => crypto._id)));
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  };
+
+  const toggleFavorite = async (cryptoId) => {
+    try {
+      const method = favorites.has(cryptoId) ? "delete" : "put";
+      await axios[method](
+        `${import.meta.env.VITE_API_URL}/api/users/watchlist/${cryptoId}`
+      );
+      setFavorites((prev) => {
+        const newFavorites = new Set(prev);
+        if (newFavorites.has(cryptoId)) {
+          newFavorites.delete(cryptoId);
+        } else {
+          newFavorites.add(cryptoId);
+        }
+        return newFavorites;
+      });
+    } catch (error) {
+      console.error("Error updating favorite:", error);
+    }
+  };
+
+  const isFavorite = (cryptoId) => favorites.has(cryptoId);
+
+  const sortedPrices = prices.sort((a, b) => {
+    if (a[orderBy] < b[orderBy]) return orderDirection === "asc" ? -1 : 1;
+    if (a[orderBy] > b[orderBy]) return orderDirection === "asc" ? 1 : -1;
+    return 0;
+  });
 
   return (
-    <Card
-      sx={{
-        backgroundColor: "#272A2F",
-        borderRadius: theme.shape.borderRadius,
-        color: "white",
-        my: 2,
-        p: 2,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "fit-content",
-        maxWidth: "100%",
-        mx: "auto",
-      }}
-    >
-      <CardContent>
-        <Typography
-          variant="h5"
-          component="div"
-          sx={{ color: theme.palette.success.main, mb: 1, fontSize: "2rem" }}
+    <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", p: 2 }}>
+      <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
+        Crypto Prices
+      </Typography>
+      <TableContainer
+        component={Paper}
+        sx={{ boxShadow: 3, borderRadius: "10px" }}
+      >
+        <Table
+          sx={{ backgroundColor: "#272A2F" }}
+          aria-label="crypto prices table"
         >
-          {`${opportunity.profit.toFixed(2)}% Profit`}
-        </Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
-          {`(${profitInBaseCurrency.toFixed(2)} USDT)`}
-        </Typography>
-        {opportunity.trades.map((trade, index) => (
-          <Box
-            key={index}
-            sx={{ my: 1, display: "flex", alignItems: "center" }}
-          >
-            <Avatar src={getLogo(trade.from)} sx={{ width: 30, height: 30 }} />
-            <ArrowForwardIosIcon
-              sx={{ mx: 1, color: theme.palette.action.active }}
-            />
-            <Avatar src={getLogo(trade.to)} sx={{ width: 30, height: 30 }} />
-            <Typography variant="body2" sx={{ ml: 1, color: "text.secondary" }}>
-              {index < opportunity.trades.length - 1
-                ? `Compra ${trade.amount.toFixed(4)} ${trade.to} con ${
-                    trade.from
-                  }`
-                : "Vende Todo"}
-            </Typography>
-          </Box>
-        ))}
-      </CardContent>
-    </Card>
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ width: "1rem" }}></TableCell>
+              <TableCell sx={{ width: "1rem" }}>#</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "symbol"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("symbol")}
+                >
+                  Symbol
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "price"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("price")}
+                >
+                  Price
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "price24Hr"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("price24Hr")}
+                >
+                  24 %
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "marketCap"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("marketCap")}
+                >
+                  Market Cap
+                </TableSortLabel>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedPrices.map((price, index) => (
+              <TableRow key={price._id}>
+                <TableCell>
+                  <IconButton onClick={() => toggleFavorite(price._id)}>
+                    {isFavorite(price._id) ? (
+                      <StarIcon color="secondary" />
+                    ) : (
+                      <StarBorderIcon />
+                    )}
+                  </IconButton>
+                </TableCell>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Avatar
+                      src={getIconUrl(price.symbol)}
+                      alt={price.symbol}
+                      sx={{ width: 24, height: 24 }}
+                    />
+                    {price.symbol.toUpperCase()}
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  ${price.price ? price.price.toFixed(2) : "N/A"}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: price.price24Hr >= 0 ? "green" : "red",
+                    animation: "blinking 2s infinite",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    {price.price24Hr >= 0 ? (
+                      <ArrowDropUpIcon />
+                    ) : (
+                      <ArrowDropDownIcon />
+                    )}
+                    {Math.abs(price.price24Hr).toFixed(2)}%
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  ${parseFloat(price.marketCap).toLocaleString()}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 
-export default ArbitrageOpportunityCard;
+export default PriceData;
