@@ -40,36 +40,25 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { correoElectronico, contraseña } = req.body;
 
-  // console.log("Datos recibidos para login:", req.body);
-
   try {
     const user = await User.findOne({
       correoElectronico: correoElectronico.trim(),
     });
     if (!user) {
-      // console.log("Usuario no encontrado con correo:", correoElectronico);
       return res.status(404).json({ message: "User not found" });
     }
 
-    // console.log("Usuario encontrado:", user.nombre);
-    // console.log("Contraseña ingresada (pre-compare):", contraseña);
-    // console.log("Contraseña hasheada almacenada:", user.contraseña);
-
     const validPassword = await bcrypt.compare(contraseña, user.contraseña);
-    // console.log("Resultado de comparación de contraseña:", validPassword);
-
     if (!validPassword) {
-      // console.log("Contraseña inválida para usuario:", user.nombre);
       return res.status(400).json({ message: "Invalid password" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    // console.log("Token generado para usuario:", user.nombre);
-    res.json({ token: token, nombre: user.nombre });
+    // Asegúrate de incluir el _id en la respuesta
+    res.json({ token: token, user: { nombre: user.nombre, _id: user._id } });
   } catch (error) {
-    // console.error("Error en el login:", error);
     res
       .status(500)
       .json({ message: "Error during login process: " + error.message });
@@ -113,6 +102,28 @@ const deleteUser = async (req, res) => {
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// En el archivo de controladores del servidor, probablemente userController.js
+
+export const updateDeposit = async (req, res) => {
+  try {
+    const userId = req.user.id; // Obtener el ID del usuario autenticado desde el middleware de autenticación
+    const user = await User.findById(userId);
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const newDeposit = req.body.deposit.deposit; // Obtener el nuevo depósito desde req.body.deposit
+    user.deposit = newDeposit; // Actualizar el campo de depósito en el documento de usuario
+    await user.save(); // Guardar los cambios en la base de datos
+
+    res.status(200).json({ message: "Deposit updated successfully" });
+  } catch (error) {
+    console.error("Failed to update deposit:", error);
+    res.status(500).json({ message: "Failed to update deposit" });
   }
 };
 

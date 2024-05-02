@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema({
     },
   },
   watchlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "CryptoPrice" }],
+  deposit: [{ type: Number, min: 0 }], // Por ejemplo, aquí estamos estableciendo que el depósito debe ser un número positivo
 });
 
 // Middleware para hashear la contraseña antes de guardar si se ha modificado
