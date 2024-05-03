@@ -1,3 +1,5 @@
+// app/src/components/FilterOpportunities.jsx
+
 import React, { useState, useEffect } from "react";
 import {
   Checkbox,

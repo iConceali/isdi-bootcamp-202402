@@ -105,4 +105,40 @@ const deleteUser = async (req, res) => {
   }
 };
 
+export const getDeposit = async (req, res) => {
+  try {
+    const userId = req.user.id; // Asegúrate de que el middleware de autenticación está estableciendo req.user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Suponiendo que 'deposit' es un número y no un array en tu modelo de usuario
+    res.status(200).json({ deposit: user.deposit });
+  } catch (error) {
+    console.error("Failed to fetch deposit:", error);
+    res.status(500).json({ message: "Failed to fetch deposit" });
+  }
+};
+
+export const updateDeposit = async (req, res) => {
+  try {
+    const userId = req.user.id; // Obtener el ID del usuario autenticado desde el middleware de autenticación
+    const user = await User.findById(userId);
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const newDeposit = req.body.deposit; // Obtener el nuevo depósito desde req.body.deposit
+    user.deposit = newDeposit; // Actualizar el campo de depósito en el documento de usuario
+    await user.save(); // Guardar los cambios en la base de datos
+
+    res.status(200).json({ message: "Deposit updated successfully" });
+  } catch (error) {
+    console.error("Failed to update deposit:", error);
+    res.status(500).json({ message: "Failed to update deposit" });
+  }
+};
+
 export { getAllUsers, createUser, loginUser, getUser, updateUser, deleteUser };

@@ -1,7 +1,18 @@
 // app/src/App.jsx
 
-import React, { useEffect } from "react";
-import { createTheme, ThemeProvider, CssBaseline, Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  createTheme,
+  ThemeProvider,
+  CssBaseline,
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import {
   BrowserRouter as Router,
   Routes,
@@ -17,9 +28,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PriceData from "./pages/PriceData";
 import ArbitrageOpportunities from "./pages/ArbitrageOpportunities";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import io from "socket.io-client";
 import TradePage from "./pages/TradePage";
 
 const darkTheme = createTheme({
@@ -41,9 +49,67 @@ const darkTheme = createTheme({
   },
 });
 
-function ProtectedRoute({ children }) {
-  const { user } = useUser();
-  return user ? children : <Navigate to="/login" />;
+function App() {
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <UserProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </UserProvider>
+    </ThemeProvider>
+  );
+}
+
+function AppContent() {
+  const { user, logoutUser } = useUser();
+  const [showSessionExpiredDialog, setShowSessionExpiredDialog] =
+    useState(false);
+
+  useEffect(() => {
+    const checkTokenExpiration = () => {
+      // Esta función debería comprobar si el token ha expirado realmente
+      // Supongamos que `user` tiene una marca de tiempo que indica cuándo expira el token
+      if (user && new Date().getTime() > user.tokenExpiration) {
+        setShowSessionExpiredDialog(true);
+      }
+    };
+
+    checkTokenExpiration();
+
+    const intervalId = setInterval(checkTokenExpiration, 60000); // Comprueba cada minuto
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [user]);
+
+  const handleCloseSessionExpiredDialog = () => {
+    setShowSessionExpiredDialog(false);
+    logoutUser();
+  };
+
+  return (
+    <>
+      <NavBar />
+      <LayoutBox />
+      <Dialog
+        open={showSessionExpiredDialog}
+        onClose={handleCloseSessionExpiredDialog}
+      >
+        <DialogTitle>Session Expired</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Your session has expired. Please log in again.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseSessionExpiredDialog}>OK</Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
 }
 
 function LayoutBox() {
@@ -57,7 +123,6 @@ function LayoutBox() {
         display: "flex",
         flexDirection: "column",
         minHeight: "100vh",
-
         color: "text.primary",
         overflow: "auto",
         width: "100%",
@@ -107,42 +172,9 @@ function LayoutBox() {
   );
 }
 
-function App() {
-  useEffect(() => {
-    const socket = io(`${import.meta.env.VITE_API_URL}`, {
-      transports: ["websocket"],
-    });
-
-    socket.on("arbitrageOpportunity", (data) => {
-      toast(data.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    });
-
-    return () => {
-      socket.off("arbitrageOpportunity");
-      socket.close();
-    };
-  }, []);
-
-  return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <UserProvider>
-        <Router>
-          <NavBar />
-          <LayoutBox />
-          <ToastContainer />
-        </Router>
-      </UserProvider>
-    </ThemeProvider>
-  );
+function ProtectedRoute({ children }) {
+  const { user } = useUser();
+  return user ? children : <Navigate to="/login" />;
 }
 
 export default App;

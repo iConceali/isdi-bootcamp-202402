@@ -3,57 +3,111 @@
 import React from "react";
 import {
   Table,
+  Box,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
 
-const TradeTable = ({ trades }) => {
+const TradeTable = ({ trades, setTrades, updateParameters, parameters }) => {
   const isSmallScreen = window.innerWidth <= 442;
 
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/trades/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        // Filtrar los trades para remover el eliminado
+        const updatedTrades = trades.filter((trade) => trade._id !== id);
+        setTrades(updatedTrades);
+
+        updateParameters(updatedTrades, parameters.deposit);
+      }
+    } catch (error) {
+      console.error("Failed to delete trade:", error);
+    }
+  };
+
   return (
-    <Table
-      sx={{ width: isSmallScreen ? "20rem" : "70rem", maxHeight: "40rem" }}
+    <Box
+      sx={{
+        maxHeight: "40rem",
+        overflowY: "scroll",
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
+        msOverflowStyle: "none",
+        scrollbarWidth: "none",
+        width: isSmallScreen ? "100%" : "70rem",
+      }}
     >
-      <TableHead>
-        <TableRow>
-          <TableCell>Trade</TableCell>
-          {!isSmallScreen && (
-            <>
-              <TableCell>Symbol</TableCell>
-              <TableCell>Date</TableCell>
-            </>
-          )}
-          <TableCell>Buy Price</TableCell>
-          <TableCell>Sell Price</TableCell>
-          <TableCell>Profit %</TableCell>
-          <TableCell>Profit $</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {trades.map((trade, index) => {
-          // Convertir la fecha si es necesario
-          const tradeDate = new Date(trade.date);
-          return (
+      <Table sx={{ width: "100%" }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Trade</TableCell>
+            {!isSmallScreen && (
+              <>
+                <TableCell>Symbol</TableCell>
+                <TableCell>Date</TableCell>
+              </>
+            )}
+            <TableCell>Inversión</TableCell>
+            <TableCell>Profit %</TableCell>
+            <TableCell>Profit $</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {trades.map((trade, index) => (
             <TableRow key={trade._id}>
-              {/* Usar trade.id como clave */}
               <TableCell>{index + 1}</TableCell>
               {!isSmallScreen && (
                 <>
                   <TableCell>{trade.symbol}</TableCell>
-                  <TableCell>{tradeDate.toLocaleDateString("es-ES")}</TableCell>
+                  <TableCell>
+                    {new Date(trade.date).toLocaleDateString("es-ES")}
+                  </TableCell>
                 </>
               )}
-              <TableCell>${trade.buyPrice.toFixed(2)}</TableCell>
-              <TableCell>${trade.sellPrice.toFixed(2)}</TableCell>
-              <TableCell>{trade.profitPercent.toFixed(2)}%</TableCell>
-              <TableCell>${trade.profitDollars.toFixed(2)}</TableCell>
+              <TableCell>${parseFloat(trade.investment).toFixed(2)}</TableCell>
+              <TableCell>
+                <span
+                  className={`circle ${
+                    trade.profitPercent >= 0 ? "green" : "red"
+                  }`}
+                ></span>
+                {trade.profitPercent.toFixed(2)}%
+              </TableCell>
+              <TableCell>
+                $
+                {(
+                  (parseFloat(trade.investment) * (trade.profitPercent || 0)) /
+                  100
+                ).toFixed(2)}
+              </TableCell>
+              <TableCell>
+                <IconButton
+                  onClick={() => handleDelete(trade._id)}
+                  color="white"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </TableCell>
             </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+          ))}
+        </TableBody>
+      </Table>
+    </Box>
   );
 };
 

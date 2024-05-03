@@ -1,3 +1,5 @@
+// app/src/pages/ArbitrageOpportunities.jsx
+
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Container, Typography, Grid, CircularProgress } from "@mui/material";

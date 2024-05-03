@@ -11,7 +11,17 @@ const authenticate = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(403).send({ message: "Invalid token" });
+      if (err.name === "TokenExpiredError") {
+        // Token expirado, redirige al usuario a la página de inicio de sesión con un mensaje de error
+        return res
+          .status(403)
+          .redirect(
+            "/login?message=Your session has expired. Please log in again."
+          );
+      } else {
+        // Token inválido, muestra un mensaje de error
+        return res.status(403).send({ message: "Invalid token" });
+      }
     }
     console.log("Decoded JWT:", decoded); // Verifica que el token se decodifica correctamente
     req.user = decoded;

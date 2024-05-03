@@ -13,6 +13,7 @@ import tradeRoutes from "./routes/tradeRoutes.js";
 import EventEmitter from "events";
 import { detectArbitrageAndNotify } from "./controllers/arbitrageController1.js"; // Asegúrate de importar correctamente
 import { detectTriangular } from "./controllers/arbitrageController2.js"; // Asegúrate de importar correctamente
+import authenticate from "./middleware/auth.js"; // Importa la función authenticate
 
 EventEmitter.defaultMaxListeners = 15;
 
@@ -62,9 +63,9 @@ io.on("connection", (socket) => {
 });
 
 app.use("/api/users", userRoutes);
-app.use("/api/arbitrage", arbitrageRoutes);
-app.use("/api/prices", priceRoutes);
-app.use("/api/trades", tradeRoutes);
+app.use("/api/arbitrage", authenticate, arbitrageRoutes); // Usa la función authenticate en las rutas protegidas
+app.use("/api/prices", authenticate, priceRoutes); // Usa la función authenticate en las rutas protegidas
+app.use("/api/trades", authenticate, tradeRoutes); // Usa la función authenticate en las rutas protegidas
 
 app.use((req, res, next) => {
   const error = new Error("Recurso no encontrado");

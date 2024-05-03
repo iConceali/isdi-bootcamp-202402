@@ -1,3 +1,5 @@
+// app/src/pages/Home.jsx
+
 import React from "react";
 import "../../src/index.css";
 import { Box } from "@mui/material";
