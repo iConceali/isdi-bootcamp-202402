@@ -1,6 +1,5 @@
 // controllers/technicalIndicatorOpportunitiesController.js
 
-import TechnicalIndicatorOpportunity from "../models/TechnicalIndicatorOpportunity";
 import { detectTechnicalIndicatorsLogic } from "./technicalIndicatorsController";
 
 // Controlador para detectar señales de compra
