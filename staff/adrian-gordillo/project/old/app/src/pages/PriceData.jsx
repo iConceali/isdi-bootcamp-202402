@@ -181,7 +181,11 @@ const PriceData = () => {
                       toggleWatchlist(price._id, price.isInWatchlist)
                     }
                   >
-                    {price.isInWatchlist ? <StarIcon /> : <StarBorderIcon />}
+                    {price.isInWatchlist ? (
+                      <StarIcon sx={{ color: "yellow" }} />
+                    ) : (
+                      <StarBorderIcon />
+                    )}
                   </IconButton>
                 </TableCell>
                 <TableCell>{index + 1}</TableCell>

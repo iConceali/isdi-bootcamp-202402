@@ -15,7 +15,7 @@ const exchanges = [
   {
     name: "Kraken",
     url: "https://api.kraken.com/0/public/Ticker?pair=",
-    format: (data, symbol) => {
+    format: (data) => {
       const key = Object.keys(data.result)[0];
       return {
         bid: parseFloat(data.result[key].b[0]),
@@ -32,14 +32,14 @@ const exchanges = [
       ask: parseFloat(data.ask),
     }),
   },
-  {
-    name: "Bitfinex",
-    url: "https://api-pub.bitfinex.com/v2/ticker/",
-    format: (data) => ({
-      bid: parseFloat(data[0]),
-      ask: parseFloat(data[2]),
-    }),
-  },
+  // {
+  //   name: "Bitfinex",
+  //   url: "https://api-pub.bitfinex.com/v2/ticker/",
+  //   format: (data) => ({
+  //     bid: parseFloat(data[0]),
+  //     ask: parseFloat(data[2]),
+  //   }),
+  // },
   {
     name: "Crypto.com",
     url: "https://api.crypto.com/v2/public/get-ticker?instrument_name=",

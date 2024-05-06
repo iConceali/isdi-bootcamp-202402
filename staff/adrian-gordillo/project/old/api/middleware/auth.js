@@ -23,7 +23,7 @@ const authenticate = (req, res, next) => {
         return res.status(403).send({ message: "Invalid token" });
       }
     }
-    console.log("Decoded JWT:", decoded); // Verifica que el token se decodifica correctamente
+    // console.log("Decoded JWT:", decoded); // Verifica que el token se decodifica correctamente
     req.user = decoded;
     next();
   });

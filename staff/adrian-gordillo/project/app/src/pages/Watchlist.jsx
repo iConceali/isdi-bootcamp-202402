@@ -153,7 +153,7 @@ const Watchlist = () => {
                     <IconButton
                       onClick={() => removeCryptoFromWatchlist(crypto._id)}
                     >
-                      <StarIcon />
+                      <StarIcon sx={{ color: "gold" }} />
                     </IconButton>
                   </TableCell>
                   <TableCell>{index + 1}</TableCell>

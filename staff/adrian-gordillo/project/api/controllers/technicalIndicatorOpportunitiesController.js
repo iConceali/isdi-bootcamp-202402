@@ -1,6 +1,7 @@
-// controllers/technicalIndicatorOpportunitiesController.js
+// api/controllers/technicalIndicatorOpportunitiesController.js
 
-import { detectTechnicalIndicatorsLogic } from "./technicalIndicatorsController";
+import { detectTechnicalIndicatorsLogic } from "./technicalIndicatorsController.js";
+import TechnicalIndicatorOpportunity from "../models/TechnicalIndicatorOpportunity.js";
 
 // Controlador para detectar señales de compra
 export async function detectTechnicalIndicators(req, res) {
@@ -8,7 +9,7 @@ export async function detectTechnicalIndicators(req, res) {
     const buySignals = await detectTechnicalIndicatorsLogic();
     if (res) {
       // Verifica que res esté definido
-      res.json({ buySignals });
+      res.status(200).json({ buySignals });
     } else {
       console.log("No se encontraron oportunidades con indicadores técnicos.");
     }
@@ -32,7 +33,11 @@ export async function detectTechnicalIndicators(req, res) {
 export async function getOpportunities(req, res) {
   try {
     const opportunities = await TechnicalIndicatorOpportunity.find();
-    res.json(opportunities);
+    if (!Array.isArray(opportunities)) {
+      console.error("Opportunities is not an array:", opportunities);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    res.status(200).json(opportunities);
   } catch (error) {
     console.error("Error al obtener las oportunidades técnicas: ", error);
     res

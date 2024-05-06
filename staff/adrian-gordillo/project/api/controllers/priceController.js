@@ -22,7 +22,7 @@ export const updateCryptoPrices = async (req, res) => {
 
     await Promise.all(updates);
     const updatedPrices = await CryptoPrice.find();
-    res.json(updatedPrices);
+    res.status(200).json(updatedPrices);
   } catch (error) {
     console.error(
       "Error al obtener y actualizar precios de criptomonedas:",
@@ -41,7 +41,7 @@ export const getCryptoById = async (req, res) => {
     if (!crypto) {
       return res.status(404).json({ message: "Cryptocurrency not found" });
     }
-    res.json(crypto);
+    res.status(200).json(crypto);
   } catch (error) {
     res
       .status(500)

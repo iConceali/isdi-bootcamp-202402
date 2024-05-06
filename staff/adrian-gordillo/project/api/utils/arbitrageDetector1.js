@@ -15,7 +15,7 @@ const exchanges = [
   {
     name: "Kraken",
     url: "https://api.kraken.com/0/public/Ticker?pair=",
-    format: (data, symbol) => {
+    format: (data) => {
       const key = Object.keys(data.result)[0];
       return {
         bid: parseFloat(data.result[key].b[0]),

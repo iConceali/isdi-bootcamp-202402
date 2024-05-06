@@ -1,11 +1,11 @@
-// controllers/technicalIndicatorsController.js
+// api/controllers/technicalIndicatorsController.js
 
 import axios from "axios";
 import {
   calculateRSI,
   calculateStochastic,
-} from "../utils/technicalIndicators";
-import TechnicalIndicatorOpportunity from "../models/TechnicalIndicatorOpportunity";
+} from "../utils/technicalIndicators.js";
+import TechnicalIndicatorOpportunity from "../models/TechnicalIndicatorOpportunity.js";
 
 const symbols = [
   "BTCUSDT",
@@ -15,6 +15,14 @@ const symbols = [
   "SOLUSDT",
   "XRPUSDT",
   "ADAUSDT",
+  "DOGEUSDT",
+  "AVAXUSDT",
+  "TRXUSDT",
+  "BCHUSDT",
+  "LINKUSDT",
+  "NEARUSDT",
+  "MATICUSDT",
+  "LTCUSDT",
 ];
 
 export const fetchHistoricalData = async (symbol) => {
@@ -32,12 +40,26 @@ export const fetchHistoricalData = async (symbol) => {
       volume: parseFloat(kline[5]),
     }));
   } catch (error) {
-    console.error(`Error fetching historical data for ${symbol}: `, error);
+    console.error(`Error fetching historical data for ${symbol}: `);
     return [];
+  }
+  // } catch (error) {
+  //   console.error(`Error fetching historical data for ${symbol}: `, error);
+  //   return [];
+  // }
+};
+
+export const deleteOldSignals = async () => {
+  try {
+    await TechnicalIndicatorOpportunity.deleteMany({});
+    console.log("Cleared old buy signals.");
+  } catch (error) {
+    console.error("Error clearing old buy signals: ", error);
   }
 };
 
 export const detectTechnicalIndicatorsLogic = async () => {
+  await deleteOldSignals();
   let buySignals = [];
 
   for (const symbol of symbols) {
@@ -54,18 +76,14 @@ export const detectTechnicalIndicatorsLogic = async () => {
     const rsiValues = calculateRSI(closes);
     const stochasticValues = calculateStochastic(highs, lows, closes);
 
-    // console.log(`Analyzed symbol: ${symbol}`);
-    console.log(`Latest RSI Value for ${symbol}: ${rsiValues}`); // Assuming rsiValues is a single value
-    console.log(
-      `Latest Stochastic Values for ${symbol}: K=${stochasticValues.k}, D=${stochasticValues.d}`
-    );
-
-    if (rsiValues <= 70 && stochasticValues.k <= 70) {
+    if (rsiValues <= 30 && stochasticValues.k <= 20) {
       try {
         const newOpportunity = new TechnicalIndicatorOpportunity({
           symbol,
           strategy: "RSI & Stochastic",
-          message: `Purchase opportunity detected in ${symbol}. RSI: ${rsiValues}, Stochastic: ${stochasticValues.k}`,
+          message: `Purchase opportunity`,
+          rsi: `${rsiValues}`,
+          stochastic: `${stochasticValues.k}`,
         });
         await newOpportunity.save();
         buySignals.push(newOpportunity);

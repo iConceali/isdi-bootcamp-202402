@@ -13,7 +13,9 @@ import tradeRoutes from "./routes/tradeRoutes.js";
 import EventEmitter from "events";
 import { detectArbitrageAndNotify } from "./controllers/arbitrageController1.js"; // Asegúrate de importar correctamente
 import { detectTriangular } from "./controllers/arbitrageController2.js"; // Asegúrate de importar correctamente
+import { detectTechnicalIndicators } from "./controllers/technicalIndicatorOpportunitiesController.js"; // Utilizamos detectTechnicalIndicators en lugar de detectTechnicalIndicatorsLogic
 import authenticate from "./middleware/auth.js"; // Importa la función authenticate
+import technicalIndicatorOpportunitiesRouter from "./routes/technicalIndicatorOpportunities.js"; // Asegúrate de importar correctamente
 
 EventEmitter.defaultMaxListeners = 15;
 
@@ -45,12 +47,17 @@ mongoose
         `Servidor corriendo en http://localhost:${process.env.PORT || 3000}`
       );
 
-      // Inicia la búsqueda y registro de oportunidades cada 10 segundos
+      // Inicia la búsqueda y registro de oportunidades cada 10 seg
       setInterval(() => {
         console.log("Buscando nuevas oportunidades de arbitraje...");
         detectArbitrageAndNotify();
         detectTriangular();
-      }, 10000); // 10 segundos
+      }, 10000); // 10 seg
+
+      setInterval(() => {
+        console.log("Buscando nuevas oportunidades con Indicadores...");
+        detectTechnicalIndicators(null);
+      }, 60000); // 1 min
     });
   })
   .catch((error) => console.error("Error al conectar a MongoDB:", error));
@@ -66,6 +73,11 @@ app.use("/api/users", userRoutes);
 app.use("/api/arbitrage", authenticate, arbitrageRoutes); // Usa la función authenticate en las rutas protegidas
 app.use("/api/prices", authenticate, priceRoutes); // Usa la función authenticate en las rutas protegidas
 app.use("/api/trades", authenticate, tradeRoutes); // Usa la función authenticate en las rutas protegidas
+app.use(
+  "/api/technical-indicator-opportunities",
+  authenticate,
+  technicalIndicatorOpportunitiesRouter
+); // Rutas para las oportunidades basadas en indicadores técnicos
 
 app.use((req, res, next) => {
   const error = new Error("Recurso no encontrado");

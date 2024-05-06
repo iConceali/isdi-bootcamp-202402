@@ -12,15 +12,14 @@ import {
   MenuItem,
   Menu,
   Toolbar,
-  createTheme,
   styled,
   Box,
   ThemeProvider,
+  createTheme,
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../../userContext";
-import "./navbar.css";
 
 const theme = createTheme({
   palette: {
@@ -33,14 +32,12 @@ const StyledLink = styled(Link)({
   color: "inherit",
 });
 
-const StyledButtons = styled(Button)({
+const StyledButton = styled(Button)({
   marginLeft: "1rem",
   padding: "0.5rem 1rem",
   borderRadius: "2rem",
-  border: 0,
   color: "white",
   fontWeight: "bold",
-  boxShadow: "none",
   transition: "transform 0.3s",
   "&:hover": {
     transform: "scale(1.05)",
@@ -50,38 +47,43 @@ const StyledButtons = styled(Button)({
 
 const NavBar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [anchorElHome, setAnchorElHome] = useState(null);
+  const openHome = Boolean(anchorElHome);
+  const [anchorElOpp, setAnchorElOpp] = useState(null);
+  const openOpp = Boolean(anchorElOpp);
   const location = useLocation();
   const { logoutUser, user } = useUser();
-  const navigate = useNavigate();
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleHomeClick = (event) => {
+    setAnchorElHome(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleHomeClose = () => {
+    setAnchorElHome(null);
+  };
+
+  const handleOppClick = (event) => {
+    setAnchorElOpp(event.currentTarget);
+  };
+
+  const handleOppClose = () => {
+    setAnchorElOpp(null);
   };
 
   const scrollToSection = (sectionId) => {
-    handleClose();
-    if (location.pathname === "/") {
-      document
-        .getElementById(sectionId)
-        ?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      navigate("/", { state: { scrollTo: sectionId } });
+    handleHomeClose();
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
   const handleLogout = () => {
     logoutUser();
-    navigate("/login");
   };
 
   return (
@@ -98,54 +100,63 @@ const NavBar = () => {
           <IconButton
             color="inherit"
             onClick={toggleDrawer}
-            sx={{ display: { xs: "block", sm: "none" } }} // Only shows on small screens
+            sx={{ display: { xs: "block", sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
           <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
-            <div className="nav-buttons">
-              <StyledButtons onClick={handleClick}>Home</StyledButtons>
-              <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={open}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={() => scrollToSection("home")}>
-                  Home
-                </MenuItem>
-                <MenuItem onClick={() => scrollToSection("value")}>
-                  Value
-                </MenuItem>
-                <MenuItem onClick={() => scrollToSection("tools")}>
-                  Tools
-                </MenuItem>
-                <MenuItem onClick={() => scrollToSection("about")}>
-                  About us
-                </MenuItem>
-                <MenuItem onClick={() => scrollToSection("contact")}>
-                  Contact
-                </MenuItem>
-              </Menu>
+            <StyledButton onClick={handleHomeClick}>Home</StyledButton>
+            <Menu
+              anchorEl={anchorElHome}
+              open={openHome}
+              onClose={handleHomeClose}
+            >
+              <MenuItem onClick={() => scrollToSection("home")}>Home</MenuItem>
+              <MenuItem onClick={() => scrollToSection("value")}>
+                Value
+              </MenuItem>
+              <MenuItem onClick={() => scrollToSection("tools")}>
+                Tools
+              </MenuItem>
+              <MenuItem onClick={() => scrollToSection("about")}>
+                About Us
+              </MenuItem>
+              <MenuItem onClick={() => scrollToSection("contact")}>
+                Contact
+              </MenuItem>
+            </Menu>
 
-              {user && (
-                <>
-                  <StyledButtons component={StyledLink} to="/prices">
-                    Prices
-                  </StyledButtons>
-                  <StyledButtons component={StyledLink} to="/watchlist">
-                    Watchlist
-                  </StyledButtons>
-                  <StyledButtons component={StyledLink} to="/opportunities">
-                    Opportunities
-                  </StyledButtons>
-                  <StyledButtons component={StyledLink} to="/trades">
-                    Trades
-                  </StyledButtons>
-                </>
-              )}
-            </div>
+            {user && (
+              <>
+                <StyledButton component={StyledLink} to="/prices">
+                  Prices
+                </StyledButton>
+                <StyledButton component={StyledLink} to="/watchlist">
+                  Watchlist
+                </StyledButton>
+                <StyledButton onClick={handleOppClick}>
+                  Opportunities
+                </StyledButton>
+                <Menu
+                  anchorEl={anchorElOpp}
+                  open={openOpp}
+                  onClose={handleOppClose}
+                >
+                  <MenuItem component={StyledLink} to="/opportunities">
+                    Standard & Triangular
+                  </MenuItem>
+                  <MenuItem
+                    component={StyledLink}
+                    to="/technical-opportunities"
+                  >
+                    Technical Indicators
+                  </MenuItem>
+                </Menu>
+                <StyledButton component={StyledLink} to="/trades">
+                  Trades
+                </StyledButton>
+              </>
+            )}
           </Box>
           <Box
             sx={{
@@ -155,40 +166,52 @@ const NavBar = () => {
               width: "100%",
             }}
           >
-            <StyledButtons
-              sx={{ display: user ? "" : "none", marginLeft: "auto" }}
-              onClick={handleLogout}
-            >
-              Logout
-            </StyledButtons>
-            <StyledButtons
-              sx={{ display: !user ? "" : "none", marginLeft: "auto" }}
-              component={StyledLink}
-              to="/login"
-            >
-              Login
-            </StyledButtons>
+            {user ? (
+              <StyledButton sx={{ marginLeft: "auto" }} onClick={handleLogout}>
+                Logout
+              </StyledButton>
+            ) : (
+              <StyledButton
+                sx={{ marginLeft: "auto" }}
+                component={StyledLink}
+                to="/login"
+              >
+                Login
+              </StyledButton>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
       <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer}>
-        <List sx={{ width: "auto" }}>
-          <ListItem button component={Link} to="/">
-            <ListItemText primary="Home" />
+        <List>
+          <ListItem button onClick={() => scrollToSection("home")}>
+            Home
           </ListItem>
           {user && (
             <>
-              <ListItem button component={Link} to="/prices">
-                <ListItemText primary="Prices" />
+              <ListItem button component={StyledLink} to="/prices">
+                Prices
               </ListItem>
-              <ListItem button component={Link} to="/watchlist">
-                <ListItemText primary="Watchlist" />
+              <ListItem button component={StyledLink} to="/watchlist">
+                Watchlist
               </ListItem>
-              <ListItem button component={Link} to="/opportunities">
-                <ListItemText primary="Opportunities" />
+              <ListItem button onClick={handleOppClick}>
+                Opportunities
               </ListItem>
-              <ListItem button component={Link} to="/trades">
-                <ListItemText primary="Trades" />
+              <Menu
+                anchorEl={anchorElOpp}
+                open={openOpp}
+                onClose={handleOppClose}
+              >
+                <MenuItem component={StyledLink} to="/opportunities">
+                  Standard & Triangular
+                </MenuItem>
+                <MenuItem component={StyledLink} to="/technical-opportunities">
+                  Technical Indicators
+                </MenuItem>
+              </Menu>
+              <ListItem button component={StyledLink} to="/trades">
+                Trades
               </ListItem>
             </>
           )}

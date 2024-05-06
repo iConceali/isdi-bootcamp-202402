@@ -1,6 +1,7 @@
+// app/src/components/ValueProposition.jsx
+
 import { Box, Typography } from "@mui/material";
 import React from "react";
-import { motion } from "framer-motion";
 
 const ValueProposition = () => {
   return (

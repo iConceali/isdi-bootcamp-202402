@@ -5,9 +5,6 @@ import authenticate from "../middleware/auth.js";
 import {
   getAllUsers,
   createUser,
-  getUser,
-  updateUser,
-  deleteUser,
   loginUser,
   getDeposit,
   updateDeposit,
@@ -23,9 +20,9 @@ router.post("/register", createUser);
 router.post("/login", loginUser);
 router.get("/deposit", authenticate, getDeposit); // Ruta para actualizar el depósito
 router.put("/deposit", authenticate, updateDeposit); // Ruta para actualizar el depósito
-router.get("/:id", authenticate, getUser); // Solo usuarios autenticados
-router.put("/:id", authenticate, updateUser); // Solo usuarios autenticados
-router.delete("/:id", authenticate, deleteUser); // Solo usuarios autenticados
+// router.get("/:id", authenticate, getUser); // Solo usuarios autenticados
+// router.put("/:id", authenticate, updateUser); // Solo usuarios autenticados
+// router.delete("/:id", authenticate, deleteUser); // Solo usuarios autenticados
 
 // Agregar una criptomoneda a la watchlist del usuario
 router.post("/:id/watchlist", authenticate, async (req, res) => {

@@ -56,7 +56,7 @@ mongoose
 
       setInterval(() => {
         console.log("Buscando nuevas oportunidades con Indicadores...");
-        detectTechnicalIndicators(null); // Utilizamos detectTechnicalIndicators en lugar de detectTechnicalIndicatorsLogic
+        detectTechnicalIndicators(null);
       }, 60000); // 1 min
     });
   })
@@ -75,6 +75,7 @@ app.use("/api/prices", authenticate, priceRoutes); // Usa la función authentica
 app.use("/api/trades", authenticate, tradeRoutes); // Usa la función authenticate en las rutas protegidas
 app.use(
   "/api/technical-indicator-opportunities",
+  authenticate,
   technicalIndicatorOpportunitiesRouter
 ); // Rutas para las oportunidades basadas en indicadores técnicos
 

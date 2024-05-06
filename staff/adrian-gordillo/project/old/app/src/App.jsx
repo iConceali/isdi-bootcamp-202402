@@ -28,6 +28,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PriceData from "./pages/PriceData";
 import ArbitrageOpportunities from "./pages/ArbitrageOpportunities";
+import TechnicalIndicatorsOpportunities from "./pages/TechnicalIndicatorsOpportunities";
 import TradePage from "./pages/TradePage";
 
 const darkTheme = createTheme({
@@ -164,6 +165,14 @@ function LayoutBox() {
           element={
             <ProtectedRoute>
               <TradePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/technical-opportunities"
+          element={
+            <ProtectedRoute>
+              <TechnicalIndicatorsOpportunities />
             </ProtectedRoute>
           }
         />

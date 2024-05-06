@@ -1,3 +1,5 @@
+// app/src/components/Footer.jsx
+
 import { Box, Typography } from "@mui/material";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";

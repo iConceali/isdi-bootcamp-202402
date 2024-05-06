@@ -4,23 +4,26 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
-    res.json(users);
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Error fetching users: " + error.message });
   }
 };
 
-const createUser = async (req, res) => {
+export const createUser = async (req, res) => {
   const { nombre, correoElectronico, contraseña } = req.body;
 
   try {
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedPassword = await bcrypt.hash(contraseña, salt);
+
     const user = new User({
       nombre,
       correoElectronico,
-      contraseña,
+      contraseña, //hashedPassword, // Usar la contraseña hasheada
     });
 
     const newUser = await user.save();
@@ -29,6 +32,9 @@ const createUser = async (req, res) => {
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((val) => val.message);
       res.status(400).json({ message: messages.join(", ") });
+      console.log(messages.join(", "));
+    } else if (error.code === 11000) {
+      res.status(400).json({ message: "email already in use" });
     } else {
       res
         .status(500)
@@ -37,18 +43,20 @@ const createUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   const { correoElectronico, contraseña } = req.body;
 
   try {
     const user = await User.findOne({
       correoElectronico: correoElectronico.trim(),
     });
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const validPassword = await bcrypt.compare(contraseña, user.contraseña);
+
     if (!validPassword) {
       return res.status(400).json({ message: "Invalid password" });
     }
@@ -57,7 +65,9 @@ const loginUser = async (req, res) => {
       expiresIn: "1h",
     });
     // Asegúrate de incluir el _id en la respuesta
-    res.json({ token: token, user: { nombre: user.nombre, _id: user._id } });
+    res
+      .status(200)
+      .json({ token: token, user: { nombre: user.nombre, _id: user._id } });
   } catch (error) {
     res
       .status(500)
@@ -65,45 +75,45 @@ const loginUser = async (req, res) => {
   }
 };
 
-const getUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id).populate(
-      "configuracionesArbitraje"
-    );
-    if (!user) {
-      return res.status(404).json({ message: "Cannot find user" });
-    }
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+// const getUser = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params.id).populate(
+//       "configuracionesArbitraje"
+//     );
+//     if (!user) {
+//       return res.status(404).json({ message: "Cannot find user" });
+//     }
+//     res.status(200).json(user);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 
-const updateUser = async (req, res) => {
-  try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!user) {
-      return res.status(404).json({ message: "Cannot find user" });
-    }
-    res.json(user);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
+// const updateUser = async (req, res) => {
+//   try {
+//     const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+//       new: true,
+//     });
+//     if (!user) {
+//       return res.status(404).json({ message: "Cannot find user" });
+//     }
+//     res.json(user);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
 
-const deleteUser = async (req, res) => {
-  try {
-    const user = await User.findByIdAndRemove(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: "Cannot find user" });
-    }
-    res.json({ message: "User deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+// const deleteUser = async (req, res) => {
+//   try {
+//     const user = await User.findByIdAndRemove(req.params.id);
+//     if (!user) {
+//       return res.status(404).json({ message: "Cannot find user" });
+//     }
+//     res.json({ message: "User deleted successfully" });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 
 export const getDeposit = async (req, res) => {
   try {
@@ -117,7 +127,9 @@ export const getDeposit = async (req, res) => {
     res.status(200).json({ deposit: user.deposit });
   } catch (error) {
     console.error("Failed to fetch deposit:", error);
-    res.status(500).json({ message: "Failed to fetch deposit" });
+    res
+      .status(500)
+      .json({ message: `Failed to fetch deposit: ${error.message}` });
   }
 };
 
@@ -140,5 +152,3 @@ export const updateDeposit = async (req, res) => {
     res.status(500).json({ message: "Failed to update deposit" });
   }
 };
-
-export { getAllUsers, createUser, loginUser, getUser, updateUser, deleteUser };
