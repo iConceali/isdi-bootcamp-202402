@@ -1,9 +1,16 @@
 // api/controllers/arbitrageController1.js
 
-import { detectArbitrageOpportunities } from "../utils/arbitrageDetector1.js";
-import Opportunity from "../models/Opportunity";
+import * as arbitrageUtils from "../utils/arbitrageDetector1.js";
+import Opportunity from "../models/Opportunity.js";
+
+export function getDependencies() {
+  return {
+    detectArbitrageOpportunities: arbitrageUtils.detectArbitrageOpportunities,
+  };
+}
 
 export const detectArbitrageAndNotify = async (req, res) => {
+  const { detectArbitrageOpportunities } = getDependencies();
   const config = {
     umbralRentabilidad: 0.02,
     comisiones: {
@@ -38,7 +45,7 @@ export const detectArbitrageAndNotify = async (req, res) => {
       );
     }
     if (res) {
-      res.json(opportunities);
+      res.status(200).json(opportunities);
     } else {
       const message = "No se encontraron oportunidades de arbitraje standard.";
       if (res) {

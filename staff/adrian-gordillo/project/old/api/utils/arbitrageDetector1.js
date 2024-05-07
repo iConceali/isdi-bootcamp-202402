@@ -32,14 +32,14 @@ const exchanges = [
       ask: parseFloat(data.ask),
     }),
   },
-  // {
-  //   name: "Bitfinex",
-  //   url: "https://api-pub.bitfinex.com/v2/ticker/",
-  //   format: (data) => ({
-  //     bid: parseFloat(data[0]),
-  //     ask: parseFloat(data[2]),
-  //   }),
-  // },
+  {
+    name: "Bitfinex",
+    url: "https://api-pub.bitfinex.com/v2/ticker/",
+    format: (data) => ({
+      bid: parseFloat(data[0]),
+      ask: parseFloat(data[2]),
+    }),
+  },
   {
     name: "Crypto.com",
     url: "https://api.crypto.com/v2/public/get-ticker?instrument_name=",
@@ -161,6 +161,7 @@ const symbolMappings = {
 };
 
 async function fetchPrice(exchange, standardSymbol, commissionRates) {
+  //retriveCryptocurrencyPrice
   const symbol = symbolMappings[standardSymbol][exchange.name];
   if (!symbol) {
     console.error(

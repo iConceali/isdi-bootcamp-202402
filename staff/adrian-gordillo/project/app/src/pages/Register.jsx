@@ -14,9 +14,9 @@ import {
 
 const Register = () => {
   const [userData, setUserData] = useState({
-    nombre: "",
-    correoElectronico: "",
-    contraseña: "",
+    name: "",
+    email: "",
+    password: "",
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -62,8 +62,8 @@ const Register = () => {
           margin="normal"
           fullWidth
           label="Name"
-          name="nombre"
-          value={userData.nombre}
+          name="name"
+          value={userData.name}
           onChange={handleChange}
           required
         />
@@ -72,8 +72,8 @@ const Register = () => {
           margin="normal"
           fullWidth
           label="Email"
-          name="correoElectronico"
-          value={userData.correoElectronico}
+          name="email"
+          value={userData.email}
           onChange={handleChange}
           required
         />
@@ -82,9 +82,9 @@ const Register = () => {
           margin="normal"
           fullWidth
           label="Password"
-          name="contraseña"
+          name="password"
           type="password"
-          value={userData.contraseña}
+          value={userData.password}
           onChange={handleChange}
           required
         />

@@ -5,7 +5,7 @@ import {
   getTrades,
   addTrade,
   deleteTrade,
-} from "../controllers/tradeController.js";
+} from "../controllers/ordersRegisterController.js";
 import authenticate from "../middleware/auth.js";
 
 const router = express.Router();

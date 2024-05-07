@@ -4,8 +4,8 @@ import axios from "axios";
 import {
   calculateRSI,
   calculateStochastic,
-} from "../utils/technicalIndicators";
-import TechnicalIndicatorOpportunity from "../models/TechnicalIndicatorOpportunity";
+} from "../utils/technicalIndicators.js";
+import TechnicalIndicatorOpportunity from "../models/TechnicalIndicatorOpportunity.js";
 
 const symbols = [
   "BTCUSDT",
@@ -40,9 +40,13 @@ export const fetchHistoricalData = async (symbol) => {
       volume: parseFloat(kline[5]),
     }));
   } catch (error) {
-    console.error(`Error fetching historical data for ${symbol}: `, error);
+    console.error(`Error fetching historical data for ${symbol}: `);
     return [];
   }
+  // } catch (error) {
+  //   console.error(`Error fetching historical data for ${symbol}: `, error);
+  //   return [];
+  // }
 };
 
 export const deleteOldSignals = async () => {
@@ -71,12 +75,6 @@ export const detectTechnicalIndicatorsLogic = async () => {
 
     const rsiValues = calculateRSI(closes);
     const stochasticValues = calculateStochastic(highs, lows, closes);
-
-    // console.log(`Analyzed symbol: ${symbol}`);
-    // console.log(`Latest RSI Value for ${symbol}: ${rsiValues}`); // Assuming rsiValues is a single value
-    // console.log(
-    //   `Latest Stochastic Values for ${symbol}: K=${stochasticValues.k}, D=${stochasticValues.d}`
-    // );
 
     if (rsiValues <= 70 && stochasticValues.k <= 70) {
       try {

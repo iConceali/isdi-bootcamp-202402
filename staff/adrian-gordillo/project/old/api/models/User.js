@@ -6,35 +6,35 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema({
   nombre: {
     type: String,
-    required: [true, "El nombre es obligatorio"],
+    required: [true, "The name is required"],
     validate: {
       validator: function (v) {
-        return /^[a-zA-Z\s]+$/.test(v); // Expresión regular que valida que solo contenga letras y espacios.
+        return /^[a-zA-Z\s]+$/.test(v);
       },
       message: (props) =>
-        `${props.value} no es un nombre válido. Solo debe contener letras.`,
+        `${props.value} is not a valid name. It should only contain letters`,
     },
   },
   correoElectronico: {
     type: String,
-    required: true,
-    unique: true,
+    required: [true, "email is required"],
+    unique: [true, "email already in use"],
     validate: {
       validator: function (v) {
         return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v);
       },
-      message: (props) => `${props.value} no es un email válido!`,
+      message: (props) => `${props.value} It is not a valid email!`,
     },
   },
   contraseña: {
     type: String,
-    required: [true, "La contraseña es obligatoria"],
-    minlength: [8, "La contraseña debe tener al menos 8 caracteres"],
+    required: [true, "Password is required"],
+    minlength: [8, "The password must be at least 8 characters"],
     validate: {
       validator: function (v) {
         return /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(v); // Verifica la presencia de al menos un número y una letra
       },
-      message: "La contraseña debe contener al menos un número y una letra.",
+      message: "The password must contain at least one number and one letter",
     },
   },
   watchlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "CryptoPrice" }],

@@ -8,7 +8,6 @@ import {
   IconButton,
   List,
   ListItem,
-  ListItemText,
   MenuItem,
   Menu,
   Toolbar,
@@ -18,7 +17,7 @@ import {
   createTheme,
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../userContext";
 
 const theme = createTheme({
@@ -32,7 +31,7 @@ const StyledLink = styled(Link)({
   color: "inherit",
 });
 
-const StyledButton = styled(Button)({
+const StyledButton = styled(Button)(({ theme }) => ({
   marginLeft: "1rem",
   padding: "0.5rem 1rem",
   borderRadius: "2rem",
@@ -43,7 +42,10 @@ const StyledButton = styled(Button)({
     transform: "scale(1.05)",
     backgroundImage: "linear-gradient(to bottom, #00efff, #006eff)",
   },
-});
+  [theme.breakpoints.down("sm")]: {
+    display: "none", // Ocultar en pantallas pequeñas
+  },
+}));
 
 const NavBar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -53,6 +55,7 @@ const NavBar = () => {
   const openOpp = Boolean(anchorElOpp);
   const location = useLocation();
   const { logoutUser, user } = useUser();
+  const navigate = useNavigate();
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
@@ -72,6 +75,16 @@ const NavBar = () => {
 
   const handleOppClose = () => {
     setAnchorElOpp(null);
+  };
+
+  const handleMenuItemClick = (sectionId) => {
+    if (location.pathname !== "/") {
+      navigate("/", { replace: true });
+    }
+    setTimeout(() => {
+      scrollToSection(sectionId);
+    }, 100); // Short delay to ensure navigation has completed if necessary
+    handleHomeClose(); // Cierra el menú después de la selección
   };
 
   const scrollToSection = (sectionId) => {
@@ -111,17 +124,19 @@ const NavBar = () => {
               open={openHome}
               onClose={handleHomeClose}
             >
-              <MenuItem onClick={() => scrollToSection("home")}>Home</MenuItem>
-              <MenuItem onClick={() => scrollToSection("value")}>
+              <MenuItem onClick={() => handleMenuItemClick("home")}>
+                Home
+              </MenuItem>
+              <MenuItem onClick={() => handleMenuItemClick("value")}>
                 Value
               </MenuItem>
-              <MenuItem onClick={() => scrollToSection("tools")}>
+              <MenuItem onClick={() => handleMenuItemClick("tools")}>
                 Tools
               </MenuItem>
-              <MenuItem onClick={() => scrollToSection("about")}>
+              <MenuItem onClick={() => handleMenuItemClick("about")}>
                 About Us
               </MenuItem>
-              <MenuItem onClick={() => scrollToSection("contact")}>
+              <MenuItem onClick={() => handleMenuItemClick("contact")}>
                 Contact
               </MenuItem>
             </Menu>
@@ -184,7 +199,7 @@ const NavBar = () => {
       </AppBar>
       <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer}>
         <List>
-          <ListItem button onClick={() => scrollToSection("home")}>
+          <ListItem button onClick={() => handleMenuItemClick("home")}>
             Home
           </ListItem>
           {user && (

@@ -1,13 +1,13 @@
 // api/routes/arbitrageRoutes.js
 
 import express from "express";
-import { detectArbitrageAndNotify } from "../controllers/arbitrageController1.js";
-import { detectTriangular } from "../controllers/arbitrageController2.js";
-import Opportunity from "../models/Opportunity"; // Importa el modelo Mongoose
+import { detectStandard } from "../controllers/arbitrageStandardController.js";
+import { detectTriangular } from "../controllers/arbitrageTriangularController.js";
+import Opportunity from "../models/StandardAndTriangularOpportunityModel.js"; // Importa el modelo Mongoose
 
 const router = express.Router();
 
-router.get("/detect", detectArbitrageAndNotify);
+router.get("/detect", detectStandard);
 router.get("/triangular-detect", detectTriangular);
 router.get("/opportunities", async (req, res) => {
   try {

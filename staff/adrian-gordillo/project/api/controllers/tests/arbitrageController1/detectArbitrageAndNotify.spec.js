@@ -7,12 +7,12 @@ import { expect } from "chai";
 import mongoose from "mongoose";
 import sinon from "sinon";
 import {
-  detectArbitrageAndNotify,
+  detectStandard,
   getDependencies,
-} from "../../arbitrageController1.js";
+} from "../../arbitrageStandardController.js";
 import Opportunity from "../../../models/Opportunity.js";
 
-describe("detectArbitrageAndNotify Tests", () => {
+describe("detectStandard Tests", () => {
   let detectArbitrageOpportunitiesStub;
 
   before(async () => {
@@ -27,7 +27,7 @@ describe("detectArbitrageAndNotify Tests", () => {
     await Opportunity.deleteMany({});
     const dependencies = getDependencies();
     detectArbitrageOpportunitiesStub = sinon
-      .stub(dependencies, "detectArbitrageOpportunities")
+      .stub(dependencies, "detectStandardArbitrageOpportunities")
       .resolves([]);
   });
 
@@ -50,7 +50,7 @@ describe("detectArbitrageAndNotify Tests", () => {
       },
     };
 
-    await detectArbitrageAndNotify(mockReq, mockRes);
+    await detectStandard(mockReq, mockRes);
 
     expect(mockRes.statusCode).to.equal(200);
     expect(mockRes.data).to.be.an("array");

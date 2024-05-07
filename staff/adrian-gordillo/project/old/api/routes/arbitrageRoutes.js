@@ -3,7 +3,7 @@
 import express from "express";
 import { detectArbitrageAndNotify } from "../controllers/arbitrageController1.js";
 import { detectTriangular } from "../controllers/arbitrageController2.js";
-import Opportunity from "../models/Opportunity"; // Importa el modelo Mongoose
+import Opportunity from "../models/Opportunity.js"; // Importa el modelo Mongoose
 
 const router = express.Router();
 

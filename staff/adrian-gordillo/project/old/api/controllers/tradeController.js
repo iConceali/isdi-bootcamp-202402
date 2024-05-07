@@ -31,6 +31,7 @@ export const addTrade = async (req, res) => {
     res.status(201).json(savedTrade);
   } catch (error) {
     res.status(400).json({ message: error.message });
+    console.log(error.message);
   }
 };
 
