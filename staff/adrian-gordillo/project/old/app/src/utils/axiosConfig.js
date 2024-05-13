@@ -2,9 +2,6 @@
 
 import axios from "axios";
 
-export const configureAxios = () => {
-  const token = sessionStorage.getItem("token");
-  if (token) {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  }
+export const configureAxios = (token) => {
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };

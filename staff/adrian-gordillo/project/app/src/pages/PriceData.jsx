@@ -1,6 +1,3 @@
-// app/src/pages/PriceData.jsx
-
-import { useUser } from "../userContext";
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -21,6 +18,7 @@ import StarIcon from "@mui/icons-material/Star";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import axios from "axios";
+import getLoggedInUserId from "../logic/getLoggedInUserId"; // Asegúrate de que la ruta es correcta
 
 const getIconUrl = (symbol) =>
   `../public/crypto-icon/${symbol.toLowerCase()}.png`;
@@ -29,49 +27,51 @@ const PriceData = () => {
   const [prices, setPrices] = useState([]);
   const [orderDirection, setOrderDirection] = useState("asc");
   const [orderBy, setOrderBy] = useState("symbol");
-  const { user } = useUser();
+  const userId = getLoggedInUserId(); // Obtiene el ID del usuario con la función externa
 
   useEffect(() => {
+    if (!userId) {
+      console.log(
+        "No user ID available, user may not be logged in or token is invalid"
+      );
+      setPrices([]); // Opcional: Limpiar los precios si no hay sesión válida
+      return; // No realizar llamadas a la API si no hay usuario
+    }
+
     const fetchPricesAndCheckWatchlist = async () => {
       try {
-        // Obtiene los precios de las criptomonedas desde el API.
         const pricesResponse = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/prices/crypto-prices`
+          `${import.meta.env.VITE_API_URL}/prices/crypto-prices`
         );
 
         let watchlistIds = [];
-
-        // Verifica si hay un usuario y un ID de usuario disponible
-        if (user && user._id) {
+        if (userId) {
           try {
-            // Obtiene la watchlist del usuario usando su ID
             const watchlistResponse = await axios.get(
-              `${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist`
+              `${import.meta.env.VITE_API_URL}/users/${userId}/watchlist`
             );
-            watchlistIds = watchlistResponse.data; // Esto debería ser un array de IDs de las criptomonedas en la watchlist
+            watchlistIds = watchlistResponse.data; // Suponiendo que esto es un array de IDs
           } catch (error) {
             console.error("Error fetching watchlist:", error);
           }
         }
 
-        // Combina los datos de los precios con la información de la watchlist
         const updatedPrices = pricesResponse.data.map((price) => ({
           ...price,
-          isInWatchlist: watchlistIds.includes(price._id), // Marca si cada criptomoneda está en la watchlist
+          isInWatchlist: watchlistIds.includes(price._id),
         }));
 
-        // Actualiza el estado de los precios con los datos combinados
         setPrices(updatedPrices);
       } catch (error) {
         console.error("Error fetching price data:", error);
-        setPrices([]); // En caso de error, limpia la lista de precios
+        setPrices([]);
       }
     };
 
     fetchPricesAndCheckWatchlist();
     const intervalId = setInterval(fetchPricesAndCheckWatchlist, 10000);
     return () => clearInterval(intervalId);
-  }, [user]); // La dependencia [user] asegura que los datos se actualicen cuando el usuario inicie sesión, cierre sesión o cambie.
+  }, [userId]);
 
   const handleSort = (property) => {
     const isAsc = orderBy === property && orderDirection === "asc";
@@ -86,23 +86,22 @@ const PriceData = () => {
   });
 
   const toggleWatchlist = async (cryptoId, isInWatchlist) => {
-    if (!user || !user._id) {
+    if (!userId) {
       console.error("No user ID found or user not logged in");
       return;
     }
 
     try {
       const method = isInWatchlist ? "DELETE" : "POST";
-      const url = `${import.meta.env.VITE_API_URL}/api/users/${
-        user._id
-      }/watchlist${method === "DELETE" ? "/" + cryptoId : ""}`;
+      const url = `${import.meta.env.VITE_API_URL}/users/${userId}/watchlist${
+        method === "DELETE" ? "/" + cryptoId : ""
+      }`;
       await axios({
         method: method,
         url: url,
         data: method === "POST" ? { cryptoId } : {},
       });
 
-      // Actualizar el estado de prices para reflejar los cambios inmediatamente en la UI
       setPrices(
         prices.map((price) => {
           if (price._id === cryptoId) {
@@ -113,7 +112,7 @@ const PriceData = () => {
       );
     } catch (error) {
       console.error("Error updating watchlist:", error);
-      alert(`Error: ${error.response.data}`); // Mostrar mensaje de error desde el servidor
+      alert(`Error: ${error.response.data}`);
     }
   };
 

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { expect } from "chai";
-import { detectTriangular } from "../../arbitrageController2.js";
+import { detectTriangular } from "../../arbitrageTriangularController.js";
 import Opportunity from "../../../models/Opportunity.js";
 
 dotenv.config();

@@ -1,4 +1,4 @@
-// app/src/userContext.js
+// app/src/userContext.jsx
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { configureAxios } from "./utils/axiosConfig";
@@ -6,6 +6,13 @@ import { configureAxios } from "./utils/axiosConfig";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+  const [token, setToken] = useState(sessionStorage.getItem("token")); // Agregar estado para el token
+  const [isTokenExpired, setIsTokenExpired] = useState(false);
+
+  if (token) {
+    configureAxios(token); // Configura Axios con el token correcto al cargar la app
+  }
+
   const parseJwt = (token) => {
     try {
       return JSON.parse(atob(token.split(".")[1]));
@@ -14,25 +21,13 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  const [user, setUser] = useState(() => {
-    const savedUser = sessionStorage.getItem("user");
-    if (savedUser) {
-      configureAxios(); // Asegúrate de que Axios esté configurado con el token correcto al cargar la app.
-      return JSON.parse(savedUser);
-    }
-    return null;
-  });
-
-  const [tokenExpired, setTokenExpired] = useState(false);
-
   const logoutUser = () => {
     sessionStorage.removeItem("token"); // Elimina el token de sessionStorage
-    sessionStorage.removeItem("user"); // Elimina el usuario de sessionStorage
-    setUser(null); // Actualiza el estado global del usuario a null
-    setTokenExpired(false);
+    setToken(null); // Asegurarse de eliminar también el token del estado
+    setIsTokenExpired(false);
   };
 
-  const loginUser = (userData, token) => {
+  const loginUser = (token) => {
     const tokenData = parseJwt(token); // Parsea el token para obtener la información necesaria
 
     if (tokenData && tokenData.exp * 1000 < Date.now()) {
@@ -42,30 +37,32 @@ export const UserProvider = ({ children }) => {
     }
 
     sessionStorage.setItem("token", token);
-    sessionStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
-    configureAxios(); // Aplica la configuración de Axios cada vez que el usuario inicia sesión.
+    setToken(token); // Guarda el token en el estado
+    configureAxios(token); // Aplica la configuración de Axios cada vez que el usuario inicia sesión.
   };
+
+  useEffect(() => {
+    loginUser(token);
+  }, [token]);
 
   // Comprobar si el token ha expirado
   useEffect(() => {
     const checkTokenExpiration = () => {
-      const token = sessionStorage.getItem("token");
       const tokenData = token ? parseJwt(token) : null;
       if (tokenData && tokenData.exp * 1000 < Date.now()) {
-        setTokenExpired(true); // Marca el token como expirado
+        setIsTokenExpired(true); // Marca el token como expirado
         logoutUser(); // Cierra la sesión del usuario automáticamente
       }
     };
 
     checkTokenExpiration();
-    const interval = setInterval(checkTokenExpiration, 10000); // Comprobar cada minuto
+    const interval = setInterval(checkTokenExpiration, 60000); // Comprobar cada minuto
     return () => clearInterval(interval);
-  }, []);
+  }, [token]);
 
   return (
     <UserContext.Provider
-      value={{ user, tokenExpired, setUser, loginUser, logoutUser }}
+      value={{ token, tokenExpired: isTokenExpired, loginUser, logoutUser }}
     >
       {children}
     </UserContext.Provider>

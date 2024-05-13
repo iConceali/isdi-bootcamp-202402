@@ -11,32 +11,9 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
 
-const TradeTable = ({ trades, setTrades, updateParameters, parameters }) => {
+const TradeTable = ({ trades, onTradeDelete }) => {
   const isSmallScreen = window.innerWidth <= 442;
-
-  const handleDelete = async (id) => {
-    try {
-      const response = await axios.delete(
-        `http://localhost:3000/api/trades/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        // Filtrar los trades para remover el eliminado
-        const updatedTrades = trades.filter((trade) => trade._id !== id);
-        setTrades(updatedTrades);
-
-        updateParameters(updatedTrades, parameters.deposit);
-      }
-    } catch (error) {
-      console.error("Failed to delete trade:", error);
-    }
-  };
 
   return (
     <Box
@@ -97,8 +74,8 @@ const TradeTable = ({ trades, setTrades, updateParameters, parameters }) => {
               </TableCell>
               <TableCell>
                 <IconButton
-                  onClick={() => handleDelete(trade._id)}
-                  color="white"
+                  onClick={() => onTradeDelete(trade._id)}
+                  color="error"
                 >
                   <DeleteIcon />
                 </IconButton>

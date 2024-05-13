@@ -64,27 +64,15 @@ function App() {
 }
 
 function AppContent() {
-  const { user, logoutUser } = useUser();
+  const { logoutUser, isTokenExpired } = useUser();
   const [showSessionExpiredDialog, setShowSessionExpiredDialog] =
     useState(false);
 
   useEffect(() => {
-    const checkTokenExpiration = () => {
-      // Esta función debería comprobar si el token ha expirado realmente
-      // Supongamos que `user` tiene una marca de tiempo que indica cuándo expira el token
-      if (user && new Date().getTime() > user.tokenExpiration) {
-        setShowSessionExpiredDialog(true);
-      }
-    };
-
-    checkTokenExpiration();
-
-    const intervalId = setInterval(checkTokenExpiration, 60000); // Comprueba cada minuto
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [user]);
+    if (isTokenExpired) {
+      setShowSessionExpiredDialog(true);
+    }
+  }, [isTokenExpired]);
 
   const handleCloseSessionExpiredDialog = () => {
     setShowSessionExpiredDialog(false);
@@ -161,7 +149,7 @@ function LayoutBox() {
           }
         />
         <Route
-          path="/trades"
+          path="/orders"
           element={
             <ProtectedRoute>
               <TradePage />
@@ -182,8 +170,9 @@ function LayoutBox() {
 }
 
 function ProtectedRoute({ children }) {
-  const { user } = useUser();
-  return user ? children : <Navigate to="/login" />;
+  const { isTokenExpired } = useUser();
+
+  return !isTokenExpired ? children : <Navigate to="/login" />;
 }
 
 export default App;

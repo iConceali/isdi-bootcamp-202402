@@ -1,23 +1,14 @@
 // api/routes/arbitrageRoutes.js
 
 import express from "express";
-import { detectStandard } from "../controllers/arbitrageStandardController.js";
-import { detectTriangular } from "../controllers/arbitrageTriangularController.js";
-import Opportunity from "../models/StandardAndTriangularOpportunityModel.js"; // Importa el modelo Mongoose
+import { detectStandard } from "../controllers/arbitrageStandard.js";
+import { detectTriangular } from "../controllers/arbitrageTriangular.js";
+import { getOpportunities } from "../controllers/opportunityController.js";
 
 const router = express.Router();
 
 router.get("/detect", detectStandard);
 router.get("/triangular-detect", detectTriangular);
-router.get("/opportunities", async (req, res) => {
-  try {
-    const opportunities = await Opportunity.find();
-    res.json(opportunities);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching opportunities: " + error.message });
-  }
-});
+router.get("/opportunities", getOpportunities);
 
 export default router;

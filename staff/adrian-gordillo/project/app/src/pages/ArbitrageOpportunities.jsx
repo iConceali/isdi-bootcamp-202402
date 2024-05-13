@@ -31,7 +31,7 @@ const ArbitrageOpportunities = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/arbitrage/opportunities`
+        `${import.meta.env.VITE_API_URL}/arbitrage/opportunities`
       );
       setAllOpportunities(response.data);
       setError(null);

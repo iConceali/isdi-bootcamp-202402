@@ -1,8 +1,11 @@
 // app/src/pages/Watchlist.jsx
 
 import React, { useEffect, useState } from "react";
-import { useUser } from "../userContext";
-import axios from "axios";
+import getLoggedInUserId from "../logic/getLoggedInUserId"; // Asegúrate de que la ruta es correcta
+import {
+  fetchWatchlist,
+  removeCryptoFromWatchlist,
+} from "../logic/watchlistService";
 import {
   Box,
   Typography,
@@ -25,58 +28,19 @@ const Watchlist = () => {
   const [watchlist, setWatchlist] = useState([]);
   const [orderDirection, setOrderDirection] = useState("asc");
   const [orderBy, setOrderBy] = useState("symbol");
-  const { user } = useUser();
+  const userId = getLoggedInUserId(); // Obtiene el userId directamente del token
 
   useEffect(() => {
-    const fetchWatchlist = async () => {
-      if (user && user._id) {
-        try {
-          const idsResponse = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist`,
-            {
-              headers: {
-                Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-              },
-            }
-          );
-          const cryptoDetailsPromises = idsResponse.data.map((id) =>
-            axios.get(`${import.meta.env.VITE_API_URL}/api/prices/crypto/${id}`)
-          );
-          const cryptoDetailsResponses = await Promise.all(
-            cryptoDetailsPromises
-          );
-          const cryptos = cryptoDetailsResponses.map(
-            (response) => response.data
-          );
-          setWatchlist(cryptos);
-        } catch (error) {
-          console.error("Error fetching Watchlist:", error);
-        }
+    const fetchAndUpdateWatchlist = () => {
+      if (userId) {
+        fetchWatchlist(userId).then(setWatchlist).catch(console.error);
       }
     };
 
-    fetchWatchlist();
-    const intervalId = setInterval(fetchWatchlist, 10000);
+    fetchAndUpdateWatchlist();
+    const intervalId = setInterval(fetchAndUpdateWatchlist, 10000);
     return () => clearInterval(intervalId);
-  }, [user]);
-
-  const removeCryptoFromWatchlist = async (cryptoId) => {
-    try {
-      await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/users/${
-          user._id
-        }/watchlist/${cryptoId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-        }
-      );
-      setWatchlist(watchlist.filter((crypto) => crypto._id !== cryptoId));
-    } catch (error) {
-      console.error("Error removing crypto from Watchlist:", error);
-    }
-  };
+  }, [userId]);
 
   const handleSort = (property) => {
     const isAsc = orderBy === property && orderDirection === "asc";
@@ -89,6 +53,17 @@ const Watchlist = () => {
     if (a[orderBy] > b[orderBy]) return orderDirection === "asc" ? 1 : -1;
     return 0;
   });
+
+  const handleRemoveFromWatchlist = (cryptoId) => {
+    if (!userId) {
+      console.error("No user ID found or user not logged in");
+      return;
+    }
+    removeCryptoFromWatchlist(userId, cryptoId, setWatchlist).catch((error) => {
+      console.error("Error removing from watchlist:", error);
+      alert(`Error: ${error.response.data.message || error.message}`);
+    });
+  };
 
   return (
     <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", p: 2 }}>
@@ -146,63 +121,52 @@ const Watchlist = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedWatchlist.length > 0 ? (
-              sortedWatchlist.map((crypto, index) => (
-                <TableRow key={crypto._id}>
-                  <TableCell>
-                    <IconButton
-                      onClick={() => removeCryptoFromWatchlist(crypto._id)}
-                    >
-                      <StarIcon sx={{ color: "gold" }} />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Avatar
-                        src={`../public/crypto-icon/${crypto.symbol.toLowerCase()}.png`}
-                        alt={crypto.symbol}
-                        sx={{ width: 24, height: 24 }}
-                      />
-                      {crypto.symbol.toUpperCase()}
-                    </Box>
-                  </TableCell>
-                  <TableCell>${crypto.price.toFixed(2)}</TableCell>
-                  <TableCell
-                    sx={{
-                      color: crypto.price24Hr >= 0 ? "green" : "red",
-                      animation: "blinking 2s infinite",
-                    }}
+            {sortedWatchlist.map((crypto, index) => (
+              <TableRow key={crypto._id}>
+                <TableCell>
+                  <IconButton
+                    onClick={() => handleRemoveFromWatchlist(crypto._id)}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      {crypto.price24Hr >= 0 ? (
-                        <ArrowDropUpIcon />
-                      ) : (
-                        <ArrowDropDownIcon />
-                      )}
-                      {crypto.price24Hr !== undefined
-                        ? `${crypto.price24Hr.toFixed(2)}%`
-                        : "N/A"}
-                    </Box>
-                  </TableCell>
-
-                  <TableCell>
-                    {crypto.marketCap
-                      ? parseFloat(crypto.marketCap).toLocaleString("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        })
-                      : "N/A"}
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} style={{ textAlign: "center" }}>
-                  No cryptocurrencies in your watchlist.
+                    <StarIcon sx={{ color: "gold" }} />
+                  </IconButton>
+                </TableCell>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Avatar
+                      src={`../public/crypto-icon/${crypto.symbol.toLowerCase()}.png`}
+                      alt={crypto.symbol}
+                      sx={{ width: 24, height: 24 }}
+                    />
+                    {crypto.symbol.toUpperCase()}
+                  </Box>
+                </TableCell>
+                <TableCell>${crypto.price.toFixed(2)}</TableCell>
+                <TableCell
+                  sx={{
+                    color: crypto.price24Hr >= 0 ? "green" : "red",
+                    animation: "blinking 2s infinite",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    {crypto.price24Hr >= 0 ? (
+                      <ArrowDropUpIcon />
+                    ) : (
+                      <ArrowDropDownIcon />
+                    )}
+                    {`${crypto.price24Hr.toFixed(2)}%`}
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  {crypto.marketCap
+                    ? parseFloat(crypto.marketCap).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })
+                    : "N/A"}
                 </TableCell>
               </TableRow>
-            )}
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

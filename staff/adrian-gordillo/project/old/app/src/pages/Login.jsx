@@ -1,5 +1,4 @@
 // app/src/pages/Login.jsx
-
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -14,10 +13,12 @@ import {
 } from "@mui/material";
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({
-    correoElectronico: "",
-    contraseña: "",
-  });
+  const initialCredentialsState = {
+    email: "",
+    password: "",
+  };
+
+  const [credentials, setCredentials] = useState(initialCredentialsState);
   const [error, setError] = useState(""); // Estado para almacenar el mensaje de error
   const { loginUser } = useUser(); // Usar loginUser del contexto
   const navigate = useNavigate();
@@ -31,18 +32,19 @@ const Login = () => {
     setError(""); // Limpiar errores anteriores
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/users/login`,
+        `${import.meta.env.VITE_API_URL}/users/auth`,
         credentials
       );
       console.log("Respuesta del servidor:", response); // Ver la respuesta completa del servidor
-      if (response.data.token && response.data.user) {
-        loginUser(response.data.user, response.data.token); // Actualizar el contexto con todos los datos del usuario
+      if (response.data.token) {
+        loginUser(response.data.token); // Actualizar el contexto con todos los datos del usuario
         navigate("/");
       } else {
         setError("No se pudo iniciar sesión, por favor intente de nuevo.");
+        navigate("/login");
       }
     } catch (error) {
-      setError("Correo electrónico o contraseña incorrectos");
+      setError("Invalid email or password !");
       console.error(
         "Error en el inicio de sesión:",
         error.response ? error.response.data : error
@@ -71,8 +73,8 @@ const Login = () => {
           margin="normal"
           fullWidth
           label="Email"
-          name="correoElectronico"
-          value={credentials.correoElectronico}
+          name="email"
+          value={credentials.email}
           onChange={handleChange}
           required
         />
@@ -81,9 +83,9 @@ const Login = () => {
           margin="normal"
           fullWidth
           label="Password"
-          name="contraseña"
+          name="password"
           type="password"
-          value={credentials.contraseña}
+          value={credentials.password}
           onChange={handleChange}
           required
         />

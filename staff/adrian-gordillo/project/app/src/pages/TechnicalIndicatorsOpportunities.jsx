@@ -17,7 +17,7 @@ const TechnicalIndicatorsOpportunities = () => {
     setIsLoading(true);
     try {
       const { data } = await axios.get(
-        "http://localhost:3000/api/technical-indicator-opportunities/technical-opportunities"
+        "http://localhost:3000/technical-indicator-opportunities/technical-opportunities"
       );
       setAllOpportunities(data);
       setFilteredOpportunities(data); // Muestra todas las oportunidades inicialmente

@@ -1,42 +1,27 @@
 // api/app.js
 
-import dotenv from "dotenv";
-dotenv.config();
 import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
 import http from "http";
-import { Server } from "socket.io";
-import { arbitrageRoutes, userRoutes } from "./routes/index.js";
-import priceRoutes from "./routes/priceRoutes.js";
-import tradeRoutes from "./routes/tradeRoutes.js";
-import EventEmitter from "events";
-import { detectArbitrageAndNotify } from "./controllers/arbitrageController1.js"; // Asegúrate de importar correctamente
-import { detectTriangular } from "./controllers/arbitrageController2.js"; // Asegúrate de importar correctamente
-import { detectTechnicalIndicators } from "./controllers/technicalIndicatorOpportunitiesController.js"; // Utilizamos detectTechnicalIndicators en lugar de detectTechnicalIndicatorsLogic
-import authenticate from "./middleware/auth.js"; // Importa la función authenticate
-import technicalIndicatorOpportunitiesRouter from "./routes/technicalIndicatorOpportunities.js"; // Asegúrate de importar correctamente
+import { Server as SocketIO } from "socket.io";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import configureExpress from "./config/configureExpress.js";
+import configureSockets from "./config/configureSockets.js";
+import { setupScheduledTasks } from "./tasks/scheduledTasks.js";
 
-EventEmitter.defaultMaxListeners = 15;
+dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
+const io = new SocketIO(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN || "*", // Ajusta según tu política de CORS
+    origin: process.env.CORS_ORIGIN || "*",
     methods: ["GET", "POST"],
   },
 });
 
-app.use(express.json());
-app.use(
-  cors({
-    origin: process.env.APP_URL, // Revisa que esta URL sea correcta
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+configureExpress(app);
+configureSockets(io);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -46,52 +31,12 @@ mongoose
       console.log(
         `Servidor corriendo en http://localhost:${process.env.PORT || 3000}`
       );
-
-      // Inicia la búsqueda y registro de oportunidades cada 10 seg
-      setInterval(() => {
-        console.log("Buscando nuevas oportunidades de arbitraje...");
-        detectArbitrageAndNotify();
-        detectTriangular();
-      }, 10000); // 10 seg
-
-      setInterval(() => {
-        console.log("Buscando nuevas oportunidades con Indicadores...");
-        detectTechnicalIndicators(null);
-      }, 60000); // 1 min
+      setupScheduledTasks(); // Configurar tareas programadas después de que el servidor esté en ejecución
     });
   })
-  .catch((error) => console.error("Error al conectar a MongoDB:", error));
-
-io.on("connection", (socket) => {
-  console.log("Un cliente se ha conectado");
-  socket.on("disconnect", () => {
-    console.log("Un cliente se ha desconectado");
+  .catch((error) => {
+    console.error("Error al conectar a MongoDB:", error);
+    process.exit(1);
   });
-});
 
-app.use("/api/users", userRoutes);
-app.use("/api/arbitrage", authenticate, arbitrageRoutes); // Usa la función authenticate en las rutas protegidas
-app.use("/api/prices", authenticate, priceRoutes); // Usa la función authenticate en las rutas protegidas
-app.use("/api/trades", authenticate, tradeRoutes); // Usa la función authenticate en las rutas protegidas
-app.use(
-  "/api/technical-indicator-opportunities",
-  authenticate,
-  technicalIndicatorOpportunitiesRouter
-); // Rutas para las oportunidades basadas en indicadores técnicos
-
-app.use((req, res, next) => {
-  const error = new Error("Recurso no encontrado");
-  error.status = 404;
-  next(error);
-});
-
-app.use((error, req, res, next) => {
-  res.status(error.status || 500);
-  res.json({
-    error: {
-      message: error.message || "An unknown error occurred.",
-    },
-  });
-});
-
-export { app, io };
+export { app, server, io };

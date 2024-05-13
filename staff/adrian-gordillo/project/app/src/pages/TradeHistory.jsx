@@ -11,7 +11,7 @@ function TradeHistory() {
   const fetchTradeHistory = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/trade-history");
+      const response = await fetch("/trade-history");
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }

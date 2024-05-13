@@ -36,7 +36,7 @@ const PriceData = () => {
       try {
         // Obtiene los precios de las criptomonedas desde el API.
         const pricesResponse = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/prices/crypto-prices`
+          `${import.meta.env.VITE_API_URL}/prices/crypto-prices`
         );
 
         let watchlistIds = [];
@@ -46,7 +46,7 @@ const PriceData = () => {
           try {
             // Obtiene la watchlist del usuario usando su ID
             const watchlistResponse = await axios.get(
-              `${import.meta.env.VITE_API_URL}/api/users/${user._id}/watchlist`
+              `${import.meta.env.VITE_API_URL}/users/${user._id}/watchlist`
             );
             watchlistIds = watchlistResponse.data; // Esto debería ser un array de IDs de las criptomonedas en la watchlist
           } catch (error) {
@@ -93,9 +93,9 @@ const PriceData = () => {
 
     try {
       const method = isInWatchlist ? "DELETE" : "POST";
-      const url = `${import.meta.env.VITE_API_URL}/api/users/${
-        user._id
-      }/watchlist${method === "DELETE" ? "/" + cryptoId : ""}`;
+      const url = `${import.meta.env.VITE_API_URL}/users/${user._id}/watchlist${
+        method === "DELETE" ? "/" + cryptoId : ""
+      }`;
       await axios({
         method: method,
         url: url,

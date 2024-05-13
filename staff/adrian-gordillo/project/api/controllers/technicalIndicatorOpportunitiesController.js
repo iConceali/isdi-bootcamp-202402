@@ -3,7 +3,7 @@
 import {
   detectTechnicalIndicatorsLogic,
   getOpportunitiesService,
-} from "../logic/technicalIndicatorsService.js";
+} from "../services/technicalIndicatorsService.js";
 
 export async function detectTechnicalIndicators(req, res) {
   try {

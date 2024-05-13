@@ -54,7 +54,7 @@ const NavBar = () => {
   const [anchorElOpp, setAnchorElOpp] = useState(null);
   const openOpp = Boolean(anchorElOpp);
   const location = useLocation();
-  const { logoutUser, user } = useUser();
+  const { logoutUser, token } = useUser();
   const navigate = useNavigate();
 
   const toggleDrawer = () => {
@@ -76,6 +76,8 @@ const NavBar = () => {
   const handleOppClose = () => {
     setAnchorElOpp(null);
   };
+
+  console.log(!!token);
 
   const handleMenuItemClick = (sectionId) => {
     if (location.pathname !== "/") {
@@ -141,7 +143,7 @@ const NavBar = () => {
               </MenuItem>
             </Menu>
 
-            {user && (
+            {token && (
               <>
                 <StyledButton component={StyledLink} to="/prices">
                   Prices
@@ -167,7 +169,7 @@ const NavBar = () => {
                     Technical Indicators
                   </MenuItem>
                 </Menu>
-                <StyledButton component={StyledLink} to="/trades">
+                <StyledButton component={StyledLink} to="/orders">
                   Trades
                 </StyledButton>
               </>
@@ -181,7 +183,7 @@ const NavBar = () => {
               width: "100%",
             }}
           >
-            {user ? (
+            {token ? (
               <StyledButton sx={{ marginLeft: "auto" }} onClick={handleLogout}>
                 Logout
               </StyledButton>
@@ -202,7 +204,7 @@ const NavBar = () => {
           <ListItem button onClick={() => handleMenuItemClick("home")}>
             Home
           </ListItem>
-          {user && (
+          {token && (
             <>
               <ListItem button component={StyledLink} to="/prices">
                 Prices
@@ -225,7 +227,7 @@ const NavBar = () => {
                   Technical Indicators
                 </MenuItem>
               </Menu>
-              <ListItem button component={StyledLink} to="/trades">
+              <ListItem button component={StyledLink} to="/orders">
                 Trades
               </ListItem>
             </>

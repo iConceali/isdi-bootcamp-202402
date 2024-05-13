@@ -6,12 +6,11 @@ import {
   addTrade,
   deleteTrade,
 } from "../controllers/ordersRegisterController.js";
-import authenticate from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", authenticate, getTrades);
-router.post("/", authenticate, addTrade);
-router.delete("/:id", authenticate, deleteTrade);
+router.get("/", getTrades);
+router.post("/", addTrade);
+router.delete("/:id", deleteTrade);
 
 export default router;

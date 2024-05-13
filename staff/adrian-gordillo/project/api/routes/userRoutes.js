@@ -1,27 +1,31 @@
 // api/routes/userRoutes.js
 
 import { Router } from "express";
-import authenticate from "../middleware/auth.js";
-import {
-  getAllUsers,
-  createUser,
-  loginUser,
-  getDeposit,
-  updateDeposit,
-  addToWatchlist,
-  getWatchlist,
-  removeFromWatchlist,
-} from "../controllers/userController.js";
+
+import user from "../controllers/user/index.js";
+
+const {
+  authenticateUserController,
+  createUserController,
+  getDepositController,
+  updateDepositController,
+  addCryptoToWatchlistController,
+  getUserWatchlistController,
+  removeCryptoFromWatchlistController,
+} = user;
 
 const router = Router();
 
-router.get("/", authenticate, getAllUsers);
-router.post("/register", createUser);
-router.post("/login", loginUser);
-router.get("/deposit", authenticate, getDeposit);
-router.put("/deposit", authenticate, updateDeposit);
-router.post("/:id/watchlist", authenticate, addToWatchlist);
-router.get("/:id/watchlist", authenticate, getWatchlist);
-router.delete("/:id/watchlist/:cryptoId", authenticate, removeFromWatchlist);
+// router.get("/", getAllUsers);
+router.post("/register", createUserController);
+router.post("/auth", authenticateUserController);
+router.get("/:userId/deposit", getDepositController);
+router.put("/:userId/deposit", updateDepositController);
+router.post("/:userId/watchlist/:cryptoId", addCryptoToWatchlistController);
+router.get("/:userId/watchlist", getUserWatchlistController);
+router.delete(
+  "/:userId/watchlist/:cryptoId",
+  removeCryptoFromWatchlistController
+);
 
 export default router;
