@@ -9,8 +9,8 @@ import {
 
 const router = express.Router();
 
-router.get("/", getTrades);
-router.post("/", addTrade);
-router.delete("/:id", deleteTrade);
+router.get("/:userId", getTrades);
+router.post("/:userId", addTrade);
+router.delete("/:userId/order/:orderId", deleteTrade);
 
 export default router;

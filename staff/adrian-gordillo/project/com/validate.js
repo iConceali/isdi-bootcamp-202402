@@ -1,3 +1,5 @@
+// com/validate.js
+
 import { ContentError, UnauthorizedError } from "./errors.js";
 import util from "./util.js";
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;

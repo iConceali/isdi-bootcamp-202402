@@ -1,3 +1,5 @@
+// app/src/logic/getLoggedInUserId.js
+
 import { util, validate } from "com";
 
 function getLoggedInUserId() {

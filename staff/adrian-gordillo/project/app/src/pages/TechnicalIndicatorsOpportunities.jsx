@@ -1,50 +1,15 @@
 // app/src/pages/TechnicalIndicatorsOpportunities.jsx
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Container, Typography, Grid, CircularProgress } from "@mui/material";
-import TechnicalIndicatorOpportunityCard from "../components/TechnicalIndicatorOpportunityCard";
-import FilterIndicators from "../components/FilterIndicators";
-import axios from "axios";
-import { motion } from "framer-motion"; // Importa motion
+import IndicatorOpportunityCard from "../components/TechnicalIndicators/IndicatorOpportunityCard";
+import FilterIndicators from "../components/TechnicalIndicators/FilterIndicators";
+import { useTechnicalIndicators } from "../hooks/useTechnicalIndicators";
+import { motion } from "framer-motion";
 
 const TechnicalIndicatorsOpportunities = () => {
-  const [allOpportunities, setAllOpportunities] = useState([]);
-  const [filteredOpportunities, setFilteredOpportunities] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchOpportunities = async () => {
-    setIsLoading(true);
-    try {
-      const { data } = await axios.get(
-        "http://localhost:3000/technical-indicator-opportunities/technical-opportunities"
-      );
-      setAllOpportunities(data);
-      setFilteredOpportunities(data); // Muestra todas las oportunidades inicialmente
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching opportunities:", error);
-      setError("Failed to fetch opportunities due to an error");
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    fetchOpportunities();
-    const intervalId = setInterval(fetchOpportunities, 20000); // Establece que la actualización sea cada minuto
-    return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonte
-  }, []);
-
-  const handleFilterChange = (symbol) => {
-    if (symbol === "") {
-      setFilteredOpportunities(allOpportunities); // Si no hay filtro seleccionado, muestra todo
-    } else {
-      const filtered = allOpportunities.filter(
-        (opportunity) => opportunity.symbol === symbol
-      );
-      setFilteredOpportunities(filtered); // Aplica el filtro sobre todas las oportunidades
-    }
-  };
+  const { filteredOpportunities, handleFilterChange, isLoading, error } =
+    useTechnicalIndicators();
 
   return (
     <Container>
@@ -68,7 +33,7 @@ const TechnicalIndicatorsOpportunities = () => {
                   times: [0, 0.5, 0.8, 1],
                 }}
               >
-                <TechnicalIndicatorOpportunityCard opportunity={opportunity} />
+                <IndicatorOpportunityCard opportunity={opportunity} />
               </motion.div>
             </Grid>
           ))}

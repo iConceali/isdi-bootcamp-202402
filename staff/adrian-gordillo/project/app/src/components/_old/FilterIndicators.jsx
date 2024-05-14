@@ -1,3 +1,5 @@
+// app/src/components/FilterIndicators.jsx
+
 import React, { useState } from "react";
 import { FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material";
 

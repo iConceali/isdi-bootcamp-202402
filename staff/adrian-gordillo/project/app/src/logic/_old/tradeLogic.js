@@ -1,4 +1,4 @@
-// tradeLogic.js
+// app/arc/logic/tradeLogic.js
 
 export const updateParameters = (trades, deposit) => {
   const balance = trades.reduce(

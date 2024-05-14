@@ -26,10 +26,10 @@ import Home from "./pages/Home";
 import Watchlist from "./pages/Watchlist";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import PriceData from "./pages/PriceData";
+import PriceList from "./pages/PriceList";
 import ArbitrageOpportunities from "./pages/ArbitrageOpportunities";
 import TechnicalIndicatorsOpportunities from "./pages/TechnicalIndicatorsOpportunities";
-import TradePage from "./pages/TradePage";
+import OrderRegister from "./pages/OrderRegister";
 
 const darkTheme = createTheme({
   palette: {
@@ -128,7 +128,7 @@ function LayoutBox() {
           path="/prices"
           element={
             <ProtectedRoute>
-              <PriceData />
+              <PriceList />
             </ProtectedRoute>
           }
         />
@@ -152,7 +152,7 @@ function LayoutBox() {
           path="/orders"
           element={
             <ProtectedRoute>
-              <TradePage />
+              <OrderRegister />
             </ProtectedRoute>
           }
         />

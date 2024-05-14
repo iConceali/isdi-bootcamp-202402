@@ -1,67 +1,16 @@
 // app/src/pages/ArbitrageOpportunities.jsx
 
-import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import React from "react";
 import { Container, Typography, Grid, CircularProgress } from "@mui/material";
-import ArbitrageOpportunityCard from "../components/ArbitrageOpportunityCard";
-import StandardArbitrageCard from "../components/StandardArbitrageCard";
-import FilterOpportunities from "../components/FilterOpportunities";
-import { motion } from "framer-motion"; // Importar motion
+import StandardArbitrageCard from "../components/Arbitrage/StandardArbitrageCard";
+import TriangularArbitrageCard from "../components/Arbitrage/TriangularArbitrageCard";
+import FilterOpportunities from "../components/Arbitrage/FilterOpportunities";
+import { useArbitrageOpportunities } from "../hooks/useArbitrageOpportunities";
+import { motion } from "framer-motion";
 
 const ArbitrageOpportunities = () => {
-  const [allOpportunities, setAllOpportunities] = useState([]);
-  const [displayedOpportunities, setDisplayedOpportunities] = useState([]);
-  const [filters, setFilters] = useState({
-    type: "",
-    exchanges: [
-      "Binance",
-      "Kraken",
-      "Coinbase",
-      "Bitfinex",
-      "Crypto.com",
-      "Gate.io",
-      "KuCoin",
-    ],
-    profitThreshold: 0.1,
-  });
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchOpportunities = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/arbitrage/opportunities`
-      );
-      setAllOpportunities(response.data);
-      setError(null);
-    } catch (error) {
-      console.error("Failed to fetch arbitrage opportunities:", error);
-      setError("Failed to fetch opportunities due to an error");
-    }
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    fetchOpportunities();
-    const intervalId = setInterval(fetchOpportunities, 10000);
-    return () => clearInterval(intervalId);
-  }, [fetchOpportunities]);
-
-  useEffect(() => {
-    const filtered = allOpportunities.filter(
-      (opportunity) =>
-        (!filters.type || opportunity.type === filters.type) &&
-        (!opportunity.exchange ||
-          filters.exchanges.includes(opportunity.exchange)) &&
-        opportunity.profit >= filters.profitThreshold
-    );
-    setDisplayedOpportunities(filtered);
-  }, [filters, allOpportunities]);
-
-  const handleFiltersChange = useCallback((newFilters) => {
-    setFilters((prevFilters) => ({ ...prevFilters, ...newFilters }));
-  }, []);
+  const { displayedOpportunities, handleFiltersChange, isLoading, error } =
+    useArbitrageOpportunities();
 
   return (
     <Container sx={{ mt: 2 }}>
@@ -83,12 +32,10 @@ const ArbitrageOpportunities = () => {
                   duration: 1,
                   ease: "easeInOut",
                   times: [0, 0.5, 0.8, 1],
-                  // repeat: Infinity,
-                  // repeatDelay: 1,
                 }}
               >
                 {opportunity.type === "triangular" ? (
-                  <ArbitrageOpportunityCard opportunity={opportunity} />
+                  <TriangularArbitrageCard opportunity={opportunity} />
                 ) : (
                   <StandardArbitrageCard opportunity={opportunity} />
                 )}

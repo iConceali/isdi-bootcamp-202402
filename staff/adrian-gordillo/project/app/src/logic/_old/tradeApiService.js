@@ -1,4 +1,4 @@
-// tradeApiService.js
+// app/src/logic/tradeApiService.js
 import axios from "axios";
 
 export const deleteTrade = async (

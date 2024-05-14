@@ -8,8 +8,9 @@ import {
 
 export const getTrades = async (req, res) => {
   try {
-    const orders = await getOrders(req.user.id);
-    res.status(200).json(orders);
+    const { userId } = req.params;
+    const orders = await getOrders(userId);
+    res.status(200).json({ orders });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -17,7 +18,8 @@ export const getTrades = async (req, res) => {
 
 export const addTrade = async (req, res) => {
   try {
-    const savedOrder = await createOrder(req.user.id, req.body);
+    const { userId } = req.params;
+    const savedOrder = await createOrder(userId, req.body);
     res.status(201).json(savedOrder);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -26,9 +28,10 @@ export const addTrade = async (req, res) => {
 
 export const deleteTrade = async (req, res) => {
   try {
-    await removeOrder(req.params.id, req.user.id);
+    const { userId, orderId } = req.params;
+    await removeOrder(orderId, userId);
     res.status(200).json({ message: "Trade deleted successfully" });
   } catch (error) {
-    res.status(error.status).json({ message: error.message });
+    res.status(error.status || 500).json({ message: error.message });
   }
 };

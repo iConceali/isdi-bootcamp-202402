@@ -1,3 +1,5 @@
+// com/util.js
+
 function extractJwtPayload(token) {
   const [, payloadB64] = token.split(".");
   const payloadJSON = atob(payloadB64);
