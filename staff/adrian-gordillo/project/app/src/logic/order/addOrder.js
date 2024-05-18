@@ -18,7 +18,13 @@ const addOrder = async (userId, orderData, token) => {
         },
       }
     );
-    return response.data.order; // Asegúrate de devolver la orden dentro del objeto
+
+    // Asegúrate de devolver la orden correctamente
+    if (!response.data.order) {
+      throw new ContentError("Invalid response from the server");
+    }
+
+    return response.data.order;
   } catch (error) {
     console.error("Failed to add order:", error);
     throw new ContentError("Failed to add order due to an error");

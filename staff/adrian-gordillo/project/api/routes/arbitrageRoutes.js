@@ -1,14 +1,14 @@
 // api/routes/arbitrageRoutes.js
 
 import express from "express";
-import { detectStandard } from "../controllers/arbitrageStandard.js";
-import { detectTriangular } from "../controllers/arbitrageTriangular.js";
-import { getOpportunities } from "../controllers/opportunityController.js";
+import detectStandardArbitrageController from "../controllers/arbitrage/detectStandardArbitrageController.js";
+import detectTriangularArbitrageController from "../controllers/arbitrage/detectTriangularArbitrageController.js";
+import getArbitrageOpportunitiesController from "../controllers/arbitrage/getArbitrageOpportunitiesController.js";
 
 const router = express.Router();
 
-router.get("/detect", detectStandard);
-router.get("/triangular-detect", detectTriangular);
-router.get("/opportunities", getOpportunities);
+router.get("/detect", detectStandardArbitrageController);
+router.get("/triangular-detect", detectTriangularArbitrageController);
+router.get("/opportunities", getArbitrageOpportunitiesController);
 
 export default router;

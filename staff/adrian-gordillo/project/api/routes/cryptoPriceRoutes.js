@@ -1,16 +1,14 @@
 // api/routes/cryptoPriceRoutes.js
 
 import express from "express";
+import fetchCryptoPricesController from "../controllers/cryptoPrices/fetchCryptoPricesController";
+import getCryptoByIdController from "../controllers/cryptoPrices/getCryptoByIdController";
 const router = express.Router();
-import {
-  updateCryptoPrices,
-  getCryptoById,
-} from "../controllers/cryptoPrice.js";
 
 // Ruta para obtener todos los precios
-router.get("/crypto-prices", updateCryptoPrices);
+router.get("/crypto-prices", fetchCryptoPricesController);
 
 // Ruta para obtener una criptomoneda por su ID
-router.get("/crypto/:id", getCryptoById); // Asegúrate de que el nombre del parámetro coincide con el usado en el controlador
+router.get("/crypto/:id", getCryptoByIdController);
 
 export default router;

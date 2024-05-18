@@ -1,6 +1,11 @@
 // src/logic/order/updateParameters.js
 
 const updateParameters = (orders, deposit) => {
+  // Ensure orders is an array
+  if (!Array.isArray(orders)) {
+    throw new Error("Expected orders to be an array");
+  }
+
   let balance = deposit;
   let totalProfitPercent = 0;
   let totalProfitDollars = 0;

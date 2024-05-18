@@ -1,0 +1,1 @@
+curl -X PUT http://localhost:3000/users/663b25f03602dac462c820f8/deposit -H "Content-Type: application/json" -d '{"deposit": 1000}'

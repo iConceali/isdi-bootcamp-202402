@@ -3,8 +3,8 @@ import express from "express";
 import cors from "cors";
 import { arbitrageRoutes, userRoutes } from "../routes/index.js";
 import priceRoutes from "../routes/cryptoPriceRoutes.js";
-import tradeRoutes from "../routes/tradeRoutes.js";
-import technicalIndicatorOpportunitiesRouter from "../routes/technicalIndicatorOpportunitiesRoutes.js";
+import ordersRoutes from "../routes/ordersRoutes.js";
+import technicalOpportunitiesRoutes from "../routes/technicalOpportunitiesRoutes.js";
 
 export default function configureExpress(app) {
   app.use(express.json());
@@ -22,11 +22,8 @@ export default function configureExpress(app) {
   app.use("/users", userRoutes);
   app.use("/arbitrage", arbitrageRoutes);
   app.use("/prices", priceRoutes);
-  app.use("/orders", tradeRoutes);
-  app.use(
-    "/technical-indicator-opportunities",
-    technicalIndicatorOpportunitiesRouter
-  );
+  app.use("/orders", ordersRoutes);
+  app.use("/technical-opportunities", technicalOpportunitiesRoutes);
 
   // Manejo de errores 404
   app.use((req, res, next) => {

@@ -1,0 +1,34 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "npx tsx app.js",
+    "inspect": "npx tsx --inspect-brk index.ts",
+    "test": "mocha --timeout 15000 --exit",
+    "test-inspect": "npx mocha --inspect-brk"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "bcryptjs": "^2.4.3",
+    "com": "file:../com",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mocha": "^10.4.0",
+    "mongoose": "^8.3.1",
+    "nodemailer": "^6.9.13",
+    "sinon": "^17.0.1",
+    "socket.io": "^4.7.5",
+    "technicalindicators": "^3.1.0"
+  },
+  "devDependencies": {
+    "chai": "^5.1.0",
+    "chai-http": "^4.4.0"
+  }
+}
