@@ -1,9 +1,7 @@
 // app/src/pages/Login.jsx
 
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import { useUser } from "../userContext"; // Asegúrate de que la ruta es correcta
+import React from "react";
+import { Link } from "react-router-dom";
 import {
   Container,
   TextField,
@@ -12,46 +10,10 @@ import {
   Box,
   Alert,
 } from "@mui/material";
+import useLogin from "../hooks/useLogin";
 
 const Login = () => {
-  const initialCredentialsState = {
-    email: "",
-    password: "",
-  };
-
-  const [credentials, setCredentials] = useState(initialCredentialsState);
-  const [error, setError] = useState(""); // Estado para almacenar el mensaje de error
-  const { loginUser } = useUser(); // Usar loginUser del contexto
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(""); // Limpiar errores anteriores
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/users/auth`,
-        credentials
-      );
-      console.log("Respuesta del servidor:", response); // Ver la respuesta completa del servidor
-      if (response.data.token) {
-        loginUser(response.data.token); // Actualizar el contexto con todos los datos del usuario
-        navigate("/");
-      } else {
-        setError("No se pudo iniciar sesión, por favor intente de nuevo.");
-        navigate("/login");
-      }
-    } catch (error) {
-      setError("Invalid email or password !");
-      console.error(
-        "Error en el inicio de sesión:",
-        error.response ? error.response.data : error
-      );
-    }
-  };
+  const { credentials, error, handleChange, handleSubmit } = useLogin();
 
   return (
     <Container

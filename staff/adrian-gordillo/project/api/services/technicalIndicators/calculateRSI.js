@@ -8,18 +8,22 @@ const { ContentError, SystemError } = errors;
  * Calculate the Relative Strength Index (RSI) for a series of closing prices
  */
 const calculateRSI = (closes, period = 14) => {
-  try {
-    // Validar el array de precios de cierre
-    if (!Array.isArray(closes) || closes.length < period) {
-      throw new ContentError("The closes array is invalid or too short");
+  // Validar el array de precios de cierre
+  if (!Array.isArray(closes) || closes.length < period) {
+    throw new ContentError("The closes array is invalid or too short");
+  }
+  closes.forEach((close, index) => {
+    if (typeof close !== "number") {
+      throw new ContentError(`close price at index ${index} is not a number`);
     }
-    closes.forEach((close, index) => {
-      validate.number(close, `close price at index ${index}`);
-    });
+  });
 
-    // Validar el periodo
-    validate.number(period, "period");
+  // Validar el periodo
+  if (typeof period !== "number") {
+    throw new ContentError("period is not a number");
+  }
 
+  try {
     let gains = 0;
     let losses = 0;
     let rsis = [];
@@ -51,13 +55,8 @@ const calculateRSI = (closes, period = 14) => {
     validate.number(result, "calculated RSI");
     return result;
   } catch (error) {
-    if (error instanceof ContentError) {
-      console.error("Validation error:", error.message);
-      throw error;
-    } else {
-      console.error("Error calculating RSI:", error.message);
-      throw new SystemError("Failed to calculate RSI");
-    }
+    console.error("Error calculating RSI:", error.message);
+    throw new SystemError("Failed to calculate RSI");
   }
 };
 

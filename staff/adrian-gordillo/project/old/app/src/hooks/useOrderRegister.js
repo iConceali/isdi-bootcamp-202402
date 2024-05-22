@@ -39,7 +39,7 @@ const useOrderRegister = () => {
       const deposit = await fetchDeposit(userId, token);
       const ordersData = await fetchOrders(userId, token);
 
-      // Verificar si ordersData es un array
+      // Ensure ordersData is an array
       if (!Array.isArray(ordersData)) {
         console.error("Orders data is not an array", ordersData);
         return;
@@ -56,6 +56,8 @@ const useOrderRegister = () => {
   const handleAddOrder = async (orderData) => {
     try {
       const newOrder = await addOrder(userId, orderData, token);
+
+      // Ensure newOrder contains valid data
       if (
         newOrder &&
         newOrder.symbol &&
@@ -100,11 +102,13 @@ const useOrderRegister = () => {
         depositObject,
         token
       );
-      const updatedParameters = updateParameters(
-        orders,
-        updatedDepositInfo.deposit
-      );
-      setParameters(updatedParameters);
+      setParameters((prevParameters) => ({
+        ...prevParameters,
+        deposit: updatedDepositInfo.deposit,
+        balance:
+          prevParameters.balance +
+          (updatedDepositInfo.deposit - prevParameters.deposit),
+      }));
     } catch (error) {
       console.error("Failed to update deposit:", error);
     }

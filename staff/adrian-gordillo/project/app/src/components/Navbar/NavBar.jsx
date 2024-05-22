@@ -1,24 +1,23 @@
 // app/src/components/NavBar/NavBar.jsx
 
-import React, { useState } from "react";
+import React from "react";
 import {
   AppBar,
-  Button,
-  Drawer,
+  Toolbar,
   IconButton,
+  Box,
+  Drawer,
+  Menu,
+  Button,
   List,
   ListItem,
   MenuItem,
-  Menu,
-  Toolbar,
-  styled,
-  Box,
-  ThemeProvider,
-  createTheme,
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import { useUser } from "../../userContext";
+import useNavBar from "../../hooks/useNavBar";
 
 const theme = createTheme({
   palette: {
@@ -43,63 +42,27 @@ const StyledButton = styled(Button)(({ theme }) => ({
     backgroundImage: "linear-gradient(to bottom, #00efff, #006eff)",
   },
   [theme.breakpoints.down("sm")]: {
-    display: "none", // Ocultar en pantallas pequeñas
+    display: "none",
   },
 }));
 
 const NavBar = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [anchorElHome, setAnchorElHome] = useState(null);
-  const openHome = Boolean(anchorElHome);
-  const [anchorElOpp, setAnchorElOpp] = useState(null);
-  const openOpp = Boolean(anchorElOpp);
-  const location = useLocation();
-  const { logoutUser, token } = useUser();
-  const navigate = useNavigate();
+  const {
+    isDrawerOpen,
+    anchorElHome,
+    anchorElOpp,
+    openHome,
+    openOpp,
+    handleHomeClick,
+    handleHomeClose,
+    handleOppClick,
+    handleOppClose,
+    handleLogout,
+    toggleDrawer,
+    handleMenuItemClick,
+  } = useNavBar();
 
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
-
-  const handleHomeClick = (event) => {
-    setAnchorElHome(event.currentTarget);
-  };
-
-  const handleHomeClose = () => {
-    setAnchorElHome(null);
-  };
-
-  const handleOppClick = (event) => {
-    setAnchorElOpp(event.currentTarget);
-  };
-
-  const handleOppClose = () => {
-    setAnchorElOpp(null);
-  };
-
-  console.log(!!token);
-
-  const handleMenuItemClick = (sectionId) => {
-    if (location.pathname !== "/") {
-      navigate("/", { replace: true });
-    }
-    setTimeout(() => {
-      scrollToSection(sectionId);
-    }, 100); // Short delay to ensure navigation has completed if necessary
-    handleHomeClose(); // Cierra el menú después de la selección
-  };
-
-  const scrollToSection = (sectionId) => {
-    handleHomeClose();
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  const handleLogout = () => {
-    logoutUser();
-  };
+  const { token } = useUser();
 
   return (
     <ThemeProvider theme={theme}>
@@ -142,7 +105,6 @@ const NavBar = () => {
                 Contact
               </MenuItem>
             </Menu>
-
             {token && (
               <>
                 <StyledButton component={StyledLink} to="/prices">

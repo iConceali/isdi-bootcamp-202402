@@ -1,6 +1,6 @@
 // api/services/technicalIndicators/getTechnicalOpportunities.js
 
-import TechnicalOpportunity from "../../models/TechnicalOpportunityModel.js";
+import TechnicalOpportunity from "../../models/TechnicalOpportunity.js";
 import { errors } from "com";
 
 const { SystemError } = errors;

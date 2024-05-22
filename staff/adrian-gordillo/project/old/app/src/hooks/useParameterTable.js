@@ -14,9 +14,9 @@ const useParameterTable = (parameters, handleUpdateDeposit) => {
     setEditDeposit(true);
   };
 
-  const handleSaveDeposit = () => {
+  const handleSaveDeposit = async () => {
     const depositValue = parseFloat(newDeposit);
-    handleUpdateDeposit({ deposit: depositValue });
+    await handleUpdateDeposit({ deposit: depositValue });
     setEditDeposit(false);
   };
 

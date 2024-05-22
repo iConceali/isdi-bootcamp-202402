@@ -1,6 +1,6 @@
 // api/services/user/getDeposit.js
 
-import User from "../../models/User";
+import User from "../../models/User.js";
 import { errors, validate } from "com";
 
 const { NotFoundError } = errors;

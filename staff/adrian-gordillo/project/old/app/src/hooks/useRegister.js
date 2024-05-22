@@ -1,9 +1,11 @@
-// src/hooks/useRegister.js
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import registerUser from "../logic/auth/registerUser";
 
+/**
+ * Hook para manejar la lógica de registro.
+ * @returns {Object} - Retorna el estado y las funciones para manejar el registro.
+ */
 const useRegister = () => {
   const [userData, setUserData] = useState({
     name: "",
@@ -19,14 +21,11 @@ const useRegister = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     try {
       await registerUser(userData);
       navigate("/login");
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.message || "Unexpected error occurred.";
-      setError(errorMsg);
+      setError(error.message || "Unexpected error occurred.");
     }
   };
 

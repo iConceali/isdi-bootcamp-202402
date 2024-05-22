@@ -1,8 +1,7 @@
 // app/src/pages/Register.jsx
 
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import {
   Container,
   TextField,
@@ -11,35 +10,10 @@ import {
   Box,
   Alert,
 } from "@mui/material";
+import useRegister from "../hooks/useRegister";
 
 const Register = () => {
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/users/register`,
-        userData
-      );
-      navigate("/login");
-    } catch (error) {
-      // Actualiza aquí para usar el mensaje de error específico del backend
-      const errorMsg =
-        error.response?.data?.message || "Unexpected error occurred.";
-      setError(errorMsg);
-    }
-  };
+  const { userData, error, handleChange, handleSubmit } = useRegister();
 
   return (
     <Container

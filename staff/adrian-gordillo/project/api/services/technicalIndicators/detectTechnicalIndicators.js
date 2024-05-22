@@ -1,6 +1,6 @@
 // api/services/technicalIndicators/detectTechnicalIndicators.js
 
-import TechnicalOpportunity from "../../models/TechnicalOpportunityModel.js";
+import TechnicalOpportunity from "../../models/TechnicalOpportunity.js";
 import fetchHistoricalData from "./fetchHistoricalData.js";
 import deleteOldSignals from "./deleteOldSignals.js";
 import calculateRSI from "./calculateRSI.js";

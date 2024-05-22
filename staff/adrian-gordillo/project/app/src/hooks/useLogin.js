@@ -6,9 +6,14 @@ import { useUser } from "../userContext";
 import loginUser from "../logic/auth/loginUser";
 
 const useLogin = () => {
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const initialCredentialsState = {
+    email: "",
+    password: "",
+  };
+
+  const [credentials, setCredentials] = useState(initialCredentialsState);
   const [error, setError] = useState("");
-  const { loginUser: loginUserContext } = useUser();
+  const { loginUser: loginContextUser } = useUser();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,16 +25,10 @@ const useLogin = () => {
     setError("");
     try {
       const token = await loginUser(credentials.email, credentials.password);
-      if (token) {
-        sessionStorage.setItem("token", token);
-        loginUserContext(token); // Actualizar el contexto
-        navigate("/");
-      } else {
-        setError("No se pudo iniciar sesión, por favor intente de nuevo.");
-        navigate("/login");
-      }
+      loginContextUser(token);
+      navigate("/");
     } catch (error) {
-      setError("Invalid email or password!");
+      setError(error.message || "Invalid email or password!");
       console.error("Error en el inicio de sesión:", error);
     }
   };

@@ -17,6 +17,13 @@ const fetchOrders = async (userId, token) => {
         },
       }
     );
+
+    // Asegurarse de que se esté devolviendo un array
+    if (!Array.isArray(response.data.orders)) {
+      console.error("Orders fetched are not an array", response.data.orders);
+      throw new ContentError("Fetched orders are not in the correct format");
+    }
+
     return response.data.orders;
   } catch (error) {
     console.error("Failed to fetch orders:", error);

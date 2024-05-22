@@ -1,21 +1,21 @@
 // com/validate.js
-
 import { ContentError, UnauthorizedError } from "./errors.js";
 import util from "./util.js";
+
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 const EMAIL_REGEX =
   /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const PASSWORD_REGEX = /^(?=.*[0-9])(?=.*[A-Za-z])[A-Za-z0-9]+$/;
 const URL_REGEX = /^(http|https):\/\//;
+
 const validate = {
   text(text, explain, checkEmptySpaceInside) {
     if (typeof text !== "string")
       throw new TypeError(explain + " " + text + " is not a string");
     if (!text.trim().length)
       throw new ContentError(explain + " >" + text + "< is empty or blank");
-    if (checkEmptySpaceInside)
-      if (text.includes(" "))
-        throw new ContentError(explain + " " + text + " has empty spaces");
+    if (checkEmptySpaceInside && text.includes(" "))
+      throw new ContentError(explain + " " + text + " has empty spaces");
   },
   date(date, explain) {
     if (typeof date !== "string")
@@ -42,14 +42,29 @@ const validate = {
       throw new TypeError(`${explain} is not a function`);
   },
   token(token, explain = "token") {
-    if (typeof token !== "string")
-      throw new TypeError(`${explain} is not a string`);
-    const { exp } = util.extractJwtPayload(token);
-    if (exp * 1000 < Date.now()) throw new UnauthorizedError("session expired");
+    if (typeof token !== "string" || token.trim() === "") {
+      throw new UnauthorizedError(`${explain} is not provided`);
+    }
+    try {
+      const { exp } = util.extractJwtPayload(token);
+      if (exp * 1000 < Date.now()) {
+        throw new UnauthorizedError(`${explain} has expired`);
+      }
+    } catch (error) {
+      throw new UnauthorizedError(`Invalid ${explain}`);
+    }
   },
   number(value, explain = "value") {
     if (typeof value !== "number" || isNaN(value))
       throw new TypeError(`${explain} ${value} is not a valid number`);
   },
 };
+
 export default validate;
+
+// token(token, explain = "token") {
+//   if (typeof token !== "string")
+//     throw new TypeError(`${explain} is not a string`);
+//   const { exp } = util.extractJwtPayload(token);
+//   if (exp * 1000 < Date.now()) throw new UnauthorizedError("session expired");
+// },

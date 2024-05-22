@@ -12,7 +12,13 @@ const getOrdersController = async (req, res, next) => {
   const { userId } = req.params;
   try {
     const orders = await getOrders(userId);
-    res.status(200).json(orders);
+
+    // Asegúrate de que orders es un array antes de enviarlo
+    if (!Array.isArray(orders)) {
+      throw new ContentError("Fetched orders are not in the correct format");
+    }
+
+    res.status(200).json({ orders });
   } catch (error) {
     if (error instanceof ContentError) {
       res.status(400).json({ error: error.message });

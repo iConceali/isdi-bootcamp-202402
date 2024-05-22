@@ -30,7 +30,8 @@ const createOrder = async (
   });
 
   try {
-    return await trade.save();
+    const newTrade = await trade.save();
+    return newTrade;
   } catch (error) {
     throw new ContentError("Failed to create order");
   }

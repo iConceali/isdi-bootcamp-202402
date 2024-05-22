@@ -13,7 +13,7 @@ const createOrderController = async (req, res, next) => {
   const orderData = req.body;
   try {
     const newOrder = await createOrder(userId, orderData);
-    res.status(201).json(newOrder);
+    res.status(201).json({ order: newOrder });
   } catch (error) {
     if (error instanceof ContentError) {
       res.status(400).json({ error: error.message });

@@ -6,10 +6,9 @@ import { errors, validate } from "com";
 
 const { SystemError, ContentError } = errors;
 
-// Recupera el precio de una criptomoneda desde un exchange específico
 const retrieveCryptoPrice = async (exchange, standardSymbol, commission) => {
   try {
-    const symbol = symbolMappings[standardSymbol][exchange.name];
+    const symbol = symbolMappings[standardSymbol]?.[exchange.name];
     if (!symbol) {
       throw new ContentError(
         `No symbol mapping found for ${standardSymbol} on ${exchange.name}.`

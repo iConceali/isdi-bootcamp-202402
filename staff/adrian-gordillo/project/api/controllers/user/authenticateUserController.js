@@ -12,7 +12,7 @@ const authenticateUserController = async (req, res) => {
 
     const userId = await authenticateUser(email, password);
     const token = jwt.sign({ sub: userId }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "1d",
     });
 
     res.json({ token });

@@ -1,5 +1,4 @@
 // app/src/App.jsx
-
 import React, { useEffect, useState } from "react";
 import {
   createTheme,
@@ -19,6 +18,7 @@ import {
   Route,
   Navigate,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { UserProvider, useUser } from "./userContext";
 import NavBar from "./components/Navbar/NavBar";
@@ -67,6 +67,7 @@ function AppContent() {
   const { logoutUser, isTokenExpired } = useUser();
   const [showSessionExpiredDialog, setShowSessionExpiredDialog] =
     useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isTokenExpired) {
@@ -77,6 +78,7 @@ function AppContent() {
   const handleCloseSessionExpiredDialog = () => {
     setShowSessionExpiredDialog(false);
     logoutUser();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -170,9 +172,9 @@ function LayoutBox() {
 }
 
 function ProtectedRoute({ children }) {
-  const { isTokenExpired } = useUser();
+  const { token, isTokenExpired } = useUser();
 
-  return !isTokenExpired ? children : <Navigate to="/login" />;
+  return token && !isTokenExpired ? children : <Navigate to="/login" />;
 }
 
 export default App;

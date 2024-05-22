@@ -1,4 +1,4 @@
-// src/components/ParameterTable.jsx
+// src/components/OrdersRegister/ParameterTable.jsx
 
 import React from "react";
 import {
@@ -55,7 +55,7 @@ const ParameterTable = ({ parameters, handleUpdateDeposit }) => {
                           </Button>
                           <Button
                             size="small"
-                            onClick={() => handleEditDeposit(false)}
+                            onClick={() => setEditDeposit(false)}
                             color="secondary"
                           >
                             Cancel
@@ -67,15 +67,15 @@ const ParameterTable = ({ parameters, handleUpdateDeposit }) => {
                   />
                 ) : (
                   <>
+                    {formatValue(key, value)}
                     <Button
                       size="small"
                       onClick={handleEditDeposit}
                       color="primary"
-                      sx={{ marginRight: 1 }}
+                      sx={{ marginLeft: 1 }}
                     >
                       Edit
                     </Button>
-                    {formatValue(key, value)}
                   </>
                 )
               ) : (

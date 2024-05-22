@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "chai": "^5.1.0",
-    "chai-http": "^4.4.0"
+    "chai-http": "^4.4.0",
+    "proxyquire": "^2.1.3"
   }
 }

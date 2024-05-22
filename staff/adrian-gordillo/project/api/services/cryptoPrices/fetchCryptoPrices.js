@@ -1,7 +1,7 @@
 // api/services/cryptoPrices/fetchCryptoPrices.js
 
 import axios from "axios";
-import CryptoPrice from "../../models/CryptoPrice";
+import CryptoPrice from "../../models/CryptoPrice.js";
 import { errors, validate } from "com";
 
 const { SystemError } = errors;

@@ -19,14 +19,11 @@ const useRegister = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     try {
       await registerUser(userData);
       navigate("/login");
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.message || "Unexpected error occurred.";
-      setError(errorMsg);
+      setError(error.message || "Unexpected error occurred.");
     }
   };
 

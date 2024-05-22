@@ -8,28 +8,37 @@ const { ContentError, SystemError } = errors;
  * Calculate the Stochastic Oscillator for a series of high, low, and closing prices
  */
 const calculateStochastic = (highs, lows, closes) => {
-  try {
-    // Validar los arrays de precios
-    if (
-      !Array.isArray(highs) ||
-      !Array.isArray(lows) ||
-      !Array.isArray(closes) ||
-      highs.length < 14 ||
-      lows.length < 14 ||
-      closes.length < 14
-    ) {
-      throw new ContentError("The price arrays are invalid or too short");
-    }
-    highs.forEach((high, index) =>
-      validate.number(high, `high price at index ${index}`)
-    );
-    lows.forEach((low, index) =>
-      validate.number(low, `low price at index ${index}`)
-    );
-    closes.forEach((close, index) =>
-      validate.number(close, `close price at index ${index}`)
-    );
+  // Validar los arrays de precios
+  if (
+    !Array.isArray(highs) ||
+    !Array.isArray(lows) ||
+    !Array.isArray(closes) ||
+    highs.length < 14 ||
+    lows.length < 14 ||
+    closes.length < 14
+  ) {
+    throw new ContentError("The price arrays are invalid or too short");
+  }
 
+  highs.forEach((high, index) => {
+    if (typeof high !== "number") {
+      throw new ContentError(`high price at index ${index} is not a number`);
+    }
+  });
+
+  lows.forEach((low, index) => {
+    if (typeof low !== "number") {
+      throw new ContentError(`low price at index ${index} is not a number`);
+    }
+  });
+
+  closes.forEach((close, index) => {
+    if (typeof close !== "number") {
+      throw new ContentError(`close price at index ${index} is not a number`);
+    }
+  });
+
+  try {
     const kPeriod = 14;
     const dPeriod = 3;
     const kValues = [];
@@ -42,8 +51,18 @@ const calculateStochastic = (highs, lows, closes) => {
       const highestHigh = Math.max(...highSlice);
       const lowestLow = Math.min(...lowSlice);
 
+      if (highestHigh === lowestLow) {
+        throw new SystemError(
+          "Highest high and lowest low are equal, division by zero"
+        );
+      }
+
       const k = ((close - lowestLow) / (highestHigh - lowestLow)) * 100;
       kValues.push(k);
+    }
+
+    if (kValues.length < dPeriod) {
+      throw new SystemError("Insufficient k values to calculate d values");
     }
 
     const dValues = kValues
@@ -67,13 +86,8 @@ const calculateStochastic = (highs, lows, closes) => {
       d: dValue,
     };
   } catch (error) {
-    if (error instanceof ContentError) {
-      console.error("Validation error:", error.message);
-      throw error;
-    } else {
-      console.error("Error calculating Stochastic Oscillator:", error.message);
-      throw new SystemError("Failed to calculate Stochastic Oscillator");
-    }
+    console.error("Error calculating Stochastic Oscillator:", error.message);
+    throw new SystemError("Failed to calculate Stochastic Oscillator");
   }
 };
 

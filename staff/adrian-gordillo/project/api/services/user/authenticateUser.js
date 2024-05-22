@@ -2,7 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import { errors, validate } from "com";
-import User from "../../models/User";
+import User from "../../models/User.js";
 
 const { CredentialsError, NotFoundError } = errors;
 

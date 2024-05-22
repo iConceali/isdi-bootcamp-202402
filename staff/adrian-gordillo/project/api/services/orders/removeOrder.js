@@ -1,6 +1,6 @@
 // api/services/orders/removeOrder.js
 
-import Trade from "../../models/OrdersRegisterModel.js";
+import Trade from "../../models/OrdersRegister.js";
 import { validate, errors } from "com";
 
 const { ContentError, NotFoundError, UnauthorizedError } = errors;
