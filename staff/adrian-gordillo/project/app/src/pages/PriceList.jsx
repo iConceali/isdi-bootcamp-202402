@@ -9,7 +9,7 @@ const PriceList = () => {
   // Desestructura los valores devueltos por el hook personalizado usePriceList
   const { prices, orderDirection, orderBy, handleSort, handleToggleWatchlist } =
     usePriceList();
-
+  // console.log(prices);
   return (
     <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", p: 2 }}>
       <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>

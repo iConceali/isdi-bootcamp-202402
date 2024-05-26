@@ -1,7 +1,6 @@
 // app/src/userContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { configureAxios } from "./utils/axiosConfig";
-import { parseJwt } from "./utils/helpers";
 import { validate } from "com";
 
 export const UserContext = createContext();

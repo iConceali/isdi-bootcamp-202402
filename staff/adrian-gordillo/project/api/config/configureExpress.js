@@ -1,10 +1,16 @@
 // config/configureExpress.js
 import express from "express";
 import cors from "cors";
-import { arbitrageRoutes, userRoutes } from "../routes/index.js";
-import priceRoutes from "../routes/cryptoPriceRoutes.js";
-import ordersRoutes from "../routes/ordersRoutes.js";
-import technicalOpportunitiesRoutes from "../routes/technicalOpportunitiesRoutes.js";
+import {
+  arbitrageRoutes,
+  userRoutes,
+  cryptoDataRoutes,
+  ordersRoutes,
+  technicalOpportunitiesRoutes,
+} from "../routes/index.js";
+import { errors, validate } from "com"; // Importar customErrors y validates
+
+const { ContentError, NotFoundError, SystemError } = errors;
 
 export default function configureExpress(app) {
   app.use(express.json());
@@ -18,27 +24,41 @@ export default function configureExpress(app) {
     })
   );
 
-  // Rutas
-  app.use("/users", userRoutes);
-  app.use("/arbitrage", arbitrageRoutes);
-  app.use("/prices", priceRoutes);
-  app.use("/orders", ordersRoutes);
-  app.use("/technical-opportunities", technicalOpportunitiesRoutes);
+  // Validación y rutas
+  try {
+    validate.url(process.env.APP_URL, "App URL");
+
+    app.use("/users", userRoutes);
+    app.use("/arbitrage", arbitrageRoutes);
+    app.use("/cryptoData", cryptoDataRoutes);
+    app.use("/orders", ordersRoutes);
+    app.use("/technical-opportunities", technicalOpportunitiesRoutes);
+  } catch (error) {
+    console.error("Validation error:", error.message);
+    throw new ContentError("Invalid configuration: " + error.message);
+  }
 
   // Manejo de errores 404
   app.use((req, res, next) => {
-    const error = new Error("Recurso no encontrado");
+    const error = new NotFoundError("Resource not found");
     error.status = 404;
     next(error);
   });
 
   // Manejo de otros errores
   app.use((error, req, res, next) => {
-    res.status(error.status || 500);
-    res.json({
-      error: {
-        message: error.message || "An unknown error occurred.",
-      },
-    });
+    if (error instanceof ContentError || error instanceof NotFoundError) {
+      res.status(error.status || 400).json({
+        error: {
+          message: error.message,
+        },
+      });
+    } else {
+      res.status(error.status || 500).json({
+        error: {
+          message: error.message || "An unknown error occurred.",
+        },
+      });
+    }
   });
 }

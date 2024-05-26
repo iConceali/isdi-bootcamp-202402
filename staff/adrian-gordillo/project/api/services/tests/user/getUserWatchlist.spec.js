@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 import User from "../../../models/User.js";
-import CryptoPrice from "../../../models/CryptoPrice.js";
+import CryptoData from "../../../models/CryptoData.js";
 import getUserWatchlist from "../../user/getUserWatchlist.js";
 import { expect } from "chai";
 import { errors } from "com";
@@ -15,37 +15,37 @@ const { NotFoundError } = errors;
 describe("getUserWatchlist", () => {
   before(() => mongoose.connect(process.env.MONGODB_TEST_URL));
 
-  beforeEach(() => Promise.all([User.deleteMany(), CryptoPrice.deleteMany()]));
+  beforeEach(() => Promise.all([User.deleteMany(), CryptoData.deleteMany()]));
 
   it("succeeds on retrieving the user's watchlist", async () => {
-    const crypto1 = await CryptoPrice.create({
+    const crypto1 = await CryptoData.create({
       symbol: "BTC",
       price: 30000,
       price24Hr: 29000,
-      marketCap: "600B",
+      marketCap: 6000000,
     });
-    const crypto2 = await CryptoPrice.create({
+    const crypto2 = await CryptoData.create({
       symbol: "ETH",
       price: 2000,
       price24Hr: 1900,
-      marketCap: "200B",
+      marketCap: 2000000,
     });
     const user = await User.create({
       name: "John Doe",
       email: "john@example.com",
       password: "password123",
-      watchlist: [crypto1._id, crypto2._id],
+      watchlist: [crypto1.id, crypto2.id],
     });
 
-    const watchlist = await getUserWatchlist(user._id.toString());
+    const watchlist = await getUserWatchlist(user.id.toString());
 
     expect(watchlist).to.be.an("array");
     expect(watchlist).to.have.lengthOf(2);
-    expect(watchlist.map((id) => id.toString())).to.include(
-      crypto1._id.toString()
+    expect(watchlist.map((crypto) => crypto.id)).to.include(
+      crypto1.id.toString()
     );
-    expect(watchlist.map((id) => id.toString())).to.include(
-      crypto2._id.toString()
+    expect(watchlist.map((crypto) => crypto.id)).to.include(
+      crypto2.id.toString()
     );
   });
 
@@ -68,7 +68,7 @@ describe("getUserWatchlist", () => {
       watchlist: [],
     });
 
-    const watchlist = await getUserWatchlist(user._id.toString());
+    const watchlist = await getUserWatchlist(user.id.toString());
 
     expect(watchlist).to.be.an("array");
     expect(watchlist).to.have.lengthOf(0);

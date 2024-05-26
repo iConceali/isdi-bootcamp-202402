@@ -7,10 +7,10 @@ const { ContentError } = errors;
 // Función para obtener los precios de criptomonedas y verificar la watchlist del usuario
 const fetchPricesAndCheckWatchlist = async (userId) => {
   try {
-    validate.text(userId, "userId"); // Validar el userId
+    validate.text(userId, "userId");
 
     const pricesResponse = await axios.get(
-      `${import.meta.env.VITE_API_URL}/prices/crypto-prices`
+      `${import.meta.env.VITE_API_URL}/cryptoData/price-list`
     );
 
     let watchlistIds = [];
@@ -18,16 +18,15 @@ const fetchPricesAndCheckWatchlist = async (userId) => {
       const watchlistResponse = await axios.get(
         `${import.meta.env.VITE_API_URL}/users/${userId}/watchlist`
       );
-      console.log("Watchlist Response Data:", watchlistResponse.data);
-      watchlistIds = Array.isArray(watchlistResponse.data.watchlist)
-        ? watchlistResponse.data.watchlist
-        : [];
+      // console.log("Watchlist Response Data:", watchlistResponse.data);
+      watchlistIds = watchlistResponse.data.watchlist.map(
+        (crypto) => crypto.id
+      );
     }
 
     const updatedPrices = pricesResponse.data.map((price) => ({
       ...price,
-      isInWatchlist:
-        Array.isArray(watchlistIds) && watchlistIds.includes(price._id),
+      isInWatchlist: watchlistIds.includes(price.id),
     }));
 
     return updatedPrices;

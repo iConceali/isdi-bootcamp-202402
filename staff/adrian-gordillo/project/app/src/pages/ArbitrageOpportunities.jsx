@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 const ArbitrageOpportunities = () => {
   const { displayedOpportunities, handleFiltersChange, isLoading, error } =
     useArbitrageOpportunities();
-
+  // console.log(displayedOpportunities);
   return (
     <Container sx={{ mt: 2 }}>
       <Typography variant="h4" color="text.primary" sx={{ mt: 5, mb: 4 }}>

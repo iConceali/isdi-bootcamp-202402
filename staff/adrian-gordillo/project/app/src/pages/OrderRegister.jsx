@@ -18,7 +18,7 @@ function OrderRegister() {
     handleDeleteOrder,
     handleUpdateDeposit,
   } = useOrderRegister();
-
+  // console.log(orders);
   return (
     <Box
       sx={{

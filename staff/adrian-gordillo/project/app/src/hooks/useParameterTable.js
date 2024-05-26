@@ -1,22 +1,21 @@
-// src/hooks/useParameterTable.js
-
 import { useState, useEffect } from "react";
 
 const useParameterTable = (parameters, handleUpdateDeposit) => {
   const [editDeposit, setEditDeposit] = useState(false);
-  const [newDeposit, setNewDeposit] = useState(parameters.deposit || 0);
+  const [newDeposit, setNewDeposit] = useState(parameters.deposit || 1000);
 
   useEffect(() => {
-    setNewDeposit(parameters.deposit || 0);
+    setNewDeposit(parameters.deposit || 1000);
   }, [parameters.deposit]);
 
   const handleEditDeposit = () => {
     setEditDeposit(true);
   };
 
-  const handleSaveDeposit = async () => {
+  const handleSaveDeposit = () => {
     const depositValue = parseFloat(newDeposit);
-    await handleUpdateDeposit({ deposit: depositValue });
+    // console.log(depositValue);
+    handleUpdateDeposit(depositValue);
     setEditDeposit(false);
   };
 
@@ -26,13 +25,13 @@ const useParameterTable = (parameters, handleUpdateDeposit) => {
 
   const formatValue = (key, value) => {
     if (value === undefined || value === null) {
-      return "N/A"; // O cualquier valor por defecto que prefieras
+      return 0; // O cualquier valor por defecto que prefieras
     }
     if (key === "profitPercent" || key === "winRate") {
       return `${value.toFixed(2)}%`;
     }
     if (key === "deposit" || key === "balance" || key === "profitDollars") {
-      return `$${value.toFixed(2)}`;
+      return `$${parseFloat(value).toFixed(2)}`;
     }
     return value;
   };

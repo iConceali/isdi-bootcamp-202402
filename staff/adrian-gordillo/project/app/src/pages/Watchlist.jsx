@@ -6,7 +6,6 @@ import WatchlistTable from "../components/Watchlist/WatchlistTable";
 import { useWatchlist } from "../hooks/useWatchlist";
 
 const Watchlist = () => {
-  // Desestructura los valores devueltos por el hook personalizado useWatchlist
   const {
     watchlist,
     orderDirection,
@@ -14,7 +13,7 @@ const Watchlist = () => {
     handleSort,
     handleRemoveFromWatchlist,
   } = useWatchlist();
-
+  // console.log(watchlist);
   return (
     <Box sx={{ width: "100%", maxWidth: 1200, mx: "auto", p: 2 }}>
       <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>

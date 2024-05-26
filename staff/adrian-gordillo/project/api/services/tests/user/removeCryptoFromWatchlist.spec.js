@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 import User from "../../../models/User.js";
-import CryptoPrice from "../../../models/CryptoPrice.js";
+import CryptoData from "../../../models/CryptoData.js";
 import removeCryptoFromWatchlist from "../../user/removeCryptoFromWatchlist.js";
 import { expect } from "chai";
 import { errors } from "com";
@@ -15,43 +15,42 @@ const { NotFoundError } = errors;
 describe("removeCryptoFromWatchlist", () => {
   before(() => mongoose.connect(process.env.MONGODB_TEST_URL));
 
-  beforeEach(() => Promise.all([User.deleteMany(), CryptoPrice.deleteMany()]));
+  beforeEach(() => Promise.all([User.deleteMany(), CryptoData.deleteMany()]));
 
   it("succeeds on removing a crypto from the watchlist", async () => {
-    const crypto = await CryptoPrice.create({
+    const crypto = await CryptoData.create({
       symbol: "BTC",
       price: 30000,
       price24Hr: 29000,
-      marketCap: "600B",
+      marketCap: 6000000,
     });
     const user = await User.create({
       name: "John Doe",
       email: "john@example.com",
       password: "password123",
-      watchlist: [crypto._id],
+      watchlist: [crypto.id],
     });
 
-    const updatedUser = await removeCryptoFromWatchlist(
-      user._id.toString(),
-      crypto._id.toString()
-    );
+    await removeCryptoFromWatchlist(user.id.toString(), crypto.id.toString());
 
-    expect(updatedUser.watchlist).to.not.include(crypto._id);
+    const updatedUser = await User.findById(user.id);
+
+    expect(updatedUser.watchlist).to.not.include(crypto.id);
   });
 
   it("fails if user does not exist", async () => {
     const fakeUserId = new mongoose.Types.ObjectId();
-    const crypto = await CryptoPrice.create({
+    const crypto = await CryptoData.create({
       symbol: "BTC",
       price: 30000,
       price24Hr: 29000,
-      marketCap: "600B",
+      marketCap: 6000000,
     });
 
     try {
       await removeCryptoFromWatchlist(
         fakeUserId.toString(),
-        crypto._id.toString()
+        crypto.id.toString()
       );
     } catch (error) {
       expect(error).to.be.instanceOf(NotFoundError);
@@ -60,11 +59,11 @@ describe("removeCryptoFromWatchlist", () => {
   });
 
   it("succeeds if crypto is not in the watchlist", async () => {
-    const crypto = await CryptoPrice.create({
+    const crypto = await CryptoData.create({
       symbol: "BTC",
       price: 30000,
       price24Hr: 29000,
-      marketCap: "600B",
+      marketCap: 6000000,
     });
     const user = await User.create({
       name: "John Doe",
@@ -73,12 +72,11 @@ describe("removeCryptoFromWatchlist", () => {
       watchlist: [],
     });
 
-    const updatedUser = await removeCryptoFromWatchlist(
-      user._id.toString(),
-      crypto._id.toString()
-    );
+    await removeCryptoFromWatchlist(user.id.toString(), crypto.id.toString());
 
-    expect(updatedUser.watchlist).to.not.include(crypto._id);
+    const updatedUser = await User.findById(user.id);
+
+    expect(updatedUser.watchlist).to.not.include(crypto.id);
   });
 
   after(() => mongoose.disconnect());

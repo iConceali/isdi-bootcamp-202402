@@ -1,99 +1,50 @@
-// api/utils/arbitrageStandardDetector.js
+// api/services/arbitrage/standard/retrieveCryptoPrice.js
 
-import axios from "axios";
+import axios from "axios"; // Importa axios para realizar peticiones HTTP
+import { symbolMappings } from "./symbolMappings.js"; // Importa mappings de símbolos
+import { errors, validate } from "com"; // Importa errores y validaciones desde "com"
 
-// Obtener información de ticker del libro de órdenes para un símbolo específico
-const getSymbolBookTicker = async (symbol) => {
+const { SystemError, ContentError } = errors; // Extrae errores específicos
+
+const retrieveCryptoPrice = async (exchange, standardSymbol, commission) => {
+  // Define función asincrónica para recuperar precios de criptomonedas
   try {
-    const response = await axios.get(
-      `https://api.binance.com/api/v3/ticker/bookTicker?symbol=${symbol}`
-    );
+    const symbol = symbolMappings[standardSymbol]?.[exchange.name]; // Mapea símbolo estándar al símbolo del exchange
+    if (!symbol) {
+      // Si no se encuentra el símbolo, lanza un error
+      throw new ContentError(
+        `No symbol mapping found for ${standardSymbol} on ${exchange.name}.`
+      );
+    }
+
+    const url = `${exchange.url}${symbol}${exchange.endpointSuffix || ""}`; // Construye la URL para la petición
+    const response = await axios.get(url); // Realiza la petición HTTP
+    const { bid, ask } = exchange.format(response.data); // Formatea la respuesta
+
+    validate.number(bid, "bid price"); // Valida el precio bid
+    validate.number(ask, "ask price"); // Valida el precio ask
+
     return {
-      symbol,
-      bidPrice: parseFloat(response.data.bidPrice),
-      askPrice: parseFloat(response.data.askPrice),
-      exchange: "Binance", // Estableciendo explícitamente el exchange como Binance
+      exchange: exchange.name, // Nombre del exchange
+      symbol: standardSymbol, // Símbolo estándar
+      bid: bid * (1 - commission / 100), // Calcula el bid con comisión
+      ask: ask * (1 + commission / 100), // Calcula el ask con comisión
     };
   } catch (error) {
-    throw new Error(`Error al obtener el book ticker para ${symbol}: ${error}`);
-  }
-};
-
-// Función para dividir el símbolo en la moneda base y la moneda cotizada
-const getSymbolParts = (symbol) => {
-  // Regex para dividir los símbolos en base y quote (por ejemplo, BTCUSDT en BTC y USDT)
-  const match = symbol.match(/^(.+?)(USD|USDT|ETH|BTC)$/);
-  return match ? { base: match[2], quote: match[1] } : null;
-};
-
-export const detectTriangularArbitrage = async () => {
-  const triangles = [
-    ["BTCUSDT", "ETHBTC", "ETHUSDT"],
-    ["BTCUSDT", "BNBBTC", "BNBUSDT"],
-    ["ETHUSDT", "BNBETH", "BNBUSDT"],
-    ["BTCUSDT", "ADABTC", "ADAUSDT"],
-    ["BTCUSDT", "XRPBTC", "XRPUSDT"],
-    ["BTCUSDT", "LTCBTC", "LTCUSDT"],
-    ["ETHBTC", "XRPETH", "XRPBTC"],
-    ["BTCUSDT", "DOTBTC", "DOTUSDT"],
-    ["ETHUSDT", "LINKETH", "LINKUSDT"],
-    ["BTCUSDT", "DOGEUSDT", "DOGEBTC"],
-    ["ETHUSDT", "AAVEETH", "AAVEUSDT"],
-    ["BTCUSDT", "UNIBTC", "UNIUSDT"],
-    ["ETHBTC", "LTCETH", "LTCBTC"],
-    ["BTCUSDT", "VETBTC", "VETUSDT"],
-    ["ETHBTC", "MANAETH", "MANABTC"],
-    ["BTCUSDT", "FILBTC", "FILUSDT"],
-    ["ETHBTC", "ATOMETH", "ATOMBTC"],
-    ["BTCUSDT", "CAKEBTC", "CAKEUSDT"],
-    ["ETHBTC", "XLMETH", "XLMBTC"],
-    ["BTCUSDT", "MATICBTC", "MATICUSDT"],
-  ];
-
-  const allArbitrageOpportunities = [];
-
-  for (const triangle of triangles) {
-    const tickers = await Promise.all(triangle.map(getSymbolBookTicker));
-    let startingAmount = 1000; // Cantidad inicial para la simulación
-    let currentAmount = startingAmount;
-    let trades = [];
-
-    for (let i = 0; i < tickers.length; i++) {
-      const parts = getSymbolParts(triangle[i]);
-      if (!parts) {
-        console.error(`No se pudo interpretar el símbolo ${triangle[i]}`);
-        continue;
-      }
-      const tradeAmount =
-        i === tickers.length - 1
-          ? currentAmount * tickers[i].bidPrice
-          : currentAmount / tickers[i].askPrice;
-      trades.push({
-        from: parts.base,
-        to: parts.quote,
-        amount: tradeAmount,
-      });
-      currentAmount = tradeAmount;
-    }
-
-    let profit = currentAmount - startingAmount;
-    if (profit > 0.02) {
-      // Umbral de rentabilidad del 0.02%
-      allArbitrageOpportunities.push({
-        success: true,
-        profit,
-        trades,
-        exchanges: "Binance",
-      });
+    // Maneja errores
+    if (error instanceof ContentError) {
+      // Si el error es de contenido
+      console.error(`Validation error: ${error.message}`); // Log del error
+      throw error; // Lanza el error
+    } else {
+      console.error(
+        `Error fetching price from ${exchange.name} for ${standardSymbol}: ${error.message}`
+      ); // Log del error
+      throw new SystemError(
+        `Failed to retrieve price for ${standardSymbol} from ${exchange.name}`
+      ); // Lanza un error del sistema
     }
   }
-
-  return allArbitrageOpportunities.length > 0
-    ? allArbitrageOpportunities
-    : [
-        {
-          success: false,
-          message: "No se encontraron oportunidades de arbitraje triangular.",
-        },
-      ];
 };
+
+export default retrieveCryptoPrice; // Exporta la función por defecto

@@ -39,7 +39,6 @@ const useOrderRegister = () => {
       const deposit = await fetchDeposit(userId, token);
       const ordersData = await fetchOrders(userId, token);
 
-      // Ensure ordersData is an array
       if (!Array.isArray(ordersData)) {
         console.error("Orders data is not an array", ordersData);
         return;
@@ -57,7 +56,6 @@ const useOrderRegister = () => {
     try {
       const newOrder = await addOrder(userId, orderData, token);
 
-      // Ensure newOrder contains valid data
       if (
         newOrder &&
         newOrder.symbol &&
@@ -83,7 +81,7 @@ const useOrderRegister = () => {
   const handleDeleteOrder = async (orderId) => {
     try {
       await deleteOrder(userId, orderId, token);
-      const updatedOrders = orders.filter((order) => order._id !== orderId);
+      const updatedOrders = orders.filter((order) => order.id !== orderId);
       setOrders(updatedOrders);
       const updatedParameters = updateParameters(
         updatedOrders,
@@ -95,19 +93,16 @@ const useOrderRegister = () => {
     }
   };
 
-  const handleUpdateDeposit = async (depositObject) => {
+  const handleUpdateDeposit = async (depositValue) => {
+    // console.log(depositValue);
     try {
-      const updatedDepositInfo = await updateDeposit(
-        userId,
-        depositObject,
-        token
-      );
+      await updateDeposit(userId, depositValue, token);
       setParameters((prevParameters) => ({
         ...prevParameters,
-        deposit: updatedDepositInfo.deposit,
+        deposit: depositValue,
         balance:
-          prevParameters.balance +
-          (updatedDepositInfo.deposit - prevParameters.deposit),
+          prevParameters.balance + (depositValue - prevParameters.deposit),
+        profitPercent: (prevParameters.profitDollars * 100) / depositValue,
       }));
     } catch (error) {
       console.error("Failed to update deposit:", error);
@@ -130,3 +125,22 @@ const useOrderRegister = () => {
 };
 
 export default useOrderRegister;
+
+// const handleUpdateDeposit = async (depositObject) => {
+//   try {
+//     const updatedDepositInfo = await updateDeposit(
+//       userId,
+//       depositObject,
+//       token
+//     );
+//     setParameters((prevParameters) => ({
+//       ...prevParameters,
+//       deposit: updatedDepositInfo.deposit,
+//       balance:
+//         prevParameters.balance +
+//         (updatedDepositInfo.deposit - prevParameters.deposit),
+//     }));
+//   } catch (error) {
+//     console.error("Failed to update deposit:", error);
+//   }
+// };

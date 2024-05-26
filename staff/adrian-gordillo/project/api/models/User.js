@@ -25,8 +25,8 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 8,
   },
-  watchlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "CryptoPrice" }],
-  deposit: { type: Number, min: 0 },
+  watchlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "CryptoData" }],
+  deposit: { type: Number, min: 0, default: 1000 },
 });
 
 userSchema.pre("save", async function (next) {

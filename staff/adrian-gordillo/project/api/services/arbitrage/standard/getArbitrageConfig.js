@@ -26,7 +26,7 @@ const getArbitrageConfig = () => {
       "MATIC/USDT",
       "MKR/USDT",
     ],
-    includeCommissions: true,
+    includeCommissions: false,
   };
 
   // Validar la configuración
