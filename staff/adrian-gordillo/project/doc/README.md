@@ -10,7 +10,6 @@ This application is designed to automate the process of obtaining cryptocurrency
 
 - **Real-time price monitoring**: Get live cryptocurrency prices from multiple exchanges.
 - **Opportunity Notifications**: Execute trades when arbitrage opportunities reach predefined profit thresholds.
-- **User administration**: manage user accounts.
 - **Trading History**: Records and displays historical trading data for performance analysis.
 - **Responsive UI**: Provides a seamless user interface that adapts to various devices.
 
@@ -23,7 +22,7 @@ This application is designed to automate the process of obtaining cryptocurrency
 - list cryptocurrency prices
 - list cryptocurrency prices from your watchlist.
 - list opportunities (standard strategy, triangular strategy)
-- filter opportunities (by exchange, strategy, profitability threshold)
+- filter opportunities (by exchange, type strategy, profitability threshold)
 - list opportunities (technical indicators strategy)
 - Add orders to a registration table to track user operations
 - view and monitor the statistics of the user's operations.
@@ -49,7 +48,7 @@ This application is designed to automate the process of obtaining cryptocurrency
 
 - **Frontend**: React.js with Material-UI for a responsive design.
 - **Backend**: Node.js with Express for API management and Socket.io for real-time communication.
-- **Database**: MongoDB, utilized for storing user data, orders records, crypto prices and arbitrage signals.
+- **Database**: MongoDB, utilized for storing user data, orders records, crypto data and arbitrage signals.
 - **Additional Tools**: Mongoose for database schema modeling, axios for HTTP requests, and dotenv for environment variable management.
 
 ### Data Model
@@ -60,7 +59,7 @@ This application is designed to automate the process of obtaining cryptocurrency
   - `name`: User's name, string, required
   - `email`: User's email for login, string, required, unique
   - `password`: Hashed password for security, string, required, unique
-  - `watchlist`: Reference to cryptoPrice-specific, [CryptoPrice], objectId
+  - `watchlist`: Reference to cryptoPrice-specific, [CryptoData], objectId
   - `deposit`: User deposit, number
 
 - **Opportunity**
@@ -88,7 +87,7 @@ This application is designed to automate the process of obtaining cryptocurrency
   - `rsi`: Rsi indicator value, number, required
   - `stochastic`: Stochastic indicator value, number, required
 
-- **Crypto Price**
+- **Crypto Data**
 
   - `id`: Unique identifier, auto
   - `symbol`: Crypto symbol, string, required, unique

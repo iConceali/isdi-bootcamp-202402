@@ -1,50 +1,76 @@
-// api/services/arbitrage/standard/retrieveCryptoPrice.js
+// api/services/arbitrage/standard/calculateStandardOpportunities.js
 
-import axios from "axios"; // Importa axios para realizar peticiones HTTP
-import { symbolMappings } from "./symbolMappings.js"; // Importa mappings de símbolos
+import retrieveCryptoPrice from "./retrieveCryptoPrice.js"; // Importa la función para recuperar precios de criptomonedas
+import { exchanges } from "./symbolMappings.js"; // Importa los mappings de los exchanges
 import { errors, validate } from "com"; // Importa errores y validaciones desde "com"
 
-const { SystemError, ContentError } = errors; // Extrae errores específicos
+const { ContentError, SystemError } = errors; // Extrae errores específicos
 
-const retrieveCryptoPrice = async (exchange, standardSymbol, commission) => {
-  // Define función asincrónica para recuperar precios de criptomonedas
+// Calcula oportunidades de arbitraje estándar comparando precios entre exchanges
+const calculateStandardOpportunities = async (config) => {
+  const { umbralRentabilidad, comisiones, paresCriptomonedas } = config;
+
   try {
-    const symbol = symbolMappings[standardSymbol]?.[exchange.name]; // Mapea símbolo estándar al símbolo del exchange
-    if (!symbol) {
-      // Si no se encuentra el símbolo, lanza un error
-      throw new ContentError(
-        `No symbol mapping found for ${standardSymbol} on ${exchange.name}.`
-      );
+    // Obtener precios de criptomonedas desde diferentes exchanges
+    const prices = await Promise.all(
+      paresCriptomonedas
+        .map((pair) =>
+          exchanges.map((exchange) =>
+            retrieveCryptoPrice(
+              exchange,
+              pair,
+              config.includeCommissions ? comisiones[exchange.name] : 0
+            )
+          )
+        )
+        .flat()
+    );
+
+    // Filtrar precios válidos
+    const validPrices = prices.filter((price) => price !== null);
+    const opportunities = [];
+
+    // Calcular oportunidades de arbitraje
+    for (const buy of validPrices) {
+      for (const sell of validPrices) {
+        if (buy.exchange !== sell.exchange && buy.symbol === sell.symbol) {
+          const potentialProfitPercentage =
+            ((sell.bid - buy.ask) / buy.ask) * 100 -
+            (config.includeCommissions
+              ? (buy.ask * comisiones[buy.exchange]) / 100 +
+                (sell.bid * comisiones[sell.exchange]) / 100
+              : 0);
+
+          // Validar los cálculos
+          validate.number(
+            potentialProfitPercentage,
+            "potentialProfitPercentage"
+          );
+
+          // Si la ganancia potencial supera el umbral de rentabilidad, agregar oportunidad
+          if (potentialProfitPercentage > umbralRentabilidad) {
+            opportunities.push({
+              symbol: buy.symbol,
+              buyExchange: buy.exchange,
+              buyPrice: buy.ask,
+              sellExchange: sell.exchange,
+              sellPrice: sell.bid,
+              profit: potentialProfitPercentage,
+            });
+          }
+        }
+      }
     }
 
-    const url = `${exchange.url}${symbol}${exchange.endpointSuffix || ""}`; // Construye la URL para la petición
-    const response = await axios.get(url); // Realiza la petición HTTP
-    const { bid, ask } = exchange.format(response.data); // Formatea la respuesta
-
-    validate.number(bid, "bid price"); // Valida el precio bid
-    validate.number(ask, "ask price"); // Valida el precio ask
-
-    return {
-      exchange: exchange.name, // Nombre del exchange
-      symbol: standardSymbol, // Símbolo estándar
-      bid: bid * (1 - commission / 100), // Calcula el bid con comisión
-      ask: ask * (1 + commission / 100), // Calcula el ask con comisión
-    };
+    return opportunities;
   } catch (error) {
-    // Maneja errores
     if (error instanceof ContentError) {
-      // Si el error es de contenido
       console.error(`Validation error: ${error.message}`); // Log del error
       throw error; // Lanza el error
     } else {
-      console.error(
-        `Error fetching price from ${exchange.name} for ${standardSymbol}: ${error.message}`
-      ); // Log del error
-      throw new SystemError(
-        `Failed to retrieve price for ${standardSymbol} from ${exchange.name}`
-      ); // Lanza un error del sistema
+      throw new SystemError(`Error processing opportunities: ${error.message}`); // Lanza un error del sistema
     }
   }
 };
 
-export default retrieveCryptoPrice; // Exporta la función por defecto
+export default calculateStandardOpportunities; // Exporta la función por defecto

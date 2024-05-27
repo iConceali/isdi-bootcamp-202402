@@ -32,7 +32,7 @@ export default function configureExpress(app) {
     app.use("/arbitrage", arbitrageRoutes);
     app.use("/cryptoData", cryptoDataRoutes);
     app.use("/orders", ordersRoutes);
-    app.use("/technical-opportunities", technicalOpportunitiesRoutes);
+    app.use("/technical-indicators", technicalOpportunitiesRoutes);
   } catch (error) {
     console.error("Validation error:", error.message);
     throw new ContentError("Invalid configuration: " + error.message);

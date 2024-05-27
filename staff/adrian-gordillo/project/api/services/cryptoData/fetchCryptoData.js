@@ -6,6 +6,7 @@ import { errors, validate } from "com";
 
 const { SystemError } = errors;
 
+// Función para obtener datos de criptomonedas
 const fetchCryptoData = async () => {
   try {
     console.log("Fetching crypto prices from API...");
@@ -19,18 +20,19 @@ const fetchCryptoData = async () => {
         validate.text(crypto.id, "crypto ID");
 
         const price = parseFloat(crypto.priceUsd);
-        const priceChange = parseFloat(crypto.changePercent24Hr);
+        const price24Hr = parseFloat(crypto.changePercent24Hr);
         const marketCap = parseFloat(crypto.marketCapUsd);
 
         validate.number(price, "crypto price");
-        validate.number(priceChange, "crypto price change 24Hr");
+        validate.number(price24Hr, "crypto price change 24Hr");
         validate.number(marketCap, "crypto market cap");
 
+        // Encuentra y actualiza (o crea si no existe) la lista de datos de criptomoneda en la base de datos con los nuevos valores
         return CryptoData.findOneAndUpdate(
           { symbol: crypto.id },
           {
             price: price,
-            price24Hr: priceChange,
+            price24Hr: price24Hr,
             marketCap: marketCap,
           },
           { new: true, upsert: true }

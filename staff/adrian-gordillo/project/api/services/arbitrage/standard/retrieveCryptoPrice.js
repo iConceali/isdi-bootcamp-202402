@@ -6,6 +6,7 @@ import { errors, validate } from "com";
 
 const { SystemError, ContentError } = errors;
 
+// Recupera precios de criptomonedas
 const retrieveCryptoPrice = async (exchange, standardSymbol, commission) => {
   try {
     const symbol = symbolMappings[standardSymbol]?.[exchange.name];

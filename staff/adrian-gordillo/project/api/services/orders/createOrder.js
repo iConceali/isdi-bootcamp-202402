@@ -27,7 +27,7 @@ const createOrder = (userId, { symbol, date, investment, profitPercent }) => {
 
     try {
       const newOrder = await order.save();
-      return newOrder; // No es necesario sanitizar aquí
+      return newOrder;
     } catch (error) {
       throw new ContentError("Failed to create order");
     }

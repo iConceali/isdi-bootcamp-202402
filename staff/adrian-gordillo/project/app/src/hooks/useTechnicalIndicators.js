@@ -37,7 +37,9 @@ export const useTechnicalIndicators = () => {
 
   const handleFilterChange = (symbol) => {
     try {
-      validate.text(symbol, "Symbol");
+      if (symbol !== "") {
+        validate.text(symbol, "Symbol");
+      }
 
       if (symbol === "") {
         setFilteredOpportunities(allOpportunities); // Si no hay filtro seleccionado, muestra todo

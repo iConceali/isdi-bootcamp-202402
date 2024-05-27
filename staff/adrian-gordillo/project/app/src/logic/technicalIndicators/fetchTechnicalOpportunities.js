@@ -4,12 +4,11 @@ import axios from "axios";
 import { validate, errors } from "com";
 const { ContentError, SystemError } = errors;
 
-// Función para obtener oportunidades técnicas desde la API
 const fetchTechnicalOpportunities = async () => {
   try {
     const apiUrl = `${
       import.meta.env.VITE_API_URL
-    }/technical-opportunities/technical-opportunities`;
+    }/technical-indicators/technical-opportunities`;
     validate.url(apiUrl, "API URL");
 
     const response = await axios.get(apiUrl);

@@ -9,10 +9,7 @@ dotenv.config();
 const dbURI = process.env.MONGO_URI;
 
 // Configuración de la conexión a MongoDB
-mongoose.connect(dbURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(dbURI);
 
 // Obtener la conexión a la base de datos
 const db = mongoose.connection;
@@ -32,10 +29,13 @@ db.on("disconnected", () => {
 
 // Captura de eventos SIGINT (señal de interrupción)
 process.on("SIGINT", () => {
+  // Cierra la conexión a la base de datos
   db.close(() => {
+    // Muestra un mensaje indicando que la conexión ha sido cerrada
     console.log(
       "Conexión a MongoDB cerrada debido a la terminación de la aplicación"
     );
+    // Termina el proceso con un código de salida 0 (sin errores)
     process.exit(0);
   });
 });

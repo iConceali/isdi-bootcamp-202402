@@ -13,6 +13,8 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
+
+//Configura Socket.IO con opciones de CORS.
 const io = new SocketIO(server, {
   cors: {
     origin: process.env.CORS_ORIGIN || "*",
@@ -23,6 +25,7 @@ const io = new SocketIO(server, {
 configureExpress(app);
 configureSockets(io);
 
+// Conecta a la base de datos MongoDB usando Mongoose
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
